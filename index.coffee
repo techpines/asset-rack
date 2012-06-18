@@ -23,7 +23,10 @@ exports.create = (newAssets, next) ->
 exports.pushS3 = (key, secret, bucket, next) ->
     client = knox.createClient key: key, secret: secret, bucket: bucket
     pushFile = (asset, next) ->
-        request = client.put asset.specificUrl
+        headers =
+            'Content-Length': asset.contents.length
+            'Content-Type': asset.mimetype
+        request = client.put asset.specificUrl, headers
         request.on 'response', (response) ->
             response.setEncoding 'utf8'
             returned = ''
