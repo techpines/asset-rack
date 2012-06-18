@@ -19,15 +19,25 @@ exports.create = (newAssets, next) ->
         asset.create next
     async.forEach newAssets, create, next
 
+exports.pushS3 = (key, secret, bucket, next) ->
+    async.forEach assets, pushFile, next
+
+pushFile = (asset, next) ->
+    client = knox.createClient key: key, secret: secret, bucket: bucket
+    client.putFile asset.filename, asset.specificUrl, (error, response) ->
+        return next error if error?
+        next()
+
 class AssetsLite
     constructor: (@options) ->
         @assets = @options.assets
+        @options.hostname ?= ''
         @options.maxAge ?= 60*60*24*7
         @options.context ?= global
         @options.funcName ?= 'assetsTag'
         @options.context[@options.funcName] = (url) =>
             for asset in @assets
-                return asset.tag if asset.url is url
+                return asset.tag @options.hostname if asset.url is url
             throw new Error "#{url}: Not found in assets."
                     
     handle: (request, response, next) ->
@@ -59,7 +69,9 @@ exports.LessAsset = class LessAsset
             @contents = tree.toCSS compress: @options.compress
             md5 = crypto.createHash('md5').update(@contents).digest 'hex'
             @specificUrl = @url.replace /\.css/, "-#{md5}.css"
-            @tag = "<link href=\"#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
+            @tag = (hostname) ->
+                hostname = "//#{hostname}"
+                "<link href=\"#{hostname}#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
             next()
 
 exports.BrowserifyAsset = class BrowserifyAsset
@@ -75,7 +87,9 @@ exports.BrowserifyAsset = class BrowserifyAsset
             @contents = browserify.bundle()
         md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         @specificUrl = @options.url.replace /\.js/, "-#{md5}.js"
-        @tag = "<script src=\"#{@specificUrl}\"></script>\n"
+        @tag = (hostname) ->
+            hostname = "//#{hostname}"
+            "<script src=\"#{hostname}#{@specificUrl}\"></script>\n"
 
     create: (next) -> next()
         
