@@ -47,12 +47,12 @@ exports.LessAsset = class LessAsset
 
     constructor: (@options) ->
         @url = @options.url
-        @path = @options.path
-        @fileContents = fs.readFileSync @path, 'utf8'
+        @filename = @options.filename
+        @fileContents = fs.readFileSync @filename, 'utf8'
         
     create: (next) ->
         parser = new less.Parser
-            filename: @options.path
+            filename: @options.filename
             paths: @options.paths
         parser.parse @fileContents, (error, tree) =>
             return next error if error?
@@ -66,9 +66,9 @@ exports.BrowserifyAsset = class BrowserifyAsset
     mimetype: 'application/javascript'
 
     constructor: (@options) ->
-        @path = @options.path
+        @filename = @options.filename
         @url = @options.url
-        browserify.addEntry @path
+        browserify.addEntry @filename
         if @options.compress?
             @contents = uglify browserify.bundle()
         else
