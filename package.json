@@ -1,5 +1,5 @@
 {
-    "name": "jadeclient",
+    "name": "assets-lite",
     "version": "0.9.0",
     "dependencies": {
         "coffee-script": "1.3.1",
