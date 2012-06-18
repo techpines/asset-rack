@@ -5,6 +5,7 @@ browserify = require('browserify')()
 uglify = require 'uglify-js'
 crypto = require 'crypto'
 async = require 'async'
+knox = require 'knox'
 
 assets = []
 
@@ -20,13 +21,23 @@ exports.create = (newAssets, next) ->
     async.forEach newAssets, create, next
 
 exports.pushS3 = (key, secret, bucket, next) ->
+    client = knox.createClient key: key, secret: secret, bucket: bucket
+    pushFile = (asset, next) ->
+        request = client.put asset.specificUrl
+        request.on 'response', (response) ->
+            response.setEncoding 'utf8'
+            returned = ''
+            response.on 'data', (data) ->
+                returned += data
+            response.on 'end', ->
+                if response.statusCode is 200
+                    next()
+                else
+                    next new Error returned
+        request.end asset.contents
+        console.log 'hey ho'
     async.forEach assets, pushFile, next
 
-pushFile = (asset, next) ->
-    client = knox.createClient key: key, secret: secret, bucket: bucket
-    client.putFile asset.filename, asset.specificUrl, (error, response) ->
-        return next error if error?
-        next()
 
 class AssetsLite
     constructor: (@options) ->
@@ -70,7 +81,7 @@ exports.LessAsset = class LessAsset
             md5 = crypto.createHash('md5').update(@contents).digest 'hex'
             @specificUrl = @url.replace /\.css/, "-#{md5}.css"
             @tag = (hostname) ->
-                hostname = "//#{hostname}"
+                hostname = "//#{hostname}" if hostname.length isnt 0
                 "<link href=\"#{hostname}#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
             next()
 
@@ -88,7 +99,7 @@ exports.BrowserifyAsset = class BrowserifyAsset
         md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         @specificUrl = @options.url.replace /\.js/, "-#{md5}.js"
         @tag = (hostname) ->
-            hostname = "//#{hostname}"
+            hostname = "//#{hostname}" if hostname.length isnt 0
             "<script src=\"#{hostname}#{@specificUrl}\"></script>\n"
 
     create: (next) -> next()
