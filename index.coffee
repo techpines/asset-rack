@@ -4,6 +4,7 @@ less = require 'less'
 browserify = require('browserify')()
 uglify = require 'uglify-js'
 crypto = require 'crypto'
+async = require 'async'
 
 assets = []
 
@@ -12,44 +13,62 @@ exports = module.exports = (options) ->
     options.assets = assets
     new AssetsLite options
 
-exports.create (newAssets, next) ->
+exports.create = (newAssets, next) ->
     create = (asset, next) ->
         assets.push asset
         asset.create next
     async.forEach newAssets, create, next
 
 class AssetsLite
-    constructor: (options) ->
+    constructor: (@options) ->
+        @assets = @options.assets
         @options.maxAge ?= 60*60*24*7
         @options.context ?= global
-        @options.funcName ?= 'assetsLite'
+        @options.funcName ?= 'assetsTag'
         @options.context[@options.funcName] = (url) =>
             for asset in @assets
                 return asset.tag if asset.url is url
             throw new Error "#{url}: Not found in assets."
                     
     handle: (request, response, next) ->
-        asset = @assets[request.url]
+        asset = @getAsset request.url
         return next() unless asset?
         response.header 'Content-Type', asset.mimetype
         response.header 'Cache-Control', "public, max-age=#{@options.maxAge}"
         response.send asset.contents
 
+    getAsset: (specificUrl) ->
+        for asset in @assets
+            if asset.specificUrl is specificUrl
+                return asset
+
 exports.LessAsset = class LessAsset
+    mimetype: 'text/css'
+
     constructor: (@options) ->
-        @fileContents = fs.readFileSync @options.path
+        @url = @options.url
+        @path = @options.path
+        @fileContents = fs.readFileSync @path, 'utf8'
         
     create: (next) ->
-        less.render @fileContents, (error, css) ->
+        parser = new less.Parser
+            filename: @options.path
+            paths: @options.paths
+        parser.parse @fileContents, (error, tree) =>
             return next error if error?
-            @contents = css
+            @contents = tree.toCSS compress: @options.compress
             md5 = crypto.createHash('md5').update(@contents).digest 'hex'
-            @specificUrl = @options.url.replace /\.css/, "-#{md5}.css"
+            @specificUrl = @url.replace /\.css/, "-#{md5}.css"
             @tag = "<link href=\"#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
+            next()
 
 exports.BrowserifyAsset = class BrowserifyAsset
+    mimetype: 'application/javascript'
+
     constructor: (@options) ->
-        browserify.addEntry @options.path
+        @path = @options.path
+        @url = @options.url
+        browserify.addEntry @path
         if @options.compress?
             @contents = uglify browserify.bundle()
         else
