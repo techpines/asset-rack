@@ -1,7 +1,7 @@
 
 fs = require 'fs'
 less = require 'less'
-browserify = require('browserify')()
+browserify = require 'browserify'
 uglify = require 'uglify-js'
 crypto = require 'crypto'
 async = require 'async'
@@ -94,11 +94,12 @@ exports.BrowserifyAsset = class BrowserifyAsset
     constructor: (@options) ->
         @filename = @options.filename
         @url = @options.url
-        browserify.addEntry @filename
+        agent = browserify watch: false
+        agent.addEntry @filename
         if @options.compress?
-            @contents = uglify browserify.bundle()
+            @contents = uglify agent.bundle()
         else
-            @contents = browserify.bundle()
+            @contents = agent.bundle()
         md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         @specificUrl = @options.url.replace /\.js/, "-#{md5}.js"
         @tag = (hostname) ->
