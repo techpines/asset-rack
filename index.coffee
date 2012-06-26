@@ -1,6 +1,7 @@
 
 fs = require 'fs'
 less = require 'less'
+pathutils = require 'path'
 browserify = require 'browserify'
 uglify = require 'uglify-js'
 crypto = require 'crypto'
@@ -96,6 +97,8 @@ exports.BrowserifyAsset = class BrowserifyAsset
         @url = @options.url
         agent = browserify watch: false
         agent.addEntry @filename
+        for dirname in @dirnames
+            agent.addEntry getFilenames dirname
         if @options.compress?
             @contents = uglify agent.bundle()
         else
@@ -105,6 +108,13 @@ exports.BrowserifyAsset = class BrowserifyAsset
         @tag = (hostname) ->
             hostname = "//#{hostname}" if hostname.length isnt 0
             "<script src=\"#{hostname}#{@specificUrl}\"></script>\n"
+
+    getFilenames: (dirname) ->
+        filenames = fs.readdirSync dirname
+        paths = for filename in filenames
+            pathutil.join diranme, filename
+            
+        
 
     create: (next) -> next()
         
