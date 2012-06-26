@@ -1,12 +1,13 @@
 
 fs = require 'fs'
 less = require 'less'
-pathutils = require 'path'
+pathutil = require 'path'
 browserify = require 'browserify'
 uglify = require 'uglify-js'
 crypto = require 'crypto'
 async = require 'async'
 knox = require 'knox'
+jade = require 'jade'
 
 assets = []
 
@@ -67,7 +68,7 @@ class AssetsLite
             if asset.specificUrl is specificUrl
                 return asset
 
-exports.LessAsset = class LessAsset
+class exports.LessAsset
     mimetype: 'text/css'
 
     constructor: (@options) ->
@@ -84,21 +85,63 @@ exports.LessAsset = class LessAsset
             @contents = tree.toCSS compress: @options.compress
             md5 = crypto.createHash('md5').update(@contents).digest 'hex'
             @specificUrl = @url.replace /\.css/, "-#{md5}.css"
-            @tag = (hostname) ->
-                hostname = "//#{hostname}" if hostname.length isnt 0
-                "<link href=\"#{hostname}#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
             next()
+    tag: (hostname) ->
+        hostname = "//#{hostname}" if hostname.length isnt 0
+        "<link href=\"#{hostname}#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
 
-exports.BrowserifyAsset = class BrowserifyAsset
+class exports.JadeAsset
+    mimetype: 'application/javascript'
+    constructor: (@options) ->
+        @url = @options.url
+        fileObjects = @getFileobjects @options.dirname
+        @contents = 'window.Templates = {'
+        for fileObject in fileObjects
+            @contents += "'#{fileObject.funcName}': #{fileObject.compiled},"
+        @contents += '};'
+        md5 = crypto.createHash('md5').update(@contents).digest 'hex'
+        @specificUrl = @url.replace /\.js/, "-#{md5}.js"
+        @tag = (hostname) ->
+            hostname = "//#{hostname}" if hostname.length isnt 0
+            "<script src=\"#{hostname}#{@specificUrl}\"></script>\n"
+        
+    create: (next) -> next()
+
+    getFileobjects: (dirname, prefix='') ->
+        filenames = fs.readdirSync dirname
+        paths = []
+        for filename in filenames
+            continue if filename.slice(0, 1) is '.'
+            path = pathutil.join dirname, filename
+            stats = fs.statSync path
+            if stats.isDirectory()
+                newPrefix = "#{prefix}#{pathutil.basename(path)}_"
+                paths = paths.concat @getFileobjects path, newPrefix
+            else
+                funcName = "#{prefix}#{pathutil.basename(path, '.jade')}"
+                fileContents = fs.readFileSync path, 'utf8'
+                compiled = jade.compile fileContents,
+                    client: true,
+                    compileDebug: false,
+                    filename: path
+                paths.push
+                    path: path
+                    funcName: funcName
+                    compiled: compiled
+        paths
+
+class exports.BrowserifyAsset
     mimetype: 'application/javascript'
 
     constructor: (@options) ->
         @filename = @options.filename
+        @dirnames = @options.dirnames
         @url = @options.url
         agent = browserify watch: false
         agent.addEntry @filename
         for dirname in @dirnames
-            agent.addEntry getFilenames dirname
+            for filename in @getFilenames(dirname)
+                agent.addEntry filename
         if @options.compress?
             @contents = uglify agent.bundle()
         else
@@ -111,9 +154,16 @@ exports.BrowserifyAsset = class BrowserifyAsset
 
     getFilenames: (dirname) ->
         filenames = fs.readdirSync dirname
-        paths = for filename in filenames
-            pathutil.join diranme, filename
-            
+        paths = []
+        for filename in filenames
+            continue if filename.slice(0, 1) is '.'
+            path = pathutil.join dirname, filename
+            stats = fs.statSync path
+            if stats.isDirectory()
+                paths = paths.concat @getFilenames path
+            else
+                paths.push path
+        paths
         
 
     create: (next) -> next()
