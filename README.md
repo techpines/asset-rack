@@ -18,16 +18,109 @@
 npm install git://github.com/techpines/assetcracker.git
 ```
 
-## Assets
+## Create your Assets
+```coffeescript
+ac = require('assetcracker')
 
-### Less
+assets = new ac.AssetPackage
+    assets: [
+        new ac.LessAsset
+            url: '/style.css'
+            filename: "#{__dirname}/path/to/file.less"
+    ,
+        new ac.BrowserifyAsset
+            url: '/app.js'
+            filename: "#{__dirname}/path/to/app.coffee"
+    ,
+        new ac.JadeAsset
+            url: '/templates.js'
+            dirname: "#{__dirname}/templates"
+    ]
+
+assets.on 'complete', ->
+    console.log 'hey all my assets are compiled!'
+```
+
+## Hook into Express
+```coffeescript
+assets.on 'complete', ->
+    app = express.createServer()
+    app.configure ->
+        app.use assets.middlware()
+```
+
+## Markup Functions
+
+In your jade templates you can include the tags by referencing their url.
+
+```
+!= assets.tag('/style.css')
+!= assets.tag('/app.js')
+!= assets.tag('/templates.js')
+```
+
+Which results in the following html:
+
+```html
+<link href="/style-c18acfe566c58a63a64165f33c4585a7.css" rel="stylesheet"></link>
+<script src="/templates-cb4ef3fab1767499219324ce5664d9d3.js"></script>
+<script src="/app-62845fa1d0f145e73ee0a5097493c86a.js"></script>
+```
+
+Notice the md5 sum that is now on the url.  This means you can HTML cache it forever.  Which is exactly what we do if you have the hash option set.  Also, updating your CDN is a breeze.
+
+## Push Compiled Assets to S3
 
 ```coffeescript
-lessAsset = new assetCracker.LessAsset
+assets.on 'complete', ->
+    assets.pushS3
+        key: '<your aws key>'
+        secret: '<your aws secret>'
+        bucket: '<your aws bucket>'
+    assets.on 's3-upload-complete', ->
+        console.log 'our static files are on amazon s3'
+```
+
+## Write a JSON config file.
+
+```coffeescript
+fs.writeFileSync '/asset/config.json', JSON.parse(assets.config)
+```
+
+## Upload the Config for Express
+
+```coffescript
+app = express.createServer()
+app.configure ->
+    assetConfig = require('/asset/config.json')
+    assets = new ac.AssetPackage
+        config: require('/asset/config.json')
+        hostname: 'static.cloudfront.net' # Or whatever you CDN host might be.
+```
+
+## New HTML Output
+
+```html
+<link href="//static.cloudfront.net/style-c18acfe566c58a63a64165f33c4585a7.css" rel="stylesheet"></link>
+<script src="//static.cloudfront.net/templates-cb4ef3fab1767499219324ce5664d9d3.js"></script>
+<script src="//static.cloudfront.net/app-62845fa1d0f145e73ee0a5097493c86a.js"></script>
+```     
+
+
+## API Reference
+
+### AssetPackage
+
+### BrowserifyAsset
+
+### JadeAsset
+
+### LessAsset
+
+```coffeescript
+lessAsset = new ac.LessAsset
     url: '/style.css'
     filename: "#{__dirname}/path/to/file.less"
-
-
 ```
 
 ## License
