@@ -1,68 +1,33 @@
-# AssetsLite
-
-Dynamic asset handling that is better than [connect-assets](https://github.com/TrevorBurnham/connect-assets).
+# AssetsCracker
 
 ## Features
 
-1. Supports both javascript and coffeescript.
-2. Uses browserify requires, which let's you do requires node-style.
-3. You can require jade templates from your javascript/coffeescript code.
-4. Md5 sum always attached to files for caching and CDN usage.
-5. No writing built files to disk, ever.
-6. Support for less.
-7. Can be plugged in as connect middleware.
-8. Easily extensible.
+1. Dynamic asset creation for js, css, html templates, images, fonts.
+2. Support for js/coffescript, browserify (node-style requires).
+3. Support for less, jade templates, other static resources (images, fonts)
+4. Multi-process, multi-server out of the box.  Share nothing.
+5. Filenames hashed for "forever" HTML caching and easy CDN updates.
+6. No need to ever compile static files to disk, all-in memory.
+7. Ability to push compiled files to Amazon S3 for use with Cloudfront.
+8. Can be plugged into express as connect middleware.
+9. Easily extensible.
 
 ## Install
 
 ```bash
-npm install git://github.com/techpines/assets-lite.git
+npm install git://github.com/techpines/assetcracker.git
 ```
 
-## Setup
+## Assets
 
-```javascript
-express = require('express');
-assetsLite = require('assets-lite');
+### Less
 
-setup = function(next) {
-    assetsLite.create([
-        new assetsLite.LessAsset({
-            filename: __dirname + '/style/app.less',
-            url: '/style.css'
-        }),
-        new assetsLite.BrowerifyAsset({
-            filename: __dirname + '/client/app.js',
-            url: '/app.js'
-        })
-    ], next);
-};
+```coffeescript
+lessAsset = new assetCracker.LessAsset
+    url: '/style.css'
+    filename: "#{__dirname}/path/to/file.less"
 
-setup(function() {
-    app = express.createServer();
-    app.configure(function() {
-        app.use(assetsLite());
-    })
-    app.listen(8000)
-});
-```
 
-### Options
-
-## Markup Function
-
-In your server side jade template, include the jade runtime scripts provided and specify a client side template to load:
-
-```
-!= assetsTag('/style.css');
-!= assetsTag('/app.js');
-```
-
-This will result in the following html code:
-
-```html
-<link rel="stylesheet" href="/style-91c65beadfc6440e3e9f35dc2b366f98.css"></link>
-<script src="/app-39efeec2cb92f3ad7c9ba8b38f3acd77.js"></script>
 ```
 
 ## License
