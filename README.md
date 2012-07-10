@@ -1,4 +1,7 @@
 
+# Asset Rack
+The best asset management framework for node. (period)
+
 ![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
 
 ## Features
