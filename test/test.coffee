@@ -1,8 +1,8 @@
 
-ac = require '../lib/index'
+{LessAsset, AssetPackage} = require '../lib/index'
 
 testLess = ->
-    asset = new ac.LessAsset
+    asset = new LessAsset
         url: '/style.css'
         filename: "#{__dirname}/fixtures/less/test.less"
 
@@ -13,9 +13,9 @@ testLess = ->
 
 
 testAssets = ->
-    assets = new ac.AssetPackage
+    assets = new AssetPackage
         assets: [
-            new ac.LessAsset
+            new LessAsset
                 url: '/style.css'
                 filename: "#{__dirname}/fixtures/less/test.less"
         ]
