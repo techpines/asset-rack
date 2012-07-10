@@ -1,4 +1,5 @@
-# AssetsCracker
+
+![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
 
 ## Features
 

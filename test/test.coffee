@@ -1,47 +1,27 @@
 
-{Assets, BrowserifyAsset} = require 'assetcracker'
-{LessAsset, JadeAsset} = require 'assetcracker'
+ac = require '../lib/index'
 
-assets = new Assets
-    assets: [
-        new BrowserifyAsset
-            url: '/app.js'
-            filename: "#{__dirname}/client/app.coffee"
-        new LessAsset
-            url: '/styles.css'
-            filename: "#{__dirname}/styles/app.css"
-        new JadeAsset
-            url: '/templates.js'
-            dirname: "#{__dirname}/templates"
-        new StaticAsset
-            url: '/static'
-            dirname: "#{__dirname}/static"
-    ]
-    hostname: 'static.example.com'
+testLess = ->
+    asset = new ac.LessAsset
+        url: '/style.css'
+        filename: "#{__dirname}/fixtures/less/test.less"
 
-assets = new AssetPackage
-    config: require '/etc/myapp/assets.json'
-    hostname: 'static.example.com'
+    asset.on 'complete', ->
+        console.log asset
 
-assets.tag '/templates.js'
-assets.tag '/app.js'
-assets.tag '/styles.css'
+    asset.create()
 
-assets.pushS3
-    key: 'your key'
-    secret: 'your secret'
-    bucket: 'your bucket'
 
-assets.middleware()
-
-assets.config
-
-setup = (next) ->
-    assets = new AssetPackage
+testAssets = ->
+    assets = new ac.AssetPackage
+        assets: [
+            new ac.LessAsset
+                url: '/style.css'
+                filename: "#{__dirname}/fixtures/less/test.less"
+        ]
     assets.on 'complete', ->
-        next()
+        console.log 'we is done'
+        console.log assets
+        console.log assets.tag('/style.css')
 
-setup ->
-    app = express.createServer()
-    app.use assets.middleware()
-    app.listen 8000
+testAssets()
