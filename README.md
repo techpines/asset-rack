@@ -5,7 +5,7 @@ The best asset management framework for node. (period)
 
 ## Features
 
-1. Dynamic asset creation for js, css, html templates, images, fonts.
+1. Dynamic asset creation for js, css, html templates.
 2. Support for js/coffescript, browserify (node-style requires).
 3. Support for less.
 4. Support for jade templates.
