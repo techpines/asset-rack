@@ -97,20 +97,37 @@ assets.on 'complete', ->
 
 ### AssetPackage
 
-This is the main asset class.
+This is the top level class that holds collections of assets.
+
+```coffeescript
+new AssetPackage
+    assets: [
+        new rack.LessAsset
+            url: '/style.css'
+            filename: "#{__dirname}/path/to/file.less"
+        new rack.BrowserifyAsset
+            url: '/app.js'
+            filename: "#{__dirname}/path/to/app.coffee"
+        new rack.JadeAsset
+            url: '/templates.js'
+            dirname: "#{__dirname}/templates"
+    ]
+```
+
+To use with express:
+
+```coffeescript
+app.use assets
+```
 
 #### Options
 
 Either a list of assets or a config object is required.
 
 * `assets`: An array of assets to use.
-* `config`: Use a config file that tells the server where the assets are
-rather then compile the assets.
-* `hostname` (optional): The hostname for your asset urls.
 
 #### Methods
 * `create`: Asynchronously creates all the packages assets.
-* `middelware`: Returns connect middleware for the assets package.
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
 * `pushS3`: Pushes all asset contents to their respective 
 urls in an Amazon S3 bucket.
