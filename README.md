@@ -7,7 +7,8 @@ The best asset management framework for node. (period)
 
 1. Dynamic asset creation for js, css, html templates, images, fonts.
 2. Support for js/coffescript, browserify (node-style requires).
-3. Support for less, jade templates, other static resources (images, fonts)
+3. Support for less.
+4. Support for jade templates.
 4. Multi-process, multi-server out of the box.  Share nothing.
 5. Filenames hashed for "forever" HTML caching and easy CDN updates.
 6. No need to ever compile static files to disk, all-in memory.
@@ -170,6 +171,7 @@ new BrowserifyAsset
 * `require`: A filename or list of filenames to require, should not be necessary
 as the `filename` argument should pull in any requires you need.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ### JadeAsset
 This is an awesome asset.  Ever wanted the simplicity of jade templates
@@ -216,6 +218,7 @@ $('body').append Templates.user_info()
 * `compress` (defaults to false): Whether to minify the javascript or not.
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 
 
@@ -233,6 +236,7 @@ lessAsset = new ac.LessAsset
 #### Options
 
 * `url`: The url that should retrieve this resource.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 * `filename`: Filename of the less file you want to serve.
 * `compress` (defaults to false): Whether to minify the css.
 * `paths`: List of paths to search for `@import` directives.
