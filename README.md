@@ -56,7 +56,8 @@ into express with ease.
 assets.on 'complete', ->
     app = express.createServer()
     app.configure ->
-        app.use assets.middlware()
+        app.use assets
+    app.listen 8000
 ```
 
 ### Markup Functions
