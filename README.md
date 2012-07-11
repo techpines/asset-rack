@@ -22,11 +22,11 @@ The best asset management framework for node. (period)
 npm install asset-rack
 ```
 
-# Tutorial
+## Tutorial
 Here is a simple walk throught that demonstrates some of the
 major features of asset rack.
 
-## Create your Assets
+### Create your Assets
 First create your assets.  Here we are creating our stylesheets, 
 javascript code, and javascript templates from less, coffeescript and jade.
 ```coffeescript
@@ -37,11 +37,9 @@ assets = new rack.AssetPackage
         new rack.LessAsset
             url: '/style.css'
             filename: "#{__dirname}/path/to/file.less"
-    ,
         new rack.BrowserifyAsset
             url: '/app.js'
             filename: "#{__dirname}/path/to/app.coffee"
-    ,
         new rack.JadeAsset
             url: '/templates.js'
             dirname: "#{__dirname}/templates"
@@ -51,7 +49,7 @@ assets.on 'complete', ->
     console.log 'hey all my assets were created!'
 ```
 
-## Hook into Express
+### Hook into Express
 Once your assets have been created you can hook them 
 into express with ease.
 ```coffeescript
@@ -61,7 +59,7 @@ assets.on 'complete', ->
         app.use assets.middlware()
 ```
 
-## Markup Functions
+### Markup Functions
 
 In your jade templates you can include the tags by referencing their url.
 
@@ -80,7 +78,7 @@ Which results in the following html:
 
 Notice the md5 sum that is now on the url.  This means you can HTML cache it forever.  Which is exactly what we do if you have the hash option set.  Also, updating your CDN is a breeze.
 
-## Push Compiled Assets to S3
+### Push Compiled Assets to S3
 Now that all your assets are done and hooked into express you can just
 serve them from your app, but we can do better!  Let's push them to Amazon
 AWS so they can be served by S3 or Cloudfront.
@@ -94,34 +92,6 @@ assets.on 'complete', ->
     assets.on 's3-upload-complete', ->
         console.log 'our static files are on amazon s3'
 ```
-
-Easy.
-
-## Write a JSON config file.
-
-```coffeescript
-fs.writeFileSync '/asset/config.json', JSON.parse(assets.config)
-```
-
-## Upload the Config for Express
-
-```coffescript
-app = express.createServer()
-app.configure ->
-    assetConfig = require('/asset/config.json')
-    assets = new ac.AssetPackage
-        config: require('/asset/config.json')
-        hostname: 'static.cloudfront.net' # Or whatever you CDN host might be.
-```
-
-## New HTML Output
-
-```html
-<link href="//static.cloudfront.net/style-{md5-sum}" rel="stylesheet"></link>
-<script src="//static.cloudfront.net/templates-{md5-sum}"></script>
-<script src="//static.cloudfront.net/app-{md5-sum}.js"></script>
-```     
-
 
 ## API Reference
 
