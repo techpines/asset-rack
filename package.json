@@ -1,5 +1,5 @@
 {
-    "name": "assets-rack",
+    "name": "asset-rack",
     "version": "1.0.1",
     "description": "Asset managemnt framework for nodejs",
     "author": "Brad Carleton <brad@techpines.com>",
