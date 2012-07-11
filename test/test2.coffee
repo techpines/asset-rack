@@ -7,12 +7,10 @@ assets = new rack.AssetPackage
         new rack.LessAsset
             url: '/style.css'
             filename: "#{__dirname}/fixtures/less/test.less"
-            compress: true
     ,
         new rack.JadeAsset
             url: '/templates.js'
             dirname: "#{__dirname}/fixtures/jade"
-            compress: true
     ,
         new rack.BrowserifyAsset
             url: '/app.js'

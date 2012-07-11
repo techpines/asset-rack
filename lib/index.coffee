@@ -8,12 +8,12 @@ EventEmitter = require('events').EventEmitter
 class exports.AssetPackage extends EventEmitter
     constructor: (@options) ->
         super()
-        @config = @options.config
-        @assets = @options.assets
-        @hostname = @options.hostname
+        for key, value of @options
+            this[key] = value
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
+        @assets = @getAssets() if @getAssets?
         @create() if @assets?
 
     create: -> process.nextTick =>
@@ -26,6 +26,13 @@ class exports.AssetPackage extends EventEmitter
             @completed = true
             @emit 'complete'
 
+    getConfig: ->
+        config = for asset in @assets
+            url: asset.url
+            md5: asset.md5
+            specificUrl: asset.specificUrl
+            mimetype: asset.mimetype
+
     handle: (request, response, next) ->
         response.local 'assets', this
         asset = @getAsset request.url
@@ -33,6 +40,9 @@ class exports.AssetPackage extends EventEmitter
         response.header 'Content-Type', asset.mimetype
         #response.header 'Cache-Control', "public, max-age=#{@options.maxAge}"
         response.send asset.contents
+
+    addPackage: (pack) ->
+        @assets = @assets.concat pack.assets
 
     getAsset: (specificUrl) ->
         for asset in @assets
@@ -70,6 +80,10 @@ class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
     constructor: (@options) ->
         @url = @options.url
+        @hash = if @options.hash? then @options.hash else true
+        @on 'newListener', (event, listener) =>
+            if event is 'complete' and @completed is true
+                listener()
         @on 'complete', @createSpecificUrl
         super()
     create: ->
@@ -83,13 +97,17 @@ class exports.Asset extends EventEmitter
                 return "<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
     createSpecificUrl: ->
         @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
+        unless @hash
+            return @specificUrl = @url
         @ext = pathutil.extname @url
         @specificUrl = @url.replace new RegExp("#{@ext}"), "-#{@md5}#{@ext}"
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
+        @completed = true
 
 exports.LessAsset = require('./assets/less').LessAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
 exports.JadeAsset = require('./assets/jade').JadeAsset
-
+exports.StaticAssetPackage = require('./assets/static').StaticAssetPackage
+exports.StaticAsset = require('./assets/static').StaticAsset
 
