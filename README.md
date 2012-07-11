@@ -138,7 +138,7 @@ urls in an Amazon S3 bucket.
 * `s3-upload-complete`: Emitted after assets have been loaded to s3.
 * `error`: Emitted for any errors.
 
-### BrowserifyAsset
+### BrowserifyAsset (js/coffeescript)
 
 Browserify is an awesome node project that converts node-style requires
 to requirejs for the frontend.  For more details, check it out,
