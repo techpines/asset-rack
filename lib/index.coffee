@@ -44,17 +44,21 @@ class exports.AssetPackage extends EventEmitter
     addPackage: (pack) ->
         @assets = @assets.concat pack.assets
 
+    addAsset: (asset) ->
+        @assets.push asset
+
     getAsset: (specificUrl) ->
         for asset in @assets
             if asset.specificUrl is specificUrl
                 return asset
 
     pushS3: (options) ->
-        async.forEach @assets, (asset, next) =>
+        async.forEachSeries @assets, (asset, next) =>
+            buffer = new Buffer asset.contents
             client = knox.createClient options
             url = asset.specificUrl.slice 1, asset.specificUrl.length
             request = client.put url, {
-                'Content-Length': asset.contents.length
+                'Content-Length': buffer.length
                 'Content-Type': asset.mimetype
             }
             request.on 'response', (response) =>
@@ -67,7 +71,7 @@ class exports.AssetPackage extends EventEmitter
             request.on 'error', (error) =>
                 @emit 'error', error
                 
-            request.end asset.contents
+            request.end buffer
         , =>
             @emit 's3-upload-complete'
     
@@ -84,7 +88,9 @@ class exports.Asset extends EventEmitter
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
-        @on 'complete', @createSpecificUrl
+        @on 'complete', =>
+            @completed = true
+            @createSpecificUrl()
         super()
     create: ->
         @emit 'complete'
@@ -100,10 +106,9 @@ class exports.Asset extends EventEmitter
         unless @hash
             return @specificUrl = @url
         @ext = pathutil.extname @url
-        @specificUrl = @url.replace new RegExp("#{@ext}"), "-#{@md5}#{@ext}"
+        @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
-        @completed = true
 
 exports.LessAsset = require('./assets/less').LessAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
