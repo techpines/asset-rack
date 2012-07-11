@@ -26,6 +26,19 @@ class exports.AssetPackage extends EventEmitter
             @completed = true
             @emit 'complete'
 
+    handle: (request, response, next) ->
+        response.local 'assets', this
+        asset = @getAsset request.url
+        return next() unless asset?
+        response.header 'Content-Type', asset.mimetype
+        #response.header 'Cache-Control', "public, max-age=#{@options.maxAge}"
+        response.send asset.contents
+
+    getAsset: (specificUrl) ->
+        for asset in @assets
+            if asset.specificUrl is specificUrl
+                return asset
+
     pushS3: (options) ->
         async.forEach @assets, (asset, next) =>
             client = knox.createClient options
@@ -49,10 +62,9 @@ class exports.AssetPackage extends EventEmitter
             @emit 's3-upload-complete'
     
     tag: (url) ->
-        args = Array.prototype.slice.call arguments, 1
-        asset = @assetMapping[url]
-        throw new Error "No asset found for url: #{url}" unless asset?
-        return asset.tag.apply asset, @options.hostname, args
+        for asset in @assets
+            return asset.tag() if url is asset.url
+        throw new Error "No asset found for url: #{url}"
             
 class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
@@ -65,8 +77,8 @@ class exports.Asset extends EventEmitter
     tag: ->
         switch @mimetype
             when 'application/javascript'
-                tag = "<script type=\"#{@mimtype}\" "
-                return tag += "src=\"#{@specificUrl}\"><script>"
+                tag = "<script type=\"#{@mimetype}\" "
+                return tag += "src=\"#{@specificUrl}\"></script>"
             when 'text/css'
                 return "<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
     createSpecificUrl: ->
