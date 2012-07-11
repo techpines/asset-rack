@@ -7,13 +7,10 @@ Asset = require('../.').Asset
 class exports.LessAsset extends Asset
     mimetype: 'text/css'
 
-    constructor: (@options) ->
-        @url = @options.url
-        @filename = @options.filename
-        @paths = options.paths
-        super()
-
     create: ->
+        @filename = @options.filename
+        @paths = @options.paths
+        @compress = @options.compress or false
         try
             fileContents = fs.readFileSync @filename, 'utf8'
             parser = new less.Parser
@@ -21,7 +18,7 @@ class exports.LessAsset extends Asset
                 paths: @paths
             parser.parse fileContents, (error, tree) =>
                 return @tigger 'error', error if error?
-                @contents = tree.toCSS()
+                @contents = tree.toCSS compress: @compress
                 @createSpecificUrl()
                 @emit 'complete'
         catch error

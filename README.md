@@ -1,7 +1,7 @@
 
-The best asset management framework for node. (period)
-
 ![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
+
+The best asset management framework for node. (period)
 
 ## Features
 
@@ -191,7 +191,7 @@ user/
     info.jade
 ```
 
-So on the client, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script
+Then in the browser, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script
 then you could reference your templates like so:
 
 ```coffeescript
