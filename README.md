@@ -128,14 +128,13 @@ Either a list of assets or a config object is required.
 * `assets`: An array of assets to use.
 
 #### Methods
-* `create`: Asynchronously creates all the packages assets.
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
 * `pushS3`: Pushes all asset contents to their respective 
 urls in an Amazon S3 bucket.
 
 #### Events
 
-* `complete`: Emitted by `create` after all assets have been created.
+* `complete`: Emitted after all assets have been created.
 * `s3-upload-complete`: Emitted after assets have been loaded to s3.
 * `error`: Emitted for any errors.
 
