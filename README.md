@@ -16,12 +16,6 @@ The best asset management framework for node. (period)
 8. Can be plugged into express as connect middleware.
 9. Easily extensible.
 
-## Install
-
-```bash
-npm install asset-rack
-```
-
 ## Concepts
 
 There are two very simple conepts to understand with asset-rack.
@@ -36,6 +30,13 @@ These three pieces are absolutely critical.  The md5 hash is *super* important! 
 
 ### AssetRack
 An asset rack is a collection of assets.  But it allows us to do things with assets that we always want to do very easily.  Like serve them from a memory cache using express and connect middleware, or push all individual assets to an Amazon S3 bucket, or write them to disk or whatever other group action we might want to perform on our assets.
+
+## Install
+
+```bash
+npm install asset-rack
+```
+
 
 ## Tutorial
 Here is a simple walk throught that demonstrates some of the
@@ -122,11 +123,9 @@ assets.on('complete', function() {
 });
 ```
 
-### Write them to Disk
+# API Reference
 
-## API Reference
-
-### AssetRack
+## AssetRack
 
 This is your initial collection of assets.
 
@@ -153,24 +152,24 @@ To use with express:
 app.use(assets);
 ```
 
-#### Options
+### Options
 
 Either a list of assets or a config object is required.
 
 * `assets`: An array of assets to use.
 
-#### Methods
+### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
 * `pushS3`: Pushes all asset contents to their respective 
 urls in an Amazon S3 bucket.
 
-#### Events
+### Events
 
 * `complete`: Emitted after all assets have been created.
 * `s3-upload-complete`: Emitted after assets have been loaded to s3.
 * `error`: Emitted for any errors.
 
-### BrowserifyAsset (js/coffeescript)
+## BrowserifyAsset (js/coffeescript)
 
 Browserify is an awesome node project that converts node-style requires
 to requirejs for the frontend.  For more details, check it out,
@@ -184,7 +183,7 @@ new BrowserifyAsset({
 });
 ```
 
-#### Options
+### Options
 
 * `url`: The url that should retrieve this resource.
 * `filename`: A filename or list of filenames to be executed by the browser.
@@ -193,7 +192,7 @@ as the `filename` argument should pull in any requires you need.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
-### JadeAsset
+## JadeAsset
 This is an awesome asset.  Ever wanted the simplicity of jade templates
 on the browser with lightning fast performance.  Here you go.
 
@@ -227,7 +226,7 @@ $('body').append(Templates['index']());
 $('body').append(Templates['user/profile']({username: 'brad', status: 'fun'}));
 $('body').append(Templates['user/info']());
 ```
-#### Options
+### Options
 
 * `url`: The url that should retrieve this resource.
 * `dirname`: Directory where template files are located, will grab them recursively.
@@ -237,7 +236,7 @@ $('body').append(Templates['user/info']());
 variable.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
-### LessAsset
+## LessAsset
 
 The less asset basically compiles up and serves your less files as css.  You
 can read more about less [here](https://github.com/cloudhead/less.js).
@@ -248,7 +247,7 @@ lessAsset = new LessAsset
     filename: "#{__dirname}/style/app.less"
 ```
 
-#### Options
+### Options
 
 * `url`: The url that should retrieve this resource.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
