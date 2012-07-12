@@ -16,6 +16,12 @@ The best asset management framework for node. (period)
 8. Can be plugged into express as connect middleware.
 9. Easily extensible.
 
+## Install
+
+```bash
+npm install asset-rack
+```
+
 ## Concepts
 
 There are two very simple conepts to understand with asset-rack.
@@ -30,13 +36,6 @@ These three pieces are absolutely critical.  The md5 hash is *super* important! 
 
 ### AssetRack
 An asset rack is a collection of assets.  But it allows us to do things with assets that we always want to do very easily.  Like serve them from a memory cache using express and connect middleware, or push all individual assets to an Amazon S3 bucket, or write them to disk or whatever other group action we might want to perform on our assets.
-
-## Install
-
-```bash
-npm install asset-rack
-```
-
 
 ## Tutorial
 Here is a simple walk throught that demonstrates some of the
