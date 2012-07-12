@@ -157,15 +157,9 @@ To use with express:
 app.use(assets);
 ```
 
-### Options
-
-Either a list of assets or a config object is required.
-
-* `assets`: An array of assets to use.
-
 ### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
-* `pushS3`: Pushes all asset contents to their respective 
+* `pushS3({key:key, secret:secret, bucket:bucket})`: Pushes all asset contents to their respective 
 urls in an Amazon S3 bucket.
 
 ### Events
