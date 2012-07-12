@@ -1,7 +1,13 @@
 
 ![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
 
-A node-style asset management framework.  Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/connect-assets).
+A node-style asset management framework. Designed for Single Page Apps.
+
+Author: Brad Carleton
+Company: Tech Pines
+Website: http://www.techpines.com 
+
+Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/connect-assets), and the Rails [Asset Pipeline](http://guides.rubyonrails.org/asset_pipeline.html)
 
 ## Features
 
