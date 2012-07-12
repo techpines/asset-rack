@@ -255,7 +255,7 @@ lessAsset = new LessAsset
 * `paths`: List of paths to search for `@import` directives.
 
 
-## License
+# License
 
 ©2012 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
 
