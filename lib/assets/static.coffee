@@ -15,7 +15,7 @@ class exports.StaticAsset extends rack.Asset
         @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
         @emit 'complete'
 
-class exports.StaticAssetPackage extends rack.AssetPackage
+class exports.StaticAssetRack extends rack.AssetRack
     getAssets: (dirname, prefix='') ->
         dirname ?= @dirname
         filenames = fs.readdirSync dirname

@@ -22,6 +22,21 @@ The best asset management framework for node. (period)
 npm install asset-rack
 ```
 
+## Concepts
+
+There are two very simple conepts to understand with asset-rack.
+
+### Asset
+An asset after it is `complete`, consists of three very important things.
+* `url`: A human readable url.
+* `contents`: Contents for the asset, like the actual javascript or image or whatever.
+* `md5`: An md5 hash of the contents
+
+These three pieces are absolutely critical.  The md5 hash is *super* important! This allows us to append our human readable url with the md5 hash for versioning which allows basically every static asset to be cached forever by proxies, browsers, cdn's.  This makes everything fast, fast, fast.
+
+### AssetRack
+An asset rack is a collection of assets.  But it allows us to do things with assets that we always want to do very easily.  Like serve them from a memory cache using express and connect middleware, or push all individual assets to an Amazon S3 bucket, or write them to disk or whatever other group action we might want to perform on our assets.
+
 ## Tutorial
 Here is a simple walk throught that demonstrates some of the
 major features of asset rack.
@@ -29,40 +44,47 @@ major features of asset rack.
 ### Create your Assets
 First create your assets.  Here we are creating our stylesheets, 
 javascript code, and javascript templates from less, coffeescript and jade.
-```coffeescript
-rack = require('asset-rack')
+```javascript
+var rack = require('asset-rack');
 
-assets = new rack.AssetPackage
-    assets: [
-        new rack.LessAsset
-            url: '/style.css'
-            filename: "#{__dirname}/path/to/file.less"
-        new rack.BrowserifyAsset
-            url: '/app.js'
-            filename: "#{__dirname}/path/to/app.coffee"
-        new rack.JadeAsset
-            url: '/templates.js'
-            dirname: "#{__dirname}/templates"
-    ]
+var assets = new rack.AssetRack([
+    new rack.LessAsset({
+        url: '/style.css',
+        filename: __dirname + '/path/to/file.less'
+    }),
+    new rack.BrowserifyAsset({
+        url: '/app.js',
+        filename: __dirname + '/path/to/app.coffee'
+    }),
+    new rack.JadeAsset({
+        url: '/templates.js',
+        dirname: __dirname + '/templates'
+    })
+]);
 
-assets.on 'complete', ->
-    console.log 'hey all my assets were created!'
+assets.on('complete', function() {
+    console.log('hey all my assets were created!');
+});
 ```
 
 ### Hook into Express
 Once your assets have been created you can hook them 
 into express with ease.
-```coffeescript
-assets.on 'complete', ->
-    app = express.createServer()
-    app.configure ->
-        app.use assets
-    app.listen 8000
+```javascript
+assets.on('complete', function() {
+    var app = express.createServer();
+    app.configure(function() {
+        app.use(assets);  // that's all you need to do
+    });
+    app.listen(8000);
+});
 ```
+
+All of those assets are now stored in an in-memroy cache, so it is super fast.
 
 ### Markup Functions
 
-In your jade templates you can include the tags by referencing their url.
+In your jade templates you can include the tags by referencing their url.  For your convenience the assets object will be added to response locals, so that you can do the following in say a jade template:
 
 ```
 != assets.tag('/style.css')
@@ -77,48 +99,58 @@ Which results in the following html:
 <script src="/app-{md5-sum}.js"></script>
 ```
 
-Notice the md5 sum that is now on the url.  This means you can HTML cache it forever.  Which is exactly what we do if you have the hash option set.  Also, updating your CDN is a breeze.
+Very cool, and this will work for multi-process and multi-server.
+
+Notice the md5 sum that is now on the url.  This means you can HTML cache it forever.  Which is exactly what we do if you have the hash option set.  Also, updating your CDN is now a breeze.
 
 ### Push Compiled Assets to S3
 Now that all your assets are done and hooked into express you can just
 serve them from your app, but we can do better!  Let's push them to Amazon
 AWS so they can be served by S3 or Cloudfront.
 
-```coffeescript
-assets.on 'complete', ->
-    assets.pushS3
-        key: '<your aws key>'
-        secret: '<your aws secret>'
+
+```javascript
+assets.on('complete', function() {
+    assets.pushS3({
+        key: '<your aws key>',
+        secret: '<your aws secret>',
         bucket: '<your aws bucket>'
-    assets.on 's3-upload-complete', ->
-        console.log 'our static files are on amazon s3'
+    });
+    assets.on('s3-upload-complete', function() {
+        console.log('our assets are now on amazon s3!');
+    });
+});
 ```
+
+### Write them to Disk
 
 ## API Reference
 
-### AssetPackage
+### AssetRack
 
-This is the top level class that holds collections of assets.
+This is your initial collection of assets.
 
-```coffeescript
-new AssetPackage
-    assets: [
-        new rack.LessAsset
-            url: '/style.css'
-            filename: "#{__dirname}/path/to/file.less"
-        new rack.BrowserifyAsset
-            url: '/app.js'
-            filename: "#{__dirname}/path/to/app.coffee"
-        new rack.JadeAsset
-            url: '/templates.js'
-            dirname: "#{__dirname}/templates"
-    ]
+```javascript
+var assets = new AssetRack([
+    new rack.LessAsset({
+        url: '/style.css',
+        filename: __dirname + '/path/to/file.less'
+    }),
+    new rack.BrowserifyAsset({
+        url: '/app.js',
+        filename: __dirname + '/path/to/app.coffee'
+    }),
+    new rack.JadeAsset({
+        url: '/templates.js',
+        dirname: __dirname + '/templates'
+    })
+]);
 ```
 
 To use with express:
 
-```coffeescript
-app.use assets
+```javascript
+app.use(assets);
 ```
 
 #### Options
@@ -144,11 +176,12 @@ Browserify is an awesome node project that converts node-style requires
 to requirejs for the frontend.  For more details, check it out,
 [here](https://github.com/substack/node-browserify).
 
-```coffeescript
-new BrowserifyAsset
-    url: '/app.js'
-    filename: "#{__dirname}/client/app.js"
+```javascript
+new BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/client/app.js',
     compress: true
+});
 ```
 
 #### Options
@@ -164,10 +197,11 @@ as the `filename` argument should pull in any requires you need.
 This is an awesome asset.  Ever wanted the simplicity of jade templates
 on the browser with lightning fast performance.  Here you go.
 
-```coffeescript
-new JadeAsset
-    url: '/templates.js'
-    dirname: "#{__dirname}/templates"
+```javascript
+new JadeAsset({
+    url: '/templates.js',
+    dirname: __dirname + '/templates'
+});
 ```
 
 So if your template directory looked like this:
@@ -180,42 +214,36 @@ user/
     info.jade
 ```
 
-Then in the browser, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script
+Then in the browser, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script:
+
+```
+script(src="/static/js/jade-runtime.js", type="text/javascript")
+```
+
 then you could reference your templates like so:
 
-```coffeescript
-$('body').append Templates.index() 
-$('body').append Templates.contact()
-$('body').append Templates['user/profile'](username: 'brad', status: 'fun')
-$('body').append Templates['user/info'](
+```javascript
+$('body').append(Templates['index']());
+$('body').append(Templates['user/profile']({username: 'brad', status: 'fun'}));
+$('body').append(Templates['user/info']());
 ```
-
-You can also change the directory `seperator` option for better template names:
-
-```coffeescript
-$('body').append Templates.user_profile(username: 'brad', status: 'fun')
-$('body').append Templates.user_info()
-```
-
 #### Options
 
 * `url`: The url that should retrieve this resource.
 * `dirname`: Directory where template files are located, will grab them recursively.
-* `separator` (defaults to '/'): I like to change it like the example above.
+* `separator` (defaults to '/'): The character that separates directories, i like to change it to an underscore, `_`.  So that you get more javascript friendly template names like `Templates.user_profile` or `Templates.friends_interests_list`.
 * `compress` (defaults to false): Whether to minify the javascript or not.
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
-
-
 
 ### LessAsset
 
 The less asset basically compiles up and serves your less files as css.  You
 can read more about less [here](https://github.com/cloudhead/less.js).
 
-```coffeescript
-lessAsset = new ac.LessAsset
+```javascript
+lessAsset = new LessAsset
     url: '/style.css'
     filename: "#{__dirname}/style/app.less"
 ```

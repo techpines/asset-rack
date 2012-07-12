@@ -5,9 +5,12 @@ pathutil = require 'path'
 knox = require 'knox'
 EventEmitter = require('events').EventEmitter
 
-class exports.AssetPackage extends EventEmitter
-    constructor: (@options) ->
+class exports.AssetRack extends EventEmitter
+    constructor: (@assets, @options) ->
         super()
+        if @assets.length is undefined
+            @options = @assets
+            @assets = undefined
         for key, value of @options
             this[key] = value
         @on 'newListener', (event, listener) =>
@@ -113,6 +116,6 @@ class exports.Asset extends EventEmitter
 exports.LessAsset = require('./assets/less').LessAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
 exports.JadeAsset = require('./assets/jade').JadeAsset
-exports.StaticAssetPackage = require('./assets/static').StaticAssetPackage
+exports.StaticAssetRack = require('./assets/static').StaticAssetRack
 exports.StaticAsset = require('./assets/static').StaticAsset
 
