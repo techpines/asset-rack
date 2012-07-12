@@ -1,7 +1,7 @@
 
 ![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
 
-The best asset management framework for node. (period)
+A node-style asset management framework.  Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/connect-assets).
 
 ## Features
 
