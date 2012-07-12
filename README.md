@@ -241,9 +241,10 @@ The less asset basically compiles up and serves your less files as css.  You
 can read more about less [here](https://github.com/cloudhead/less.js).
 
 ```javascript
-lessAsset = new LessAsset
-    url: '/style.css'
-    filename: "#{__dirname}/style/app.less"
+new LessAsset({
+    url: '/style.css',
+    filename: __dirname + '/style/app.less'
+});
 ```
 
 ### Options
