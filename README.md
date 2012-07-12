@@ -5,6 +5,10 @@ A node-style asset management framework. Designed for Single Page Apps.
 
 Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/connect-assets), and the Rails [Asset Pipeline](http://guides.rubyonrails.org/asset_pipeline.html)
 
+* __Orignal Author__: Brad Carleton
+* __Company__: Tech Pines
+* __Website__: http://www.techpines.com
+
 ## Features
 
 1. Dynamic asset creation for js, css, html templates.
