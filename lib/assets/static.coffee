@@ -8,6 +8,7 @@ EventEmitter = require('events').EventEmitter
 
 class exports.StaticAsset extends rack.Asset
     create: ->
+        @maxAge = @options.maxAge
         @mimetype = @options.mimetype
         @filename = @options.filename
         @contents = fs.readFileSync @filename
@@ -33,7 +34,11 @@ class exports.StaticAssetRack extends rack.AssetRack
                 ext = pathutil.extname path
                 mimetype = mime.types[ext.slice(1, ext.length)]
                 if mimetype?
-                    options = url: url, filename: path, mimetype: mimetype, hash: @hash
-                    assets.push new exports.StaticAsset options
+                    assets.push new exports.StaticAsset
+                        url: url
+                        filename: path
+                        mimetype: mimetype
+                        hash: @hash
+                        maxAge: @maxAge
         assets
         

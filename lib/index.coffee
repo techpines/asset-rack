@@ -35,13 +35,16 @@ class exports.AssetRack extends EventEmitter
             md5: asset.md5
             specificUrl: asset.specificUrl
             mimetype: asset.mimetype
+            maxAge: asset.maxAge
+            hash: asset.hash
 
     handle: (request, response, next) ->
-        response.local 'assets', this
+        response.locals assets: this
         asset = @getAsset request.url
         return next() unless asset?
         response.header 'Content-Type', asset.mimetype
-        #response.header 'Cache-Control', "public, max-age=#{@options.maxAge}"
+        if asset.maxAge?
+            response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
         response.send asset.contents
 
     addPackage: (pack) ->
