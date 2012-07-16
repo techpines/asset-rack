@@ -7,7 +7,7 @@ Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/c
 
 * __Orignal Author__: Brad Carleton
 * __Company__: Tech Pines
-* __Website__: http://www.techpines.com
+* __Blog Intro__: [Introducing AssetRack](http://www.techpines.com/blog/asset-rack-dynamic-asset-management-nodejs)
 
 ## Features
 
