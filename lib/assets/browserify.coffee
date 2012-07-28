@@ -7,7 +7,7 @@ crypto = require 'crypto'
 Asset = require('../index').Asset
 
 class exports.BrowserifyAsset extends Asset
-    mimetype: 'application/javascript'
+    mimetype: 'text/javascript'
 
     create: ->
         @filename = @options.filename

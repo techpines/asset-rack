@@ -102,7 +102,7 @@ class exports.Asset extends EventEmitter
         @emit 'complete'
     tag: ->
         switch @mimetype
-            when 'application/javascript'
+            when 'text/javascript'
                 tag = "<script type=\"#{@mimetype}\" "
                 return tag += "src=\"#{@specificUrl}\"></script>"
             when 'text/css'

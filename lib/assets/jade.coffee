@@ -8,7 +8,7 @@ Asset = require('../index').Asset
 
 
 class exports.JadeAsset extends Asset
-    mimetype: 'application/javascript'
+    mimetype: 'text/javascript'
 
     create: ->
         @dirname = @options.dirname
