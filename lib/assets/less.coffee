@@ -17,7 +17,7 @@ class exports.LessAsset extends Asset
                 filename: @filename
                 paths: @paths
             parser.parse fileContents, (error, tree) =>
-                return @tigger 'error', error if error?
+                return @emit 'error', error if error?
                 @contents = tree.toCSS compress: @compress
                 @createSpecificUrl()
                 @emit 'complete'
