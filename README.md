@@ -1,3 +1,4 @@
+[![build status](https://secure.travis-ci.org/techpines/asset-rack.png)](http://travis-ci.org/techpines/asset-rack)
 
 ![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
 
