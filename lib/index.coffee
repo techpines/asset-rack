@@ -8,16 +8,22 @@ EventEmitter = require('events').EventEmitter
 class exports.AssetRack extends EventEmitter
     constructor: (@assets, @options) ->
         super()
-        if @assets.length is undefined
+        if not @assets and not @options
+            @options = {}
+            @assets = []
+        else if @assets and not (@assets instanceof Array)
             @options = @assets
-            @assets = undefined
+            @assets = []
+        else if not @options
+            @options = {}
+
         for key, value of @options
             this[key] = value
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
         @assets = @getAssets() if @getAssets?
-        @create() if @assets?
+        @create() if @assets.length
 
     create: -> process.nextTick =>
         async.forEach @assets, (asset, next) ->
