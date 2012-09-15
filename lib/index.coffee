@@ -107,6 +107,8 @@ class exports.Asset extends EventEmitter
                 return tag += "src=\"#{@specificUrl}\"></script>"
             when 'text/css'
                 return "<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
+            else
+                return @specificUrl
     createSpecificUrl: ->
         @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         unless @hash
