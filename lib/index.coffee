@@ -124,4 +124,4 @@ exports.JadeAsset = require('./assets/jade').JadeAsset
 exports.StaticAssetRack = require('./assets/static').StaticAssetRack
 exports.StaticAsset = require('./assets/static').StaticAsset
 exports.AngularTemplatesAsset = require('./assets/angularTemplates').AngularTemplatesAsset
-
+exports.SnocketsAsset = require('./assets/snockets').SnocketsAsset
