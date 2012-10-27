@@ -189,6 +189,7 @@ new BrowserifyAsset({
 * `require`: A filename or list of filenames to require, should not be necessary
 as the `filename` argument should pull in any requires you need.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
+* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## JadeAsset

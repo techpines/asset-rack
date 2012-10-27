@@ -13,7 +13,10 @@ class exports.BrowserifyAsset extends Asset
         @filename = @options.filename
         @require = @options.require
         @compress = @options.compress or false
+        @extensionHandlers = @options.extensionHandlers or []
         agent = browserify watch: false
+        for handler in @extensionHandlers
+          agent.register(handler.ext, handler.handler)
         agent.addEntry @filename
         agent.require @require if @require
         if @options.compress is true
