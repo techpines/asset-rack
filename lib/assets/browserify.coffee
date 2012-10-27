@@ -12,8 +12,9 @@ class exports.BrowserifyAsset extends Asset
     create: ->
         @filename = @options.filename
         @require = @options.require
+        @debug = @options.debug or false
         @compress = @options.compress or false
-        agent = browserify watch: false
+        agent = browserify watch: false, debug: @debug
         agent.addEntry @filename
         agent.require @require if @require
         if @options.compress is true

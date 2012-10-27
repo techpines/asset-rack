@@ -188,6 +188,7 @@ new BrowserifyAsset({
 * `filename`: A filename or list of filenames to be executed by the browser.
 * `require`: A filename or list of filenames to require, should not be necessary
 as the `filename` argument should pull in any requires you need.
+* `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
