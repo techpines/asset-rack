@@ -13,14 +13,15 @@ Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/c
 
 1. Dynamic asset creation for js, css, html templates.
 2. Support for js/coffescript, browserify (node-style requires).
-3. Support for less.
-4. Support for jade templates.
-4. Multi-process, multi-server out of the box.  Share nothing.
-5. Filenames hashed for "forever" HTML caching and easy CDN updates.
-6. No need to ever compile static files to disk, all-in memory.
-7. Ability to push compiled files to Amazon S3 for use with Cloudfront.
-8. Can be plugged into express as connect middleware.
-9. Easily extensible.
+3. Support for snockets (Rails/Sprockets-style comments to indicate dependencies).
+4. Support for less.
+5. Support for jade templates.
+6. Multi-process, multi-server out of the box.  Share nothing.
+7. Filenames hashed for "forever" HTML caching and easy CDN updates.
+8. No need to ever compile static files to disk, all-in memory.
+9. Ability to push compiled files to Amazon S3 for use with Cloudfront.
+10. Can be plugged into express as connect middleware.
+11. Easily extensible.
 
 ## Install
 
@@ -189,6 +190,27 @@ new BrowserifyAsset({
 * `require`: A filename or list of filenames to require, should not be necessary
 as the `filename` argument should pull in any requires you need.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
+## Snockets (js/coffeescript)
+
+Snockets is a JavaScript/CoffeeScript concatenation tool for Node.js inspired by Sprockets. Used by connect-assets to create a Rails 3.1-style asset pipeline.  For more details, check it out,
+[here](https://github.com/TrevorBurnham/snockets).
+
+```javascript
+new SnocketsAsset({
+    url: '/app.js',
+    filename: __dirname + '/client/app.js',
+    compress: true
+});
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `filename`: A filename or list of filenames to be executed by the browser.
+* `compress` (defaults to false): whether to run the javascript through a minifier.
+* `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## JadeAsset

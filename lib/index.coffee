@@ -123,4 +123,5 @@ exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
 exports.JadeAsset = require('./assets/jade').JadeAsset
 exports.StaticAssetRack = require('./assets/static').StaticAssetRack
 exports.StaticAsset = require('./assets/static').StaticAsset
+exports.SnocketsAsset = require('./assets/snockets').SnocketsAsset
 
