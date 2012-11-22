@@ -76,16 +76,16 @@ class exports.AssetRack extends EventEmitter
                     @emit 'error', new Error message
             request.on 'error', (error) =>
                 @emit 'error', error
-                
+
             request.end buffer
         , =>
             @emit 's3-upload-complete'
-    
+
     tag: (url) ->
         for asset in @assets
             return asset.tag() if url is asset.url
         throw new Error "No asset found for url: #{url}"
-            
+
 class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
     constructor: (@options) ->
@@ -123,4 +123,5 @@ exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
 exports.JadeAsset = require('./assets/jade').JadeAsset
 exports.StaticAssetRack = require('./assets/static').StaticAssetRack
 exports.StaticAsset = require('./assets/static').StaticAsset
+exports.AngularTemplatesAsset = require('./assets/angularTemplates').AngularTemplatesAsset
 
