@@ -15,12 +15,13 @@ Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/c
 2. Support for js/coffescript, browserify (node-style requires).
 3. Support for less.
 4. Support for jade templates.
-4. Multi-process, multi-server out of the box.  Share nothing.
-5. Filenames hashed for "forever" HTML caching and easy CDN updates.
-6. No need to ever compile static files to disk, all-in memory.
-7. Ability to push compiled files to Amazon S3 for use with Cloudfront.
-8. Can be plugged into express as connect middleware.
-9. Easily extensible.
+5. Support for angularjs templates.
+6. Multi-process, multi-server out of the box.  Share nothing.
+7. Filenames hashed for "forever" HTML caching and easy CDN updates.
+8. No need to ever compile static files to disk, all-in memory.
+9. Ability to push compiled files to Amazon S3 for use with Cloudfront.
+10. Can be plugged into express as connect middleware.
+11. Easily extensible.
 
 ## Install
 
@@ -48,7 +49,7 @@ Here is a simple walk throught that demonstrates some of the
 major features of asset rack.
 
 ### Create your Assets
-First create your assets.  Here we are creating our stylesheets, 
+First create your assets.  Here we are creating our stylesheets,
 javascript code, and javascript templates from less, coffeescript and jade.
 ```javascript
 var rack = require('asset-rack');
@@ -74,7 +75,7 @@ assets.on('complete', function() {
 ```
 
 ### Hook into Express
-Once your assets have been created you can hook them 
+Once your assets have been created you can hook them
 into express with ease.
 ```javascript
 assets.on('complete', function() {
@@ -159,7 +160,7 @@ app.use(assets);
 
 ### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
-* `pushS3({key:key, secret:secret, bucket:bucket})`: Pushes all asset contents to their respective 
+* `pushS3({key:key, secret:secret, bucket:bucket})`: Pushes all asset contents to their respective
 urls in an Amazon S3 bucket.
 
 ### Events
@@ -234,6 +235,35 @@ $('body').append(Templates['user/info']());
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
+## AngularTemplatesAsset
+
+The angular templates asset packages all .html templates ready to be injected into the client side angularjs template cache.
+You can read more about angularjs [here](http://angularjs.org/).
+
+```javascript
+new AngularTemplatesAsset({
+    url: '/js/templates.js',
+    directory: __dirname + '/templates'
+});
+```
+
+Then see the following example client js code which loads templates into the template cache, where `angularTemplates` is the function provided by AngularTemplatesAsset:
+
+```javascript
+//replace this with your module initialization logic
+var myApp = angular.module("myApp", []);
+
+//use this line to add the templates to the cache
+myApp.run(['$templateCache', angularTemplates]);
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+* `directory`: Directory where the .html templates are stored.
+* `compress` (defaults to false): Whether to unglify the js.
 
 ## LessAsset
 
