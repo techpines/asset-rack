@@ -13,7 +13,7 @@ class exports.AngularTemplatesAsset extends Asset
         templates = []
 
         for file in files when file.match(/\.html$/)
-            template = fs.readFileSync(path.join(@directory, file), 'utf8').replace(/\n/g, '\\n').replace(/'/g, '\\\'')
+            template = fs.readFileSync(path.join(@directory, file), 'utf8').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/'/g, '\\\'')
             templates.push "$templateCache.put('#{file}', '#{template}')"
 
         javascript = "var angularTemplates = function($templateCache) {\n#{templates.join('\n')}}"
