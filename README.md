@@ -191,6 +191,7 @@ new BrowserifyAsset({
 as the `filename` argument should pull in any requires you need.
 * `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
+* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
 * `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## JadeAsset
