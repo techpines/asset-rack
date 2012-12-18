@@ -14,15 +14,15 @@ Inspired by Trevor Burnham's [connect-assets](https://github.com/TrevorBurnham/c
 1. Dynamic asset creation for js, css, html templates.
 2. Support for js/coffescript, browserify (node-style requires).
 3. Support for snockets (Rails/Sprockets-style comments to indicate dependencies).
-3. Support for less.
-4. Support for jade templates.
-5. Support for angularjs templates.
-6. Multi-process, multi-server out of the box.  Share nothing.
-7. Filenames hashed for "forever" HTML caching and easy CDN updates.
-8. No need to ever compile static files to disk, all-in memory.
-9. Ability to push compiled files to Amazon S3 for use with Cloudfront.
-10. Can be plugged into express as connect middleware.
-11. Easily extensible.
+4. Support for less.
+5. Support for jade templates.
+6. Support for angularjs templates.
+7. Multi-process, multi-server out of the box.  Share nothing.
+8. Filenames hashed for "forever" HTML caching and easy CDN updates.
+9. No need to ever compile static files to disk, all-in memory.
+10. Ability to push compiled files to Amazon S3 for use with Cloudfront.
+11. Can be plugged into express as connect middleware.
+12. Easily extensible.
 
 ## Install
 
