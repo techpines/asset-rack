@@ -20,7 +20,7 @@ class exports.JadeAsset extends Asset
         for fileObject in fileObjects
             @contents += "'#{fileObject.funcName}': #{fileObject.compiled},"
         @contents += '};'
-        @contents = uglify @contents if @compress
+        @contents = uglify.minify(@contents, { fromString: true }).code if @compress
         @emit 'complete'
         
     getFileobjects: (dirname, prefix='') ->
