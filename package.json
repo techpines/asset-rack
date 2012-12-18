@@ -1,6 +1,6 @@
 {
     "name": "asset-rack",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "description": "Asset management framework for nodejs",
     "author": "Brad Carleton <brad@techpines.com>",
     "repository": "git://github.com/techpines/asset-rack",
