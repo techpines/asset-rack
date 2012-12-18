@@ -14,8 +14,13 @@ class exports.SnocketsAsset extends Asset
             files = snockets.getCompiledChain @filename, { async: false }
             scripts = []
             for file in files
-                script = file.js.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/'/g, '\\\'')
+                script = file.js
+                    .replace(/\\/g, '\\\\')
+                    .replace(/\n/g, '\\n')
+                    .replace(/\r/g, '')
+                    .replace(/'/g, '\\\'')
                 filename = path.relative(path.dirname(@filename), file.filename)
+                    .replace(/\\/g, '/')
                 scripts.push "// #{filename}\neval('#{script}\\n//@ sourceURL=#{filename}')\n"
             @contents = scripts.join('\n')
         else
