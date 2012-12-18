@@ -21,7 +21,7 @@ class exports.BrowserifyAsset extends Asset
         agent.addEntry @filename
         agent.require @require if @require
         if @options.compress is true
-            @contents = uglify agent.bundle()
+            @contents = uglify.minify(agent.bundle(), { fromString: true }).code
         else
             @contents = agent.bundle()
         @emit 'complete'

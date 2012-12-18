@@ -18,7 +18,7 @@ class exports.AngularTemplatesAsset extends Asset
 
         javascript = "var angularTemplates = function($templateCache) {\n#{templates.join('\n')}}"
         if @options.compress is true
-            @contents = uglify javascript
+            @contents = uglify.minify(javascript, { fromString: true }).code
         else
             @contents = javascript
         @emit 'complete'
