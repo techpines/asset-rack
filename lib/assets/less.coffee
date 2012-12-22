@@ -25,4 +25,4 @@ class exports.LessAsset extends Asset
             @emit 'error', error
 
     tag: ->
-        "<link href=\"#{@specificUrl}\" rel=\"stylesheet\"></link>\n"
+        "<link href=\"#{@specificUrl}\" rel=\"stylesheet\">\n"
