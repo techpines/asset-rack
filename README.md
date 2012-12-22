@@ -90,6 +90,8 @@ assets.on('complete', function() {
 
 All of those assets are now stored in an in-memroy cache, so it is super fast.
 
+__Important__: You have to call `app.use(assets)` before `app.use(app.router())` or else the `assets` markup functions will not be available in your templates.
+
 ### Markup Functions
 
 In your jade templates you can include the tags by referencing their url.  For your convenience the assets object will be added to response locals, so that you can do the following in say a jade template:
