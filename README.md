@@ -90,7 +90,7 @@ assets.on('complete', function() {
 
 All of those assets are now stored in an in-memroy cache, so it is super fast.
 
-__Important__: You have to call `app.use(assets)` before `app.use(app.router())` or else the `assets` markup functions will not be available in your templates.
+__Important__: You have to call `app.use(assets)` before `app.use(app.router)` or else the `assets` markup functions will not be available in your templates.  The assets middleware needs to come first.
 
 ### Markup Functions
 
