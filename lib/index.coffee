@@ -91,10 +91,13 @@ class exports.AssetRack extends EventEmitter
 
 class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
+    defaultMaxAge: 60*60*24*365 # one year
     constructor: (@options) ->
         @url = @options.url
         @hash = @options.hash
         @maxAge = @options.maxAge
+        @maxAge ?= @defaultMaxAge
+        @allowNoHashCache = @options.allowNoHashCache
         @ext = pathutil.extname @url
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
@@ -110,19 +113,22 @@ class exports.Asset extends EventEmitter
         if isUrlMatch or (not @completed and @isRelevantUrl(request.url))
             if @completed
                 response.header 'Content-Type', @mimetype
-                if @maxAge?
-                    response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
+                test =  @maxAge? and (request.url isnt @url or @allowNoHashCache is true)
+                if test
+                    response.header 'Cache-Control', "public, max-age=#{@maxAge}"
                 return response.send @contents
             else return @on 'complete', =>
                 response.header 'Content-Type', @mimetype
-                if @maxAge?
-                    response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
+                test = @maxAge? and (request.url isnt @url or @allowNoHashCache is true)
+                if test
+                    response.header 'Cache-Control', "public, max-age=#{@maxAge}"
                 return response.send @contents
         next()
         
     create: ->
-        @content = ''
+        @contents = 'asset-rack'
         @emit 'complete'
+
     tag: ->
         switch @mimetype
             when 'text/javascript'
@@ -132,7 +138,8 @@ class exports.Asset extends EventEmitter
                 return "\n<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
     createSpecificUrl: ->
         @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
-        unless @hash
+        if @hash is false
+            @useDefaultMaxAge = false
             return @specificUrl = @url
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
         if @hostname?
@@ -144,11 +151,11 @@ class exports.Asset extends EventEmitter
             return true
         return false
             
-    
-
 exports.LessAsset = require('./assets/less').LessAsset
+exports.StylusAsset = require('./assets/stylus').StylusAsset
+exports.SassAsset = require('./assets/sass').SassAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
 exports.JadeAsset = require('./assets/templates').JadeAsset
 exports.StaticAssetBuilder = require('./assets/static').StaticAssetBuilder
 exports.SnocketsAsset = require('./assets/snockets').SnocketsAsset
-exports.AngularTemplatesAsset = require('./assets/angularTemplates').AngularTemplatesAsset
+exports.AngularTemplatesAsset = require('./assets/angular-templates').AngularTemplatesAsset
