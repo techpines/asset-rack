@@ -16,7 +16,17 @@ class exports.StaticAsset extends rack.Asset
         @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
         @emit 'complete'
 
-class exports.StaticAssetRack extends rack.AssetRack
+class exports.StaticAssetBuilder extends EventEmitter
+    constructor: (@options) ->
+        super()
+        @dirname = @options.dirname
+        @baseUrl = @options.baseUrl
+
+    create: ->
+        @assets = @getAssets @dirname, @baseUrl
+        process.nextTick =>
+            @emit 'complete' 
+    
     getAssets: (dirname, prefix='') ->
         dirname ?= @dirname
         filenames = fs.readdirSync dirname
@@ -34,11 +44,13 @@ class exports.StaticAssetRack extends rack.AssetRack
                 ext = pathutil.extname path
                 mimetype = mime.types[ext.slice(1, ext.length)]
                 if mimetype?
-                    assets.push new exports.StaticAsset
+                    asset = new exports.StaticAsset
                         url: url
                         filename: path
                         mimetype: mimetype
                         hash: @hash
                         maxAge: @maxAge
+                    asset.create()
+                    assets.push asset
         assets
         

@@ -6,8 +6,7 @@ async = require 'async'
 jade = require 'jade'
 Asset = require('../index').Asset
 
-
-class exports.JadeAsset extends Asset
+class exports.TemplateAsset extends Asset
     mimetype: 'text/javascript'
 
     create: ->
@@ -16,11 +15,16 @@ class exports.JadeAsset extends Asset
         @compress = @options.compress or false
         @clientVariable = @options.clientVariable or 'Templates'
         fileObjects = @getFileobjects @options.dirname
-        @contents = "window.#{@clientVariable} = {"
+        @contents = "window.#{@clientVariable} = {\n"
+        @contents += "'assets': #{JSON.stringify(@rack.getConfig())},"
         for fileObject in fileObjects
-            @contents += "'#{fileObject.funcName}': #{fileObject.compiled},"
+            funcDefinition = "#{fileObject.compiled}"
+            wrapper = 'function(locals, attrs, escape, rethrow) { \n'
+            wrapper += "var assets = #{@clientVariable}.assets; \n"
+            wrapper += "return (#{fileObject.compiled})(locals, attrs, escape, rethrow);}"
+            @contents += "'#{fileObject.funcName}': #{wrapper},"
         @contents += '};'
-        @contents = uglify.minify(@contents, { fromString: true }).code if @compress
+        @contents = uglify @contents if @compress
         @emit 'complete'
         
     getFileobjects: (dirname, prefix='') ->
@@ -34,9 +38,9 @@ class exports.JadeAsset extends Asset
                 newPrefix = "#{prefix}#{pathutil.basename(path)}#{@separator}"
                 paths = paths.concat @getFileobjects path, newPrefix
             else
-                funcName = "#{prefix}#{pathutil.basename(path, '.jade')}"
+                funcName = "#{prefix}#{pathutil.basename(path, @extension)}"
                 fileContents = fs.readFileSync path, 'utf8'
-                compiled = jade.compile fileContents,
+                compiled = @compile fileContents,
                     client: true,
                     compileDebug: false,
                     filename: path
@@ -45,4 +49,20 @@ class exports.JadeAsset extends Asset
                     funcName: funcName
                     compiled: compiled
         paths
+
+class exports.JadeAsset extends exports.TemplateAsset
+    extension: '.jade'
+
+    compile: (contents, options) ->
+        jade.compile contents, options
+
+
+#class exports.HandlebarsAsset extends exports.TemplateAsset
+#    create: ->
+#        @extension = @options.extension or '.html'
+#        super()
+#
+#    compile: (contents, options) ->
+#        handlebars.compile contents, options
+
 

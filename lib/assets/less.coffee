@@ -17,12 +17,20 @@ class exports.LessAsset extends Asset
                 filename: @filename
                 paths: @paths
             parser.parse fileContents, (error, tree) =>
-                return @emit 'error', error if error?
-                @contents = tree.toCSS compress: @compress
-                @createSpecificUrl()
+                return @trigger 'error', error if error?
+                raw = tree.toCSS compress: @compress
+                if @rack?
+                    urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
+                    results = raw.match /url\s*\(\s*'([^']+)'\s*\)/g
+
+                    for result in results
+                        match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
+                        url = match[1]
+                        specificUrl = @rack.url url
+                        if specificUrl?
+                            raw = raw.replace result, "url('#{specificUrl}')"
+                @contents = raw
                 @emit 'complete'
         catch error
             @emit 'error', error
 
-    tag: ->
-        "<link href=\"#{@specificUrl}\" rel=\"stylesheet\"></link>\n"

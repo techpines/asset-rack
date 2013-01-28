@@ -6,26 +6,29 @@ knox = require 'knox'
 EventEmitter = require('events').EventEmitter
 
 class exports.AssetRack extends EventEmitter
-    constructor: (@assets, @options) ->
+    constructor: (@assetObjects, @options) ->
         super()
-        if @assets.length is undefined
-            @options = @assets
-            @assets = undefined
-        for key, value of @options
-            this[key] = value
+        @maxAge = @options.maxAge
+        @assets = []
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
-        @assets = @getAssets() if @getAssets?
-        @create() if @assets?
+        @create()
 
     create: -> process.nextTick =>
-        async.forEach @assets, (asset, next) ->
-            asset.on 'complete', ->
+        async.forEachSeries @assetObjects, (asset, next) =>
+            asset.on 'complete', =>
+                if asset instanceof exports.Asset
+                    @assets.push asset
+                else
+                    @assets = @assets.concat asset.assets
                 next()
+            asset.rack = @
             asset.create()
         , (error) =>
             return @emit 'error', error if error?
+            for asset in @assets
+                asset.maxAge ?= @maxAge
             @completed = true
             @emit 'complete'
 
@@ -47,12 +50,6 @@ class exports.AssetRack extends EventEmitter
             response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
         response.send asset.contents
 
-    addPackage: (pack) ->
-        @assets = @assets.concat pack.assets
-
-    addAsset: (asset) ->
-        @assets.push asset
-
     getAsset: (specificUrl) ->
         for asset in @assets
             if asset.specificUrl is specificUrl
@@ -66,6 +63,8 @@ class exports.AssetRack extends EventEmitter
             request = client.put url, {
                 'Content-Length': buffer.length
                 'Content-Type': asset.mimetype
+                'Cache-Control': "public, max-age=#{asset.maxAge}"
+                'x-amz-acl': 'public-read'
             }
             request.on 'response', (response) =>
                 response.setEncoding 'utf8'
@@ -86,11 +85,16 @@ class exports.AssetRack extends EventEmitter
             return asset.tag() if url is asset.url
         throw new Error "No asset found for url: #{url}"
 
+    url: (url) ->
+        for asset in @assets
+            return asset.specificUrl if url is asset.url
+
 class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
     constructor: (@options) ->
         @url = @options.url
         @hash = if @options.hash? then @options.hash else true
+        @maxAge = @options.maxAge
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
@@ -103,12 +107,10 @@ class exports.Asset extends EventEmitter
     tag: ->
         switch @mimetype
             when 'text/javascript'
-                tag = "<script type=\"#{@mimetype}\" "
+                tag = "\n<script type=\"#{@mimetype}\" "
                 return tag += "src=\"#{@specificUrl}\"></script>"
             when 'text/css'
-                return "<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
-            else
-                return @specificUrl
+                return "\n<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
     createSpecificUrl: ->
         @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         unless @hash
@@ -120,8 +122,7 @@ class exports.Asset extends EventEmitter
 
 exports.LessAsset = require('./assets/less').LessAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
-exports.JadeAsset = require('./assets/jade').JadeAsset
-exports.StaticAssetRack = require('./assets/static').StaticAssetRack
-exports.StaticAsset = require('./assets/static').StaticAsset
+exports.JadeAsset = require('./assets/templates').JadeAsset
+exports.StaticAssetBuilder = require('./assets/static').StaticAssetBuilder
 exports.SnocketsAsset = require('./assets/snockets').SnocketsAsset
 exports.AngularTemplatesAsset = require('./assets/angularTemplates').AngularTemplatesAsset

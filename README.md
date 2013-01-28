@@ -310,6 +310,29 @@ new LessAsset({
 * `compress` (defaults to false): Whether to minify the css.
 * `paths`: List of paths to search for `@import` directives.
 
+## StaticAssetBuilder
+Compiles a collection of static assets.
+
+```javascript
+new StaticAssetBuilder({
+    url: '/static',
+    dirname: __dirname + '/static'
+});
+```
+
+Now you reference your static assets like this:
+
+```
+img(src="#{assets.url('/static/cool-image.png')}")
+```
+
+### Options
+
+* `url`: Base url for all of the static assets.
+* `dirname`: Directory where the static assets will be recursively loaded from.
+* `compress` (defaults to false): Whether to minify the javascript or not.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
 
 # License
 

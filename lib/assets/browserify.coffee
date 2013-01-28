@@ -13,7 +13,9 @@ class exports.BrowserifyAsset extends Asset
         @filename = @options.filename
         @require = @options.require
         @debug = @options.debug or false
-        @compress = @options.compress or false
+        # TODO: fix this
+        # @compress = @options.compress or false
+        @options.compress = false
         @extensionHandlers = @options.extensionHandlers or []
         agent = browserify watch: false, debug: @debug
         for handler in @extensionHandlers
