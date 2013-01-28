@@ -93,7 +93,7 @@ class exports.Asset extends EventEmitter
     mimetype: 'text/plain'
     constructor: (@options) ->
         @url = @options.url
-        @hash = if @options.hash? then @options.hash else true
+        @hash = @options.hash
         @maxAge = @options.maxAge
         @ext = pathutil.extname @url
         @on 'newListener', (event, listener) =>
@@ -106,7 +106,8 @@ class exports.Asset extends EventEmitter
         super()
 
     handle: (request, response, next) ->
-        if request.url is @specificUrl or (not @completed and @isRelevantUrl(request.url))
+        isUrlMatch = request.url is @specificUrl or (not @hash? and request.url is @url)
+        if isUrlMatch or (not @completed and @isRelevantUrl(request.url))
             if @completed
                 response.header 'Content-Type', @mimetype
                 if @maxAge?
@@ -120,6 +121,7 @@ class exports.Asset extends EventEmitter
         next()
         
     create: ->
+        @content = ''
         @emit 'complete'
     tag: ->
         switch @mimetype

@@ -14,7 +14,6 @@ describe 'a less asset', ->
         app.use new rack.LessAsset
             filename: "#{__dirname}/fixtures/simple.less"
             url: '/style.css'
-            hash: false
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
@@ -40,7 +39,6 @@ describe 'a less asset', ->
         app.use new rack.LessAsset
             filename: "#{__dirname}/fixtures/simple.less"
             url: '/style.css'
-            hash: false
             compress: true
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
