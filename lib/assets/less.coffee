@@ -9,7 +9,8 @@ class exports.LessAsset extends Asset
 
     create: ->
         @filename = @options.filename
-        @paths = @options.paths
+        @paths = @options.paths or []
+        @paths.push pathutil.dirname @options.filename
         @compress = @options.compress or false
         try
             fileContents = fs.readFileSync @filename, 'utf8'

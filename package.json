@@ -15,6 +15,12 @@
         "jade": "0.27.7",
         "mime": "1.2.7"
     },
+    "devDependencies": {
+        "express.io": "*",
+        "request": "*",
+        "mocha": "*",
+        "chai": "*"
+    },
     "main": "switch.js",
     "engines": { "node":">= 0.5.0" }
 }

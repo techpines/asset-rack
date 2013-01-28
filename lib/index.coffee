@@ -95,13 +95,30 @@ class exports.Asset extends EventEmitter
         @url = @options.url
         @hash = if @options.hash? then @options.hash else true
         @maxAge = @options.maxAge
+        @ext = pathutil.extname @url
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
         @on 'complete', =>
             @completed = true
             @createSpecificUrl()
+        @create()
         super()
+
+    handle: (request, response, next) ->
+        if request.url is @specificUrl or (not @completed and @isRelevantUrl(request.url))
+            if @completed
+                response.header 'Content-Type', @mimetype
+                if @maxAge?
+                    response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
+                return response.send @contents
+            else return @on 'complete', =>
+                response.header 'Content-Type', @mimetype
+                if @maxAge?
+                    response.header 'Cache-Control', "public, max-age=#{asset.maxAge}"
+                return response.send @contents
+        next()
+        
     create: ->
         @emit 'complete'
     tag: ->
@@ -115,10 +132,17 @@ class exports.Asset extends EventEmitter
         @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
         unless @hash
             return @specificUrl = @url
-        @ext = pathutil.extname @url
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
+        
+    isRelevantUrl: (specificUrl) ->
+        baseUrl = @url.slice(0, @url.length - @ext.length)
+        if specificUrl.indexOf baseUrl isnt -1 and @ext is pathutil.extname specificUrl
+            return true
+        return false
+            
+    
 
 exports.LessAsset = require('./assets/less').LessAsset
 exports.BrowserifyAsset = require('./assets/browserify').BrowserifyAsset
