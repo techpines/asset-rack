@@ -6,10 +6,10 @@ stylus = require 'stylus'
 Asset = require('../.').Asset
 
 class exports.StylusAsset extends Asset
-    type: 'text/css'
-    create: ->
-        compress = @config.compress or false
-        paths = @config.paths or []
+    mimetype: 'text/css'
+    create: (options) ->
+        compress = options.compress or false
+        paths = options.paths or []
 
         fs.readFile @filename, 'utf8', (err, data) =>
             return @emit 'error', err if err?

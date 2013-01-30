@@ -7,11 +7,13 @@ Asset = require('../.').Asset
 class exports.LessAsset extends Asset
     mimetype: 'text/css'
 
-    create: ->
-        @filename = @options.filename
-        @paths = @options.paths or []
-        @paths.push pathutil.dirname @options.filename
-        @compress = @options.compress or false
+    create: (options) ->
+        @filename = options.filename
+        @paths = options.paths
+        @paths ?= []
+        @paths.push pathutil.dirname options.filename
+        
+        @compress = options.compress or false
         try
             fileContents = fs.readFileSync @filename, 'utf8'
             parser = new less.Parser
@@ -30,8 +32,8 @@ class exports.LessAsset extends Asset
                         specificUrl = @rack.url url
                         if specificUrl?
                             raw = raw.replace result, "url('#{specificUrl}')"
-                @contents = raw
-                @emit 'complete'
+                @emit 'complete', contents: raw
         catch error
+            console.log error
             @emit 'error', error
 

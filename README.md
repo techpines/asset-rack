@@ -79,13 +79,11 @@ assets.on('complete', function() {
 Once your assets have been created you can hook them
 into express with ease.
 ```javascript
-assets.on('complete', function() {
-    var app = express.createServer();
-    app.configure(function() {
-        app.use(assets);  // that's all you need to do
-    });
-    app.listen(8000);
+var app = express()
+app.configure(function() {
+    app.use(assets);  // that's all you need to do
 });
+app.listen(7076);
 ```
 
 All of those assets are now stored in an in-memroy cache, so it is super fast.
@@ -193,7 +191,6 @@ as the `filename` argument should pull in any requires you need.
 * `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## Snockets (js/coffeescript)
 
@@ -215,7 +212,6 @@ new SnocketsAsset({
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
 * `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## JadeAsset
 This is an awesome asset.  Ever wanted the simplicity of jade templates
@@ -259,7 +255,6 @@ $('body').append(Templates['user/info']());
 * `compress` (defaults to false): Whether to minify the javascript or not.
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
 ## AngularTemplatesAsset
 
