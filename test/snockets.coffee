@@ -5,14 +5,14 @@ express = require 'express.io'
 easyrequest = require 'request'
 fs = require 'fs'
 
-describe 'a browserify asset', ->
+describe 'a snockets asset', ->
     app = null
 
     it 'should work', (done) ->
-        compiled = fs.readFileSync './fixtures/browserify/app.js', 'utf8'
+        compiled = fs.readFileSync './fixtures/snockets/app.js', 'utf8'
         app = express().http()
-        app.use new rack.BrowserifyAsset
-            filename: "#{__dirname}/fixtures/browserify/app.coffee"
+        app.use new rack.SnocketsAsset
+            filename: "#{__dirname}/fixtures/snockets/app.coffee"
             url: '/app.js'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
@@ -21,10 +21,10 @@ describe 'a browserify asset', ->
                 done()
 
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync './fixtures/browserify/app.min.js', 'utf8'
+        compiled = fs.readFileSync './fixtures/snockets/app.min.js', 'utf8'
         app = express().http()
-        app.use asset = new rack.BrowserifyAsset
-            filename: "#{__dirname}/fixtures/browserify/app.coffee"
+        app.use new rack.SnocketsAsset
+            filename: "#{__dirname}/fixtures/snockets/app.coffee"
             url: '/app.js'
             compress: true
         app.listen 7076, ->
@@ -33,12 +33,5 @@ describe 'a browserify asset', ->
                 body.should.equal compiled
                 done()
 
-    #it 'should work with extension handlers', (done) ->
-    #    done()
-    
-    #it 'should work with debug option', (done) ->
-    #    done()
-    
-                    
     afterEach (done) -> process.nextTick ->
         app.server.close done

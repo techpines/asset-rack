@@ -44,10 +44,10 @@ class exports.StaticAssetBuilder extends EventEmitter
                 ext = pathutil.extname path
                 mimetype = mime.types[ext.slice(1, ext.length)]
                 if mimetype?
-                    asset = new exports.StaticAsset
+                    asset = new Asset
                         url: url
-                        filename: path
-                        mimetype: mimetype
+                        contents: fs.readFileSync @filename
+                        mimetype: mime.types[ext.slice(1, ext.length)]
                         hash: @hash
                         maxAge: @maxAge
                     asset.create()

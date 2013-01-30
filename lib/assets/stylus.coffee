@@ -1,6 +1,6 @@
 
 fs = require 'fs'
-path = require 'path'
+pathutil = require 'path'
 nib = require 'nib'
 stylus = require 'stylus'
 Asset = require('../.').Asset
@@ -8,19 +8,26 @@ Asset = require('../.').Asset
 class exports.StylusAsset extends Asset
     mimetype: 'text/css'
     create: (options) ->
-        compress = options.compress or false
-        paths = options.paths or []
+        @filename = options.filename
+        @compress = options.compress
+        @compress ?= false
 
-        fs.readFile @filename, 'utf8', (err, data) =>
-            return @emit 'error', err if err?
-            options =
-                filename: @src
-                paths: paths.concat [path.dirname @filename]
-            stylus(data, options)
-                .use(nib())
-                .set('compress', compress)
+        fs.readFile @filename, 'utf8', (error, data) =>
+            return @emit 'error', error if error?
+            stylus(data)
+                .set('filename', @filename)
+                .set('compress', @compress)
                 .set('include css', true)
-                .render (err, css) =>
-                    return @emit 'error', err if err?
-                    @contents = css
-                    @emit 'complete'
+                .use(nib())
+                .render (error, css) =>
+                    return @emit 'error', error if error?
+                    if @rack?
+                        urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
+                        results = css.match /url\s*\(\s*'([^']+)'\s*\)/g
+                        for result in results
+                            match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
+                            url = match[1]
+                            specificUrl = @rack.url url
+                            if specificUrl?
+                                css = css.replace result, "url('#{specificUrl}')"
+                    @emit 'complete', contents: css

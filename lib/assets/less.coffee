@@ -20,12 +20,11 @@ class exports.LessAsset extends Asset
                 filename: @filename
                 paths: @paths
             parser.parse fileContents, (error, tree) =>
-                return @trigger 'error', error if error?
+                return @emit 'error', error if error?
                 raw = tree.toCSS compress: @compress
                 if @rack?
                     urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
                     results = raw.match /url\s*\(\s*'([^']+)'\s*\)/g
-
                     for result in results
                         match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
                         url = match[1]

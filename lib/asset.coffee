@@ -10,6 +10,7 @@ class exports.Asset extends EventEmitter
     constructor: (options) -> process.nextTick =>
         @url = options.url
         @contents = options.contents
+        @mimetype = options.mimetype if options.mimetype?
         @hash = options.hash
         @maxAge = options.maxAge
         @maxAge ?= @rack?.maxAge
@@ -27,6 +28,8 @@ class exports.Asset extends EventEmitter
                 @assets = data.assets
             @completed = true
             @createSpecificUrl()
+        @on 'error', (error) =>
+            throw error if @listeners 'error' is 1
         super()
         process.nextTick => @create options
 

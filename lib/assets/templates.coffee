@@ -16,11 +16,9 @@ class exports.TemplateAsset extends Asset
         @clientVariable = @options.clientVariable or 'Templates'
         fileObjects = @getFileobjects @options.dirname
         @contents = "window.#{@clientVariable} = {\n"
-        @contents += "'assets': #{JSON.stringify(@rack.getConfig())},"
         for fileObject in fileObjects
             funcDefinition = "#{fileObject.compiled}"
             wrapper = 'function(locals, attrs, escape, rethrow) { \n'
-            wrapper += "var assets = #{@clientVariable}.assets; \n"
             wrapper += "return (#{fileObject.compiled})(locals, attrs, escape, rethrow);}"
             @contents += "'#{fileObject.funcName}': #{wrapper},"
         @contents += '};'

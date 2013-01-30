@@ -5,10 +5,10 @@ Asset = require('../index').Asset
 class exports.SnocketsAsset extends Asset
     mimetype: 'text/javascript'
 
-    create: ->
-        @filename = @options.filename
-        @compress = @options.compress or false
-        @debug = @options.debug or false
+    create: (options) ->
+        @filename = options.filename
+        @compress = options.compress or false
+        @debug = options.debug or false
         snockets = new Snockets()
         if @debug
             files = snockets.getCompiledChain @filename, { async: false }

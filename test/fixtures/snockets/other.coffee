@@ -1,0 +1,2 @@
+
+window.cone = 'gravy'

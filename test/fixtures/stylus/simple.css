@@ -1,0 +1,14 @@
+body {
+  color: rgba(255,200,100,0.5);
+  color: rgba(255,200,100,0.5);
+  color: rgba(255,200,100,0.5);
+  color: rgba(255,200,100,0.5);
+}
+body {
+  font: 12px Helvetica, Arial, sans-serif;
+}
+a.button {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
