@@ -34,6 +34,7 @@ describe 'a less asset', ->
                 done()
 
     it 'should work with paths', (done) ->
+        compiled = fs.readFileSync "#{__dirname}/fixtures/less/another.css", 'utf8'
         app = express().http()
         app.use new rack.LessAsset
             filename: "#{__dirname}/fixtures/less/another.less"
@@ -42,8 +43,8 @@ describe 'a less asset', ->
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
-                #body.should.equal compiled
-                fs.writeFileSync "#{__dirname}/fixtures/less/another.css"
+                body.should.equal compiled
+                #fs.writeFileSync "#{__dirname}/fixtures/less/another.css", body
                 done()
         
     afterEach (done) -> process.nextTick ->

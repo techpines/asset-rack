@@ -14,10 +14,14 @@ class exports.AssetRack extends EventEmitter
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
+        @on 'error', (error) =>
+            throw error if @listeners('error').length is 1
         for asset in assets
             asset.rack = this
         @assets = []
         async.forEachSeries assets, (asset, next) =>
+            asset.on 'error', (error) =>
+                next error
             asset.on 'complete', =>
                 if asset.contents
                     @assets.push asset
