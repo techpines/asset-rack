@@ -5,52 +5,44 @@ async = require 'async'
 rack = require '../index'
 mime = require 'mime'
 EventEmitter = require('events').EventEmitter
+Asset = require('../.').Asset
 
-class exports.StaticAsset extends rack.Asset
-    create: ->
-        @maxAge = @options.maxAge
-        @mimetype = @options.mimetype
-        @filename = @options.filename
-        @contents = fs.readFileSync @filename
-        @ext = pathutil.extname @filename
-        @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
-        @emit 'complete'
+class exports.StaticAssetBuilder extends Asset
 
-class exports.StaticAssetBuilder extends EventEmitter
-    constructor: (@options) ->
-        super()
-        @dirname = @options.dirname
-        @baseUrl = @options.baseUrl
-
-    create: ->
-        @assets = @getAssets @dirname, @baseUrl
-        process.nextTick =>
-            @emit 'complete' 
+    create: (options) ->
+        @dirname = options.dirname
+        @urlPrefix = options.urlPrefix
+        @assets = []
+        @getAssets @dirname, @urlPrefix, =>
+            @emit 'created'
     
-    getAssets: (dirname, prefix='') ->
-        dirname ?= @dirname
+    getAssets: (dirname, prefix='', next) ->
         filenames = fs.readdirSync dirname
-        assets = []
-        for filename in filenames
-            continue if filename.slice(0, 1) is '.'
+        async.forEachSeries filenames, (filename, next) =>
+            next() if filename.slice(0, 1) is '.'
             path = pathutil.join dirname, filename
             stats = fs.statSync path
             if stats.isDirectory()
                 newPrefix = "#{prefix}#{pathutil.basename(path)}/"
-                assets = assets.concat @getAssets path, newPrefix
+                @getAssets path, newPrefix, (newAssets) =>
+                    @assets.concat newAssets
+                    next()
             else
                 basePath = pathutil.dirname @dirname
                 url = path.replace basePath, ''
                 ext = pathutil.extname path
                 mimetype = mime.types[ext.slice(1, ext.length)]
+                contents = fs.readFileSync path
                 if mimetype?
                     asset = new Asset
                         url: url
-                        contents: fs.readFileSync @filename
+                        contents: contents
                         mimetype: mime.types[ext.slice(1, ext.length)]
                         hash: @hash
                         maxAge: @maxAge
-                    asset.create()
-                    assets.push asset
-        assets
+                    asset.on 'complete', =>
+                        @assets.push asset
+                        next()
+        , (error) ->
+            next()
         

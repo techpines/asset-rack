@@ -30,4 +30,4 @@ class exports.StylusAsset extends Asset
                             specificUrl = @rack.url url
                             if specificUrl?
                                 css = css.replace result, "url('#{specificUrl}')"
-                    @emit 'complete', contents: css
+                    @emit 'created', contents: css

@@ -21,13 +21,15 @@ class exports.Asset extends EventEmitter
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
-        @on 'complete', (data) =>
-            if data?.contents
+        @on 'created', (data) =>
+            if data?.contents?
                 @contents = data.contents
-            if data?.assets
+            if data?.assets?
                 @assets = data.assets
+            if @contents?
+                @createSpecificUrl()
             @completed = true
-            @createSpecificUrl()
+            @emit 'complete'
         @on 'error', (error) =>
             throw error if @listeners 'error' is 1
         super()
@@ -47,13 +49,21 @@ class exports.Asset extends EventEmitter
         url is @specificUrl or (not @hash? and url is @url)
 
     handle: (request, response, next) ->
-        @on 'complete', =>
+        handle = =>
+            if @assets?
+                for asset in @assets
+                    if asset.checkUrl request.url
+                        return asset.respond request, response
             if @checkUrl(request.url)
                 @respond request, response
             else next()
+        if @completed is true
+            handle()
+        else @on 'complete', ->
+            handle()
         
     create: (options) ->
-        @emit 'complete'
+        @emit 'created'
 
     tag: ->
         switch @mimetype

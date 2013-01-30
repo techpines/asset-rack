@@ -21,4 +21,4 @@ class exports.AngularTemplatesAsset extends Asset
             @contents = uglify.minify(javascript, { fromString: true }).code
         else
             @contents = javascript
-        @emit 'complete'
+        @emit 'created'

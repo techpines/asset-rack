@@ -25,4 +25,4 @@ class exports.SnocketsAsset extends Asset
             @contents = scripts.join('\n')
         else
             @contents = snockets.getConcatenation @filename, { async: false, minify: @compress }
-        @emit 'complete'
+        @emit 'created'

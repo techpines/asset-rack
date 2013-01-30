@@ -23,10 +23,10 @@ class exports.AssetRack extends EventEmitter
             asset.on 'error', (error) =>
                 next error
             asset.on 'complete', =>
-                if asset.contents
+                if asset.contents?
                     @assets.push asset
-                if asset.assets
-                    @assets.concat asset.assets
+                if asset.assets?
+                    @assets = @assets.concat asset.assets
                 next()
             asset.rack = this
         , (error) =>
@@ -44,11 +44,15 @@ class exports.AssetRack extends EventEmitter
 
     handle: (request, response, next) ->
         response.locals assets: this
-        @on 'complete', =>
+        handle = =>
             for asset in @assets
                 check = asset.checkUrl request.url
                 return asset.respond request, response if check
-            return next() unless asset?
+            next()
+        if @completed
+            handle()
+        else @once 'completed', handle
+        
 
     pushS3: (options) ->
         async.forEachSeries @assets, (asset, next) =>
@@ -77,9 +81,9 @@ class exports.AssetRack extends EventEmitter
 
     tag: (url) ->
         for asset in @assets
-            return asset.tag() if asset.checkUrl url
+            return asset.tag() if asset.url is url
         throw new Error "No asset found for url: #{url}"
 
     url: (url) ->
         for asset in @assets
-            return asset.specificUrl if url is asset.checkUrl url
+            return asset.specificUrl if url is asset.url

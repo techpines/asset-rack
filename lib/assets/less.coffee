@@ -13,7 +13,8 @@ class exports.LessAsset extends Asset
         @paths ?= []
         @paths.push pathutil.dirname options.filename
         
-        @compress = options.compress or false
+        @compress = options.compress
+        @compress ?= false
         try
             fileContents = fs.readFileSync @filename, 'utf8'
             parser = new less.Parser
@@ -31,8 +32,7 @@ class exports.LessAsset extends Asset
                         specificUrl = @rack.url url
                         if specificUrl?
                             raw = raw.replace result, "url('#{specificUrl}')"
-                @emit 'complete', contents: raw
+                @emit 'created', contents: raw
         catch error
-            console.log error
             @emit 'error', error
 

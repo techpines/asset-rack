@@ -9,7 +9,7 @@ describe 'a static asset builder', ->
     app = null
     
     it 'should work', (done) ->
-        compiled = fs.readFileSync './fixtures/snockets/app.js', 'utf8'
+        compiled = fs.readFileSync "#{__dirname}/fixtures/static/blank.txt", 'utf8'
         app = express().http()
         app.use new rack.StaticAssetBuilder
             dirname: "#{__dirname}/fixtures/static"
