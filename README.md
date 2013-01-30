@@ -112,13 +112,35 @@ MyCoolAsset = rack.Asset.extends({
 
 Here is our complete list of assets currently available:
 
-* [StaticAssetBuilder]()
-* [LessAsset]()
-* [StylusAsset]()
-* [BrowserifyAsset]()
-* []()
-* [LessAsset]()
+#### CSS
+* [Less]()
+* [Stylus]()
 
+#### Javascript
+* [Browserify]()
+* [Snockets]()
+
+### Templates
+* [Jade]()
+* [AngularTemplates]()
+
+#### Other
+* [StaticAssets]()
+
+Do you have a cool asset that you would like to share.  Send a pull request, and I'll add it to the list.
+
+# Examples
+
+I have been using this framework for over a year on client projects.  Here are some examples that I can actually show you though!
+
+We open sourced the code for our business site:
+
+[github.com/www.techpines.com]()
+
+And all of the teaser sites for our open source projects:
+
+[github.com/techpines/express-io.org]()
+[github.com/techpines/asset-rack.org]()
 
 # License
 
