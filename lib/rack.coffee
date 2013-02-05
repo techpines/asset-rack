@@ -5,7 +5,7 @@ BufferStream = require('./util').BufferStream
 ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
 
-class exports.AssetRack extends EventEmitter
+class exports.Rack extends EventEmitter
     constructor: (assets, options) ->
         super()
         options ?= {}
@@ -129,3 +129,4 @@ class exports.AssetRack extends EventEmitter
     url: (url) ->
         for asset in @assets
             return asset.specificUrl if url is asset.url
+

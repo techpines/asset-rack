@@ -10,7 +10,7 @@ describe 'a rack', ->
     app = null
     it 'should work with no hash', (done) ->
         app = express().http()
-        app.use assets = new rack.AssetRack [
+        app.use assets = new rack.Rack [
             new rack.Asset
                 url: '/blank.txt'
                 contents: 'test'

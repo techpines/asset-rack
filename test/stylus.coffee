@@ -33,6 +33,7 @@ describe 'a stylus asset', ->
                 body.should.equal compiled
                 done()
 
+    #TODO: it should work with a rack', ->
         
     afterEach (done) -> process.nextTick ->
         app.server.close done
