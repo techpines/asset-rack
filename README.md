@@ -119,54 +119,19 @@ assets.deploy(
 ```
 
 
-Or you can create your own assets:
+# Create your Own!
 
-```js
-MyCoolAsset = rack.Asset.extends({
-    create: function(option) {
-        
-        // create your asset
-
-        // Once you have the contents of your asset.
-        // It is ready to fly.
-        this.emit('created', {contents: contents})
-    }
-})
-```
-
-# Assets
-
-Here is our complete list of assets currently available:
-
-#### CSS
-* [Less]()
-* [Stylus]()
-
-#### Javascript
-* [Browserify]()
-* [Snockets]()
-
-### Templates
-* [Jade]()
-* [AngularTemplates]()
-
-#### Other
-* [StaticAssets]()
-
-Do you have a cool asset that you would like to share.  Send a pull request, and I'll add it to the list.
+This framework is extremely flexible.  Extend the __Asset__ class and override the __create__ method to create your own awesome assets, and watch them get automatically ka-pow'ed by your rack.
 
 # Examples
 
 I have been using this framework for over a year on client projects.  Here are some examples that I can actually show you though!
 
-We open sourced the code for our business site:
 
-[github.com/www.techpines.com]()
+[techpines.com]() - We open sourced techpines.com, so you can see a static-web project in action.
+[express-io.org]() - A realtime-web framework with a static page.
 
-And all of the teaser sites for our open source projects:
-
-[github.com/techpines/express-io.org]()
-[github.com/techpines/asset-rack.org]()
+If you have an example you would like to show, then drop my a line. 
 
 # License
 
