@@ -131,6 +131,7 @@ var SuperCoolAsset = rack.newAsset({
     }
 
 })
+```
 
 # Examples
 
