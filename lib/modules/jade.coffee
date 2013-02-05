@@ -21,11 +21,13 @@ class exports.JadeAsset extends Asset
 
     createContents: ->
         @contents = fs.readFileSync require.resolve('jade').replace 'index.js', 'runtime.js'
+        @contents += '(function(){ \n' if @clientRack?
         @contents += @clientRack.contents if @clientRack?
         @contents += "window.#{@clientVariable} = {\n"
         for fileObject in @fileObjects
             @contents += "'#{fileObject.funcName}': #{fileObject.compiled},"
         @contents += '};'
+        @contents += '})();' if @clientRack?
         @contents = uglify.minify(@contents, {fromString: true}).code if @compress
         @emit 'created'
         

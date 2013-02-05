@@ -177,7 +177,13 @@ exports.rethrow = function rethrow(err, filename, lineno){
   return exports;
 
 })({});
-window.Templates = {
+(function(){ 
+var assets = { 
+    assets: {"/image.png":"/image-f9d92473103fd055e17f45a10798ed89.png"},
+    url: function (url) {
+        return this.assets[url];
+      }
+};window.Templates = {
 'dependency': function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
@@ -212,4 +218,4 @@ var interp;
 buf.push('<div id="user"><ul><li>First: ' + escape((interp = users[0]) == null ? '' : interp) + '</li><li>Second: ' + escape((interp = users[1]) == null ? '' : interp) + '</li></ul></div>');
 }
 return buf.join("");
-},};
+},};})();
