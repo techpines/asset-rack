@@ -1,6 +1,8 @@
 
 async = require 'async'
 knox = require 'knox'
+pkgcloud = require 'pkgcloud'
+BufferStream = require('./util').BufferStream
 ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
 
@@ -10,7 +12,8 @@ class exports.AssetRack extends EventEmitter
         options ?= {}
         @maxAge = options.maxAge
         @allowNoHashCache = options.allowNoHashCache
-        @on 'complete', => @completed = true
+        @on 'complete', =>
+            @completed = true
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
@@ -29,10 +32,10 @@ class exports.AssetRack extends EventEmitter
                     @assets = @assets.concat asset.assets
                 next()
             asset.rack = this
+            asset.emit 'start'
         , (error) =>
             return @emit 'error', error if error?
-            @addClientRack =>
-                @emit 'complete'
+            @emit 'complete'
 
     getConfig: ->
         config = for asset in @assets
@@ -46,6 +49,7 @@ class exports.AssetRack extends EventEmitter
     createClientRack: ->
         clientRack =  new ClientRack
         clientRack.rack = this
+        clientRack.emit 'start'
         clientRack
     
     addClientRack: (next) ->
@@ -64,7 +68,26 @@ class exports.AssetRack extends EventEmitter
         if @completed
             handle()
         else @once 'complete', handle
-        
+
+    deploy: (options, next) ->
+        client = pkgcloud.storage.createClient options
+        console.log @assets.length
+        async.forEachSeries @assets, (asset, next) =>
+            stream = new BufferStream asset.contents
+            console.log stream
+            url = asset.specificUrl.slice 1, asset.specificUrl.length
+            client.upload
+                container: options.container
+                remote: url
+                headers: asset.headers
+                stream: stream
+            , (error) ->
+                console.log 'upload called my callback'
+                return next error if error?
+                next()
+        , (error) ->
+            return next error if error?
+            next()
 
     pushS3: (options) ->
         async.forEachSeries @assets, (asset, next) =>

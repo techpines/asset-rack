@@ -7,7 +7,7 @@ mime = require 'mime'
 
 class exports.Asset extends EventEmitter
     defaultMaxAge: 60*60*24*365 # one year
-    constructor: (options) -> process.nextTick =>
+    constructor: (options) ->
         options ?= {}
         @url = options.url if options.url?
         @contents = options.contents if options.contents?
@@ -17,10 +17,7 @@ class exports.Asset extends EventEmitter
         @mimetype ?= 'text/plain'
         @hash = options.hash
         @maxAge = options.maxAge
-        @maxAge ?= @rack?.maxAge
-        @maxAge ?= @defaultMaxAge
         @allowNoHashCache = options.allowNoHashCache
-        @allowNoHashCache ?= @rack?.allowNoHashCache
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
@@ -35,8 +32,15 @@ class exports.Asset extends EventEmitter
             @emit 'complete'
         @on 'error', (error) =>
             throw error if @listeners 'error' is 1
+        @on 'start', =>
+            @maxAge ?= @rack?.maxAge
+            @maxAge ?= @defaultMaxAge
+            @allowNoHashCache ?= @rack?.allowNoHashCache
+            @create options
         super()
-        process.nextTick => @create options
+        process.nextTick =>
+            @maxAge ?= @defaultMaxAge
+            return @create options unless @rack?
 
     respond: (request, response) ->
         response.header 'Content-Type', @mimetype

@@ -6,9 +6,8 @@ express = require 'express.io'
 easyrequest = require 'request'
 fs = require 'fs'
 
-app = null
-app = express().http()
-app.use assets = new rack.AssetRack [
+aws = require('/etc/techpines/aws')
+assets = new rack.AssetRack [
     new rack.Asset
         url: '/blank.txt'
         contents: 'test'
@@ -16,7 +15,14 @@ app.use assets = new rack.AssetRack [
         url: '/blank-again.txt'
         contents: 'test-again'
 ]
-assets.on 'compelete', ->
-    assets.addClientRack()
-
-app.listen 7076
+console.log aws
+assets.on 'complete', ->
+    console.log 'did we complete'
+    assets.deploy
+        provider: 'amazon'
+        keyId: aws.key
+        key: aws.secret
+        container: 'temp.techpines.com'
+    , (error) ->
+        console.log error
+        
