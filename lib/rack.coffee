@@ -36,15 +36,6 @@ class exports.Rack extends EventEmitter
             return @emit 'error', error if error?
             @emit 'complete'
 
-    getConfig: ->
-        config = for asset in @assets
-            url: asset.url
-            md5: asset.md5
-            specificUrl: asset.specificUrl
-            mimetype: asset.mimetype
-            maxAge: asset.maxAge
-            hash: asset.hash
-
     createClientRack: ->
         clientRack =  new ClientRack
         clientRack.rack = this
@@ -95,31 +86,6 @@ class exports.Rack extends EventEmitter
         if @completed
             deploy()
         else @once 'complete', deploy
-
-    pushS3: (options) ->
-        async.forEachSeries @assets, (asset, next) =>
-            buffer = new Buffer asset.contents
-            client = knox.createClient options
-            url = asset.specificUrl.slice 1, asset.specificUrl.length
-            request = client.put url, {
-                'Content-Length': buffer.length
-                'Content-Type': asset.mimetype
-                'Cache-Control': "public, max-age=#{asset.maxAge}"
-                'x-amz-acl': 'public-read'
-            }
-            request.on 'response', (response) =>
-                response.setEncoding 'utf8'
-                if response.statusCode is 200
-                    next()
-                else
-                    message = "#{asset.url}: Bad S3 status code response #{response.statusCode}"
-                    @emit 'error', new Error message
-            request.on 'error', (error) =>
-                @emit 'error', error
-
-            request.end buffer
-        , =>
-            @emit 's3-upload-complete'
 
     tag: (url) ->
         for asset in @assets

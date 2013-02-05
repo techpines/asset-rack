@@ -1,4 +1,5 @@
 
+<img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 # Install
 
 ```js
