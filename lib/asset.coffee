@@ -2,22 +2,25 @@
 async = require 'async'
 crypto = require 'crypto'
 pathutil = require 'path'
+mime = require 'mime'
 {EventEmitter} = require 'events'
 
 class exports.Asset extends EventEmitter
-    mimetype: 'text/plain'
     defaultMaxAge: 60*60*24*365 # one year
     constructor: (options) -> process.nextTick =>
-        @url = options.url
-        @contents = options.contents
+        options ?= {}
+        @url = options.url if options.url?
+        @contents = options.contents if options.contents?
+        @ext = pathutil.extname @url
         @mimetype = options.mimetype if options.mimetype?
+        @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
+        @mimetype ?= 'text/plain'
         @hash = options.hash
         @maxAge = options.maxAge
         @maxAge ?= @rack?.maxAge
         @maxAge ?= @defaultMaxAge
         @allowNoHashCache = options.allowNoHashCache
         @allowNoHashCache ?= @rack?.allowNoHashCache
-        @ext = pathutil.extname @url
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
@@ -40,7 +43,7 @@ class exports.Asset extends EventEmitter
         useCache =  @maxAge? and (request.url isnt @url or @allowNoHashCache is true)
         if useCache
             response.header 'Cache-Control', "public, max-age=#{@maxAge}"
-        response.header 'Content-Length', @contents.length
+        #response.header 'Content-Length', @contents.length
         for key, value of @headers
             response.header key, value
         return response.send @contents

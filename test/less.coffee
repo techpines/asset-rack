@@ -44,8 +44,23 @@ describe 'a less asset', ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
                 body.should.equal compiled
-                #fs.writeFileSync "#{__dirname}/fixtures/less/another.css", body
                 done()
         
+    it 'should work with the rack', (done) ->
+        app = express().http()
+        app.use assets = new rack.AssetRack [
+            new rack.Asset
+                url: '/background.png'
+                contents: 'not a real png'
+            new rack.LessAsset
+                filename: "#{__dirname}/fixtures/less/dependency.less"
+                url: '/style.css'
+        ]
+        app.listen 7076, ->
+            easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
+                backgroundUrl = assets.url('/background.png')
+                body.indexOf(backgroundUrl).should.not.equal -1 
+                done()
+
     afterEach (done) -> process.nextTick ->
         app.server.close done

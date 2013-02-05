@@ -1,8 +1,8 @@
 
 async = require 'async'
 knox = require 'knox'
+ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
-
 
 class exports.AssetRack extends EventEmitter
     constructor: (assets, options) ->
@@ -31,7 +31,8 @@ class exports.AssetRack extends EventEmitter
             asset.rack = this
         , (error) =>
             return @emit 'error', error if error?
-            @emit 'complete'
+            @addClientRack =>
+                @emit 'complete'
 
     getConfig: ->
         config = for asset in @assets
@@ -42,6 +43,17 @@ class exports.AssetRack extends EventEmitter
             maxAge: asset.maxAge
             hash: asset.hash
 
+    createClientRack: ->
+        clientRack =  new ClientRack
+        clientRack.rack = this
+        clientRack
+    
+    addClientRack: (next) ->
+        clientRack = @createClientRack()
+        clientRack.on 'complete', =>
+            @assets.push clientRack
+            next()
+        
     handle: (request, response, next) ->
         response.locals assets: this
         handle = =>
@@ -51,7 +63,7 @@ class exports.AssetRack extends EventEmitter
             next()
         if @completed
             handle()
-        else @once 'completed', handle
+        else @once 'complete', handle
         
 
     pushS3: (options) ->
