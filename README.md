@@ -1,6 +1,6 @@
 
-<img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 ## Welcome to the Static Web!
+<img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
 The Static Web is amazing.  The Static Web is blisteringly fast.  The Static Web is ultra efficient.
 Get started with asset-rack.  It will change your life. :)  The rest of the docs are in javascript, this one example is in coffeescript for beauty's sake.
