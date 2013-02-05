@@ -8,7 +8,6 @@ EventEmitter = require('events').EventEmitter
 Asset = require('../.').Asset
 
 class exports.StaticAssetBuilder extends Asset
-
     create: (options) ->
         @dirname = options.dirname
         @urlPrefix = options.urlPrefix
@@ -19,7 +18,7 @@ class exports.StaticAssetBuilder extends Asset
     getAssets: (dirname, prefix='', next) ->
         filenames = fs.readdirSync dirname
         async.forEachSeries filenames, (filename, next) =>
-            next() if filename.slice(0, 1) is '.'
+            return next() if filename.slice(0, 1) is '.'
             path = pathutil.join dirname, filename
             stats = fs.statSync path
             if stats.isDirectory()

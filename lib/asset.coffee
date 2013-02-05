@@ -33,7 +33,7 @@ class exports.Asset extends EventEmitter
                 @assets = data.assets
             if @contents?
                 @createSpecificUrl()
-            @createHeaders()
+                @createHeaders()
             @completed = true
             @emit 'complete'
         @on 'error', (error) =>
