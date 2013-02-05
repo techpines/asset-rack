@@ -7,55 +7,35 @@ Get started with asset-rack.  It will change your life. :)  The rest of the docs
 
 ```coffeescript
 rack = require 'asset-rack'
-assets = new rack.Rack [
-    new rack.StaticAssetBuilder
-        baseUrl: '/static'
-        dirname: "#{__dirname}/static"
-    new rack.LessAsset
-        url: '/style.css'
-        filename: "#{__dirname}/style/base.less"
-    new rack.BrowserifyAsset
-        url: '/app.js'
-        filename: "#{__dirname}/client/app.coffee"
-    new rack.JadeAsset
-        url: '/templates.js'
-        dirname: "#{__dirname}/templates"
-    new rack.JadeEntryPages
-        routes: routes
-]
 ```
-
-## What is the Static Web?
 
 The Static-Web is a modern, high-performance, cutting edge take on the most prolific platform.
 
 ## What is an Asset?
 
-> __An asset is an unchanging resource on the web.  It has the following three features:__
+> __An asset is a resource on the web that has the following three features:__
 
 1. __Location (URL)__: Where on the web the resource is located.
 2. __Contents (HTTP Response Body)__: The body of the response received by a web client.
 3. __Meta Data (HTTP Headers)__: Gives information about the resource, like content-type, caching info.
+
+Conceptually, this definition is the bedrock foundation of __asset-rack__.
 
 ## Getting Started
 
 Asset-rack is the most advanced static-web framework on any platform.
 
 ```js
-rack = require('asset-rack')
 asset = new rack.Asset({
     url: '/hello.txt'
     contents: 'hello world'
 })
 ```
 
-Now that you have your asset you might want to use it.  That is easy enough, just hook it up to express.
+Need to serve your assets with a blisteringly fast in memory cache using express?  Try this:
 
 ```
-app.use(new rack.Asset({
-    url: '/hello.txt'
-    contents: 'hello world'
-})
+app.use(asset)
 ```
 
 What's cool is that this new asset is available both here:
@@ -64,20 +44,9 @@ What's cool is that this new asset is available both here:
 /hello-238jf202390fj40.txt
 ```
 
-What if you have multiple assets?
+What if you have lots of complex assets that depend on one another?  Is there a hero to save us?
 
-```js
-app.use(new rack.Asset({
-    url: '/hello.txt',
-    contents: 'hello world',
-})
-app.use(new rack.Asset({
-    url: '/hello-again.txt',
-    contents: 'hello world again',
-})
-```
-
-Or we can use an asset rack, which is an object that holds them all:
+Try using a rack!
 
 ```js
 assets = new rack.AssetRack([
@@ -90,24 +59,30 @@ assets = new rack.AssetRack([
         contents: 'hello world again',
     })
 ])
-app.use assets
 ```
 
-You are probably thinking that this is very simple, and you're right.  How about a more complex example.
+# Batteries Included
 
-```js
-assets = new rack.AssetRack([
-    new rack.StaticAssetBuilder
-        urlPrefix: '/static'
-        dirname: "#{__dirname}/static"
-    new rack.LessAsset
-        url: '/style.css'
-        filename: "#{__dirname}/style/base.less"
-    new rack.BrowserifyAsset
-        url: '/app.js'
-        filename: "#{__dirname}/client/app.coffee"
-])
-```
+The above assets are simple to say the least, but we have some professional grade assets included.
+
+
+
+Here is our complete list of assets currently available:
+
+#### For Stylesheets
+* [Less]() - Compile less assets, ability to use dependencies, gzip, minification.
+* [Stylus]() - Compile stylu assets, ability to use dependencies, gzip, minification.
+
+#### For your javascript
+* [Browserify]() - Create browserify assets that allow you to use "node-style" requires on the client-side.
+* [Snockets]() - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+
+### Templates
+* [Jade]() - High, performance jade templates precompiled for the browser.
+* [AngularTemplates]() - AngularJS templates for you AngularJS folks.
+
+#### Other
+* [StaticAssets]() - Images(png, jpg, gif), fonts, whatever you got.
 
 # Deploying to the Cloud
 A static-web framework needs be deployed.  The deploy mechanism is extremely sophisticated.
