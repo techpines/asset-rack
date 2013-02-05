@@ -1,45 +1,14 @@
 
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
-## Welcome to the Static Web!
+# Install
 
-The Static Web is amazing.  The Static Web is blisteringly fast.  The Static Web is ultra efficient.
-Get started with asset-rack.  It will change your life. :)  The rest of the docs are in javascript, this one example is in coffeescript for beauty's sake.
-
-```coffeescript
-rack = require 'asset-rack'
-assets = new rack.Rack [
-    new rack.StaticAssetBuilder
-        baseUrl: '/static'
-        dirname: "#{__dirname}/static"
-    new rack.LessAsset
-        url: '/style.css'
-        filename: "#{__dirname}/style/base.less"
-    new rack.BrowserifyAsset
-        url: '/app.js'
-        filename: "#{__dirname}/client/app.coffee"
-    new rack.JadeAsset
-        url: '/templates.js'
-        dirname: "#{__dirname}/templates"
-    new rack.JadeEntryPages
-        routes: routes
-]
+```js
+npm install asset-rack
 ```
 
-## What is the Static Web?
+# Getting Started
 
-The Static-Web is a modern, high-performance, cutting edge take on the most prolific platform.
-
-## What is an Asset?
-
-> __An asset is an unchanging resource on the web.  It has the following three features:__
-
-1. __Location (URL)__: Where on the web the resource is located.
-2. __Contents (HTTP Response Body)__: The body of the response received by a web client.
-3. __Meta Data (HTTP Headers)__: Gives information about the resource, like content-type, caching info.
-
-## Getting Started
-
-Asset-rack is the most advanced static-web framework on any platform.
+Asset-rack is the most advanced asset management framework on any platform.  It embarrasses the Ruby Asset Pipeline.
 
 ```js
 rack = require('asset-rack')
@@ -62,6 +31,16 @@ What's cool is that this new asset is available both here:
 
 ```
 /hello-238jf202390fj40.txt
+```
+
+What if we are in production mode and we only want to allow the hash url version:
+
+```js
+app.use(new rack.Asset({
+    url: '/hello.txt',
+    contents: 'hello world',
+    hash: true
+})
 ```
 
 What if you have multiple assets?
@@ -109,40 +88,11 @@ assets = new rack.AssetRack([
 ])
 ```
 
-# Deploying to the Cloud
-A static-web framework needs be deployed.  The deploy mechanism is extremely sophisticated.
+Well this is cool, now you all of you assets properly hashed and ready to serve.  Or if you are into the static web hosting game.  You might try this:
 
-## Amazon S3
-
-```js
-assets.deploy({
-    provider: 'amazon',
-    container: 'some-bucket',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
-}, function(error, config) {})
 ```
-
-## Rackspace Cloud Files
-```js
-assets.deploy(
-    provider: 'rackspace',
-    container: 'some-cloud-folder',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
-}, function(error, config) {})
+assets.deployS3()
 ```
-
-## Azure
-```js
-assets.deploy(
-    provider: 'azure',
-    container: 'some-cloud-folder',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
-}, function(error, config) {})
-```
-
 
 Or you can create your own assets:
 
