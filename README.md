@@ -128,8 +128,8 @@ This framework is extremely flexible.  Extend the __Asset__ class and override t
 I have been using this framework for over a year on client projects.  Here are some examples that I can actually show you though!
 
 
-[techpines.com]() - We open sourced techpines.com, so you can see a static-web project in action.
-[express-io.org]() - A realtime-web framework with a static page.
+* [techpines.com]() - We open sourced techpines.com, so you can see a static-web project in action.
+* [express-io.org]() - A realtime-web framework with a static page.
 
 If you have an example you would like to show, then drop my a line. 
 
