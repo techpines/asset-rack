@@ -11,13 +11,18 @@ class exports.Asset extends EventEmitter
         options ?= {}
         @url = options.url if options.url?
         @contents = options.contents if options.contents?
+        @headers = if options.headers then options.headers else {}
+        headers = {}
+        for key, value of @headers
+            headers[key.toLowerCase()] = value
+        @headers = headers
         @ext = pathutil.extname @url
         @mimetype = options.mimetype if options.mimetype?
         @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
         @mimetype ?= 'text/plain'
-        @hash = options.hash
-        @maxAge = options.maxAge
-        @allowNoHashCache = options.allowNoHashCache
+        @hash = options.hash if options.hash?
+        @maxAge = options.maxAge if options.maxAge?
+        @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
@@ -28,13 +33,14 @@ class exports.Asset extends EventEmitter
                 @assets = data.assets
             if @contents?
                 @createSpecificUrl()
+            @createHeaders()
             @completed = true
             @emit 'complete'
         @on 'error', (error) =>
             throw error if @listeners 'error' is 1
         @on 'start', =>
             @maxAge ?= @rack?.maxAge
-            @maxAge ?= @defaultMaxAge
+            @maxAge ?= @defaultMaxAge unless @hash is false
             @allowNoHashCache ?= @rack?.allowNoHashCache
             @create options
         super()
@@ -43,12 +49,14 @@ class exports.Asset extends EventEmitter
             return @create options unless @rack?
 
     respond: (request, response) ->
-        response.header 'Content-Type', @mimetype
-        useCache =  @maxAge? and (request.url isnt @url or @allowNoHashCache is true)
-        if useCache
-            response.header 'Cache-Control', "public, max-age=#{@maxAge}"
-        #response.header 'Content-Length', @contents.length
-        for key, value of @headers
+        headers = {}
+        if request.url is @url and @allowNoHashCache isnt true
+            for key, value of @headers
+                headers[key] = value
+            delete headers['cache-control']
+        else
+            headers = @headers
+        for key, value of headers
             response.header key, value
         return response.send @contents
         
@@ -71,6 +79,12 @@ class exports.Asset extends EventEmitter
         
     create: (options) ->
         @emit 'created'
+
+    createHeaders: ->
+        @headers['content-type'] ?= @mimetype
+        @headers['content-length'] = @contents.length
+        if @maxAge?
+            @headers['cache-control'] ?= "public, max-age=#{@maxAge}"
 
     tag: ->
         switch @mimetype

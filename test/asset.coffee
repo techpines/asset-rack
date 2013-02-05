@@ -16,6 +16,7 @@ describe 'an asset', ->
             contents: 'asset-rack'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+                console.log body
                 response.headers['content-type'].should.equal 'text/plain'
                 should.not.exist response.headers['cache-control']
                 body.should.equal 'asset-rack'

@@ -1,6 +1,5 @@
 
 async = require 'async'
-knox = require 'knox'
 pkgcloud = require 'pkgcloud'
 BufferStream = require('./util').BufferStream
 ClientRack = require('./.').ClientRack
@@ -70,24 +69,32 @@ class exports.AssetRack extends EventEmitter
         else @once 'complete', handle
 
     deploy: (options, next) ->
-        client = pkgcloud.storage.createClient options
-        console.log @assets.length
-        async.forEachSeries @assets, (asset, next) =>
-            stream = new BufferStream asset.contents
-            console.log stream
-            url = asset.specificUrl.slice 1, asset.specificUrl.length
-            client.upload
-                container: options.container
-                remote: url
-                headers: asset.headers
-                stream: stream
+        deploy = =>
+            client = pkgcloud.storage.createClient options
+            async.forEachSeries @assets, (asset, next) =>
+                stream = new BufferStream asset.contents
+                url = asset.specificUrl.slice 1, asset.specificUrl.length
+                headers = {}
+                for key, value of asset.headers
+                    headers[key] = value
+                headers['x-amz-acl'] = 'public-read'
+                options =
+                    container: options.container
+                    remote: url
+                    headers: headers
+                    stream: stream
+
+                client.upload options, (error) ->
+                    return next error if error?
+                    next()
             , (error) ->
-                console.log 'upload called my callback'
-                return next error if error?
-                next()
-        , (error) ->
-            return next error if error?
-            next()
+                if error?
+                    return next error if next?
+                    throw error
+                next() if next?
+        if @completed
+            deploy()
+        else @once 'complete', deploy
 
     pushS3: (options) ->
         async.forEachSeries @assets, (asset, next) =>
