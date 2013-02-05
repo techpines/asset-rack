@@ -73,7 +73,7 @@ Here is our complete list of assets currently available:
 * [Less]() - Compile less assets, ability to use dependencies, gzip, minification.
 * [Stylus]() - Compile stylu assets, ability to use dependencies, gzip, minification.
 
-#### For your javascript
+#### For Javascript
 * [Browserify]() - Create browserify assets that allow you to use "node-style" requires on the client-side.
 * [Snockets]() - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
 
@@ -123,13 +123,22 @@ assets.deploy(
 
 This framework is extremely flexible.  Extend the __Asset__ class and override the __create__ method to create your own awesome assets, and watch them get automatically ka-pow'ed by your rack.
 
+```js
+var SuperCoolAsset = rack.newAsset({
+    create: function(options) {
+        this.contents = 'easy, easy' // set your contents
+        this.emit 'created' // let us know your done
+    }
+
+})
+
 # Examples
 
-I have been using this framework for over a year on client projects.  Here are some examples that I can actually show you though!
+Here are some examples!
 
 
-* [techpines.com]() - We open sourced techpines.com, so you can see a static-web project in action.
 * [express-io.org]() - A realtime-web framework with a static page.
+* [techpines.com](https://github.com/techpines/techpines.com) - We open sourced techpines.com, so you can see a static-web project in action.
 
 If you have an example you would like to show, then drop my a line. 
 
