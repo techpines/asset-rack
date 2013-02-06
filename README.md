@@ -93,34 +93,34 @@ Here is our complete list of assets currently available:
 # Deploying to the Cloud
 A static-web framework needs be deployed.  The deploy mechanism is extremely sophisticated.
 
-## Amazon S3
+### Amazon S3
 
 ```js
 assets.deploy({
     provider: 'amazon',
     container: 'some-bucket',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
+    accessKey: 'aws-access-key',
+    secretKey: 'aws-secret-key',
 }, function(error, config) {})
 ```
 
-## Rackspace Cloud Files
+### Rackspace Cloud Files
 ```js
 assets.deploy(
     provider: 'rackspace',
-    container: 'some-cloud-folder',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
+    container: 'some-container',
+    username: 'rackspace-usernam',
+    apiKey: 'rackspace-api-key',
 }, function(error, config) {})
 ```
 
-## Azure
+### Azure Storage
 ```js
 assets.deploy(
     provider: 'azure',
-    container: 'some-cloud-folder',
-    key: '<AWS ACCESS KEY>',
-    secret: '<AWS SECRET KEY>',
+    container: 'some-container',
+    storageAccount: 'test-storage-account',
+    storageAccessKey: 'test-storage-access-key'
 }, function(error, config) {})
 ```
 
