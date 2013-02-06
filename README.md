@@ -1,16 +1,16 @@
 
-## Say Hello to the Static Web!
 
-<br>
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
-<br>
 
-The Static Web is amazing.  The Static Web is blisteringly fast.  The Static Web is ultra efficient.
-Get started with asset-rack.  It will change your life. :)  The rest of the docs are in javascript, this one example is in coffeescript for beauty's sake.
+static-web framework for node.js
 
 ```coffeescript
 rack = require 'asset-rack'
 ```
+## Say Hello to the Static Web!
+
+The Static Web is amazing.  The Static Web is blisteringly fast.  The Static Web is ultra efficient.
+Get started with asset-rack.  It will change your life. :)  The rest of the docs are in javascript, this one example is in coffeescript for beauty's sake.
 
 The Static-Web is a modern, high-performance, cutting edge take on the most prolific platform.
 
