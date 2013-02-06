@@ -77,12 +77,15 @@ Here is our complete list of assets currently available:
 * [Browserify]() - Create browserify assets that allow you to use "node-style" requires on the client-side.
 * [Snockets]() - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
 
-### Templates
+#### Templates
 * [Jade]() - High, performance jade templates precompiled for the browser.
 * [AngularTemplates]() - AngularJS templates for you AngularJS folks.
 
-#### Other
+#### Static
 * [StaticAssets]() - Images(png, jpg, gif), fonts, whatever you got.
+
+#### Pages
+* [Page]() - This is a front page, if your app starts static, then you need on of these guys.
 
 # Deploying to the Cloud
 A static-web framework needs be deployed.  The deploy mechanism is extremely sophisticated.
@@ -132,6 +135,8 @@ var SuperCoolAsset = rack.newAsset({
 
 })
 ```
+
+[Learn more!]()
 
 # Examples
 
