@@ -4,8 +4,11 @@
 ```bash
 npm install asset-rack
 ```
+<div>
+<pre>npm install <span style="color: orange;">asset-rack</span></pre>
+</div>
 
-# Welcome to the Static Web
+# The Static Web is here
 
 The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
 
