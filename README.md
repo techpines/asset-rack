@@ -63,14 +63,12 @@ You have versioning, conflict resolution all in one simple mechanism.  You can u
 
 Assets need to be managed.  Enter the __Rack__.  The rack serializes your assets, allows you to deploy static assets to the cloud, allows you to reference.
 
-Check out a more serious example, where we have maybe a directory structure like this:
+Check out a more serious example, where we have a directory structure like this:
 
 ```
-/static # all your images, fonts, etc.
-/style  #
+/static      # all your images, fonts, etc.
+/style.less  # a less files with your styles
 ```
-
-Keep in mind, that unlike other frameworks you decide your own directory structure, url structure, and overall project layout.
 
 ```js
 assets = new rack.Rack([
@@ -85,13 +83,13 @@ assets = new rack.Rack([
 ])
 ```
 
-Hook into express:
+Hook it into express:
 
 ```js
 app.use(assets)
 ```
 
-### Easy to use in your Templates
+### Use in your Templates
 
 And now you can reference your assets in your server side templates.
 
@@ -108,6 +106,12 @@ Or you can grab just the url.
 
 ```js
 assets.url('/logo.png')
+```
+
+Which gives the hashed url.
+
+```
+/logo-34t90j0re9g034o4f3o4f3.png
 ```
 
 # Batteries Included
