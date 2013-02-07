@@ -3,13 +3,13 @@
 
 <br>
 
-```coffeescript
-rack = require 'asset-rack'
-```
-
 # Welcome to the Static Web
 
 The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
+
+```coffeescript
+rack = require 'asset-rack'
+```
 
 The Static Web is an incredibly modern, high-performance platform for delivering apps and services.  But before you dive-in, you need to start with the basics.  You need to understand the fundamental building block of the static web, the __asset__.
 
