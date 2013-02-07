@@ -128,6 +128,29 @@ We have some professional grade assets included.
 #### Static
 * [StaticAssets](https://github.com/techpines/asset-rack-new/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
 
+## Roll your own
+
+Asset Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
+
+```js
+SuperCoolAsset = rack.Asset.extend({
+    create: function(options) {
+        this.contents = 'easy, easy'
+        this.emit 'created'
+    }
+})
+```
+Or, for those with more refined taste:
+
+```coffee
+class SuperCoolAsset extends rack.Asset
+    create: (options) ->
+        @contents = 'even easier with coffee'
+        @emit 'created'
+```
+
+Checkout the [tutorial.](https://github.com/techpines/asset-rack-new/tree/master/lib#extending-the-asset-class)
+
 
 ## Deploying to the Cloud
 Your assets need to be deployed! Here are the current providers that are supported.
@@ -164,29 +187,6 @@ assets.deploy(
 ```
 
 
-## Roll your own
-
-Asset Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
-
-```js
-SuperCoolAsset = rack.Asset.extend({
-    create: function(options) {
-        this.contents = 'easy, easy'
-        this.emit 'created'
-    }
-})
-```
-Or, for those with more refined taste:
-
-```coffee
-class SuperCoolAsset extends rack.Asset
-    create: (options) ->
-        @contents = 'even easier with coffee'
-        @emit 'created'
-```
-
-Checkout the [tutorial.](https://github.com/techpines/asset-rack-new/tree/master/lib#extending-the-asset-class)
-
 ## FAQ
 
 #### __Why is this better than Connect-Assets?__
@@ -206,9 +206,9 @@ With all that said, much thanks to Trevor for writing connect-assets.
 
 Grunt is a great build tool.  Asset Rack is not a build a tool.  It never writes files to disk, there is no "build step".  Everything happens "just in time".
 
-If you have "genuine" build issues, then by all means please use Grunt.  You can even use Grunt with Asset Rack if you want.
+If you have "genuine" build issues, then by all means use Grunt.  You can even use Grunt with Asset Rack.
 
-However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
+However, if you are only using Grunt to manage your static assets, then you should consider upgrading to Asset Rack.
 
 #### __Why is this better than Wintersmith(Blacksmith)?__
 
