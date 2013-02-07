@@ -113,25 +113,23 @@ Which gives the hashed url.
 
 We have some professional grade assets included.
 
-#### For Stylesheets
-* [Less]() - Compile less assets, ability to use dependencies, gzip, minification.
-* [Stylus]() - Compile stylu assets, ability to use dependencies, gzip, minification.
-
 #### For Javascript
-* [Browserify]() - Create browserify assets that allow you to use "node-style" requires on the client-side.
-* [Snockets]() - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+* [Browserify](https://github.com/techpines/asset-rack-new/tree/master/lib#browserify-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
+* [Snockets](https://github.com/techpines/asset-rack-new/tree/master/lib#snockets-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+
+#### For Stylesheets
+* [Less](http://github.com/techpines/asset-rack-new/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, gzip, minification.
+* [Stylus](https://github.com/techpines/asset-rack-new/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, gzip, minification.
 
 #### Templates
-* [Jade]() - High, performance jade templates precompiled for the browser.
-* [AngularTemplates]() - AngularJS templates for you AngularJS folks.
+* [Jade](https://github.com/techpines/asset-rack-new/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
+* [AngularTemplates](https://github.com/techpines/asset-rack-new/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
 
 #### Static
 * [StaticAssets]() - Images(png, jpg, gif), fonts, whatever you got.
 
-#### Pages
-* [Page]() - This is a front page, if your app starts static, then you need on of these guys.
 
-# Deploying to the Cloud
+## Deploying to the Cloud
 Your assets need to be deployed! Here are the current providers that are supported.
 
 ### Amazon S3
@@ -166,7 +164,7 @@ assets.deploy(
 ```
 
 
-## Roll your own
+### Roll your own
 
 Asset-Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
 
@@ -187,7 +185,7 @@ class SuperCoolAsset extends rack.Asset
         @emit 'created'
 ```
 
-Checkout the [tutorial.]()
+Checkout the [tutorial.](https://github.com/techpines/asset-rack-new/tree/master/lib#extending-the-asset-class)
 
 ## FAQ
 
