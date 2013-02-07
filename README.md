@@ -153,6 +153,12 @@ Here are some examples!
 
 If you have an example you would like to show, then drop my a line. 
 
+# FAQ
+
+[Why is this better than Grunt?]()
+[Why is this better than Connect-Assets?]()
+[Why is this better than the Rails Asset Pipeline]()
+
 # License
 
 ©2012 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
