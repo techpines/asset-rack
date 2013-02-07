@@ -21,7 +21,7 @@ asset = new Asset({
 })
 ```
 
-## Use with Express
+### Use with Express
 
 Generally, you should wrap your assets in a rack, but for quick and dirty smaller projects you can just use the asset directly.
 
@@ -49,7 +49,7 @@ app.use(asset);
 * `created`: Emitted when just the contents or assets have been created, before headers and hashing.
 * `error`: Emitted if there is an error with the asset.
 
-## Extending the Asset Class
+### Extending the Asset Class
 
 It is easy to extend the base asset class.  The procedure for javascript is similar to that of Backbone.js.  You must override the create method for your asset.
 
@@ -106,21 +106,21 @@ This is pretty self-explanatory, the only caveat is that you need to wait for th
 
 ## Rack
 
-This is your initial collection of assets.
+Manage your assets more easily with a rack.
 
 ```javascript
-assets = new AssetRack([
+assets = new rack.Rack([
     new rack.LessAsset({
         url: '/style.css',
-        filename: __dirname + '/path/to/file.less'
+        filename: '/path/to/file.less'
     }),
     new rack.BrowserifyAsset({
         url: '/app.js',
-        filename: __dirname + '/path/to/app.coffee'
+        filename: '/path/to/app.coffee'
     }),
     new rack.JadeAsset({
         url: '/templates.js',
-        dirname: __dirname + '/templates'
+        dirname: '/templates'
     })
 ])
 ```
@@ -133,16 +133,17 @@ app.use(assets);
 
 ### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
-* `pushS3({key:key, secret:secret, bucket:bucket})`: Pushes all asset contents to their respective
-urls in an Amazon S3 bucket.
+* `url(url)`: Get the hashed url from the unhashed url.
+* `deploy(options, callback)`: Deploy to the cloud see below.
 
 ### Events
 
 * `complete`: Emitted after all assets have been created.
-* `s3-upload-complete`: Emitted after assets have been loaded to s3.
 * `error`: Emitted for any errors.
 
-## BrowserifyAsset (js/coffeescript)
+## For Javascript
+
+### Browserify (js/coffeescript)
 
 Browserify is an awesome node project that converts node-style requires
 to requirejs for the frontend.  For more details, check it out,
@@ -156,7 +157,7 @@ new BrowserifyAsset({
 });
 ```
 
-### Options
+#### Options
 
 * `url`: The url that should retrieve this resource.
 * `filename`: A filename or list of filenames to be executed by the browser.
@@ -165,9 +166,8 @@ as the `filename` argument should pull in any requires you need.
 * `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
-## Snockets (js/coffeescript)
+### Snockets (js/coffeescript)
 
 Snockets is a JavaScript/CoffeeScript concatenation tool for Node.js inspired by Sprockets. Used by connect-assets to create a Rails 3.1-style asset pipeline.  For more details, check it out,
 [here](https://github.com/TrevorBurnham/snockets).
@@ -180,23 +180,62 @@ new SnocketsAsset({
 });
 ```
 
-### Options
+#### Options
 
 * `url`: The url that should retrieve this resource.
 * `filename`: A filename or list of filenames to be executed by the browser.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
 * `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
-## JadeAsset
+
+## For StyleSheets
+
+### LessAsset
+
+The less asset basically compiles up and serves your less files as css.  You
+can read more about less [here](https://github.com/cloudhead/less.js).
+
+```javascript
+new LessAsset({
+    url: '/style.css',
+    filename: __dirname + '/style/app.less'
+});
+```
+
+#### Options
+
+* `url`: The url that should retrieve this resource.
+* `filename`: Filename of the less file you want to serve.
+* `compress` (defaults to false): Whether to minify the css.
+* `paths`: List of paths to search for `@import` directives.
+
+### StylusAsset
+
+The stylus asset serves up your stylus assets.
+
+```javascript
+new LessAsset({
+    url: '/style.css',
+    filename: __dirname + '/style/fun.styl'
+});
+```
+
+#### Options
+
+* `url`: The url that should retrieve this resource.
+* `filename`: Filename of the less file you want to serve.
+
+## For Templates
+
+### JadeAsset
 This is an awesome asset.  Ever wanted the simplicity of jade templates
 on the browser with lightning fast performance.  Here you go.
 
 ```javascript
 new JadeAsset({
     url: '/templates.js',
-    dirname: __dirname + '/templates'
+    dirname: './templates'
 });
 ```
 
@@ -210,30 +249,23 @@ user/
     info.jade
 ```
 
-Then in the browser, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script:
-
-```
-script(src="/static/js/jade-runtime.js", type="text/javascript")
-```
-
-then you could reference your templates like so:
+Then reference your templates on the client like this:
 
 ```javascript
 $('body').append(Templates['index']());
 $('body').append(Templates['user/profile']({username: 'brad', status: 'fun'}));
 $('body').append(Templates['user/info']());
 ```
-### Options
+#### Options
 
 * `url`: The url that should retrieve this resource.
 * `dirname`: Directory where template files are located, will grab them recursively.
-* `separator` (defaults to '/'): The character that separates directories, i like to change it to an underscore, `_`.  So that you get more javascript friendly template names like `Templates.user_profile` or `Templates.friends_interests_list`.
+* `separator` (defaults to '/'): The character that separates directories.
 * `compress` (defaults to false): Whether to minify the javascript or not.
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
 
-## AngularTemplatesAsset
+### AngularTemplatesAsset
 
 The angular templates asset packages all .html templates ready to be injected into the client side angularjs template cache.
 You can read more about angularjs [here](http://angularjs.org/).
@@ -255,30 +287,8 @@ var myApp = angular.module("myApp", []);
 myApp.run(['$templateCache', angularTemplates]);
 ```
 
-### Options
+#### Options
 
 * `url`: The url that should retrieve this resource.
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
-* `directory`: Directory where the .html templates are stored.
+* `dirname`: Directory where the .html templates are stored.
 * `compress` (defaults to false): Whether to unglify the js.
-
-## LessAsset
-
-The less asset basically compiles up and serves your less files as css.  You
-can read more about less [here](https://github.com/cloudhead/less.js).
-
-```javascript
-new LessAsset({
-    url: '/style.css',
-    filename: __dirname + '/style/app.less'
-});
-```
-
-### Options
-
-* `url`: The url that should retrieve this resource.
-* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
-* `filename`: Filename of the less file you want to serve.
-* `compress` (defaults to false): Whether to minify the css.
-* `paths`: List of paths to search for `@import` directives.
-
