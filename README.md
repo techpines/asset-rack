@@ -1,7 +1,9 @@
 
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
-<br>
+```bash
+npm install asset-rack
+```
 
 # Welcome to the Static Web
 
