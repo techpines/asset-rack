@@ -189,19 +189,9 @@ class SuperCoolAsset extends rack.Asset
 
 Checkout the [tutorial.]()
 
-# Examples
-
-Here are some examples!
-
-
-* [express-io.org]() - A realtime-web framework with a static page.
-* [techpines.com](https://github.com/techpines/techpines.com) - Open source for you viewing pleasure.
-
-If you have an example you would like to show, then drop me a line. 
-
 ## FAQ
 
-__Why is this better than Connect-Assets?__
+#### __Why is this better than Connect-Assets?__
 
 That's easy!
 
@@ -214,7 +204,7 @@ That's easy!
 
 With all that said, much thanks to Trevor for writing connect-assets. 
 
-__Why is this better than Grunt?__
+#### __Why is this better than Grunt?__
 
 Grunt is a great build tool.  Asset Rack is not a build a tool.  It never writes files to disk, there is no "build step".  Everything happens "just in time".
 
@@ -222,7 +212,7 @@ If you have "genuine" build issues, then by all means please use Grunt.  You can
 
 However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
 
-__Why is this better than Wintersmith(Blacksmith)?__
+#### __Why is this better than Wintersmith(Blacksmith)?__
 
 Asset Rack is a static web framework, and at it's core there are only two abstractions, the `Asset` and `Rack` classes.  Wintersmith is a high level framework that solves a more specific problem.
 

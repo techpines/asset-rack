@@ -111,18 +111,48 @@ To use with express:
 app.use(assets);
 ```
 
-### Options
-* 
-
-### Methods
+#### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
 * `url(url)`: Get the hashed url from the unhashed url.
 * `deploy(options, callback)`: Deploy to the cloud see below.
 
-### Events
+#### Events
 
 * `complete`: Emitted after all assets have been created.
 * `error`: Emitted for any errors.
+
+### Deploying
+
+#### Amazon S3
+
+```js
+assets.deploy({
+    provider: 'amazon',
+    container: 'some-bucket',
+    accessKey: 'aws-access-key',
+    secretKey: 'aws-secret-key',
+}, function(error, config) {})
+```
+
+#### Rackspace Cloud Files
+```js
+assets.deploy(
+    provider: 'rackspace',
+    container: 'some-container',
+    username: 'rackspace-username',
+    apiKey: 'rackspace-api-key',
+}, function(error, config) {})
+```
+
+#### Azure Storage
+```js
+assets.deploy(
+    provider: 'azure',
+    container: 'some-container',
+    storageAccount: 'test-storage-account',
+    storageAccessKey: 'test-storage-access-key'
+}, function(error, config) {})
+```
 
 ## For Javascript
 
