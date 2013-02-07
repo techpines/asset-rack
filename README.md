@@ -222,11 +222,11 @@ If you have "genuine" build issues, then by all means please use Grunt.  You can
 
 However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
 
-__Why is this better than (Winter/Black)smith?__
+__Why is this better than Wintersmith(Blacksmith)?__
 
-Asset Rack is a static web framework, and at it's core there are only two abstractions, the `Asset` and `Rack` classes.  Wintersmith is a high level frameworks that solves more specific problems.
+Asset Rack is a static web framework, and at it's core there are only two abstractions, the `Asset` and `Rack` classes.  Wintersmith is a high level framework that solves a more specific problem.
 
-Wintersmith could consume Asset Rack as a dependency.  If something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need more flexibilty and power, then I'm sure you can guess my opinion on that.
+Wintersmith could consume Asset Rack as a dependency, and if something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need more flexibilty and power, then go with Asset Rack.
 
 # License
 
