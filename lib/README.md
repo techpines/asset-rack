@@ -154,9 +154,9 @@ assets.deploy(
 }, function(error, config) {})
 ```
 
-## For Javascript
+## Javascript/Coffeescript
 
-### Browserify (js/coffeescript)
+### BrowserifyAsset (js/coffeescript)
 
 Browserify is an awesome node project that converts node-style requires
 to requirejs for the frontend.  For more details, check it out,
@@ -180,7 +180,7 @@ as the `filename` argument should pull in any requires you need.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
 
-### Snockets (js/coffeescript)
+### SnocketsAsset (js/coffeescript)
 
 Snockets is a JavaScript/CoffeeScript concatenation tool for Node.js inspired by Sprockets. Used by connect-assets to create a Rails 3.1-style asset pipeline.  For more details, check it out,
 [here](https://github.com/TrevorBurnham/snockets).
@@ -202,7 +202,7 @@ new SnocketsAsset({
 * `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
 
 
-## For StyleSheets
+## Stylesheets
 
 ### LessAsset
 
@@ -239,7 +239,7 @@ new LessAsset({
 * `url`: The url that should retrieve this resource.
 * `filename`: Filename of the less file you want to serve.
 
-## For Templates
+## Templates
 
 ### JadeAsset
 This is an awesome asset.  Ever wanted the simplicity of jade templates
@@ -305,3 +305,18 @@ myApp.run(['$templateCache', angularTemplates]);
 * `url`: The url that should retrieve this resource.
 * `dirname`: Directory where the .html templates are stored.
 * `compress` (defaults to false): Whether to unglify the js.
+
+## Static
+
+### StaticAssets
+
+```js
+new StaticAssets({
+    dirname: '/path/to/static'
+    urlPrefix: '/static'
+})
+```
+
+#### Options
+* `dirname`: The folder to recursively pull assets from.
+* `urlPrefix`: Base url where all assets will be available from.

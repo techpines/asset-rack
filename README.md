@@ -118,8 +118,8 @@ We have some professional grade assets included.
 * [Snockets](https://github.com/techpines/asset-rack-new/tree/master/lib#snockets-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
 
 #### For Stylesheets
-* [Less](http://github.com/techpines/asset-rack-new/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, gzip, minification.
-* [Stylus](https://github.com/techpines/asset-rack-new/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, gzip, minification.
+* [Less](http://github.com/techpines/asset-rack-new/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
+* [Stylus](https://github.com/techpines/asset-rack-new/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
 
 #### Templates
 * [Jade](https://github.com/techpines/asset-rack-new/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
