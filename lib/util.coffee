@@ -1,6 +1,7 @@
 
 EventEmitter = require('events').EventEmitter
 Buffer = require('buffer').Buffer
+_ = require 'underscore'
 
 class exports.BufferStream extends EventEmitter
     constructor: (buffer) ->
@@ -16,3 +17,9 @@ class exports.BufferStream extends EventEmitter
     resume: ->
     destroy: ->
     readable: true
+
+exports.extend = (object) ->
+    class Asset extends this
+    for key, value of object
+        Asset::[key] = value
+    Asset

@@ -3,11 +3,13 @@ async = require 'async'
 crypto = require 'crypto'
 pathutil = require 'path'
 mime = require 'mime'
+{extend} = require './util'
 {EventEmitter} = require 'events'
 
 class exports.Asset extends EventEmitter
     defaultMaxAge: 60*60*24*365 # one year
     constructor: (options) ->
+        super()
         options ?= {}
         @url = options.url if options.url?
         @contents = options.contents if options.contents?
@@ -43,7 +45,6 @@ class exports.Asset extends EventEmitter
             @maxAge ?= @defaultMaxAge unless @hash is false
             @allowNoHashCache ?= @rack?.allowNoHashCache
             @create options
-        super()
         process.nextTick =>
             @maxAge ?= @defaultMaxAge
             return @create options unless @rack?
@@ -108,3 +109,5 @@ class exports.Asset extends EventEmitter
         if specificUrl.indexOf baseUrl isnt -1 and @ext is pathutil.extname specificUrl
             return true
         return false
+
+    @extend: extend

@@ -10,3 +10,4 @@ exports.JadeAsset = require('./modules/jade').JadeAsset
 exports.StaticAssetBuilder = require('./modules/static').StaticAssetBuilder
 exports.SnocketsAsset = require('./modules/snockets').SnocketsAsset
 exports.AngularTemplatesAsset = require('./modules/angular-templates').AngularTemplatesAsset
+

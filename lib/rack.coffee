@@ -1,7 +1,7 @@
 
 async = require 'async'
 pkgcloud = require 'pkgcloud'
-BufferStream = require('./util').BufferStream
+{BufferStream, extend} = require('./util')
 ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
 
@@ -57,9 +57,11 @@ class exports.Rack extends EventEmitter
             next()
         if @completed
             handle()
-        else @once 'complete', handle
+        else @on 'complete', handle
 
     deploy: (options, next) ->
+        options.keyId = options.accessKey
+        options.key = options.secretKey
         deploy = =>
             client = pkgcloud.storage.createClient options
             async.forEachSeries @assets, (asset, next) =>
@@ -85,7 +87,7 @@ class exports.Rack extends EventEmitter
                 next() if next?
         if @completed
             deploy()
-        else @once 'complete', deploy
+        else @on 'complete', deploy
 
     tag: (url) ->
         for asset in @assets
@@ -96,3 +98,4 @@ class exports.Rack extends EventEmitter
         for asset in @assets
             return asset.specificUrl if url is asset.url
 
+    @extend: extend
