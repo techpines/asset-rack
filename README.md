@@ -78,7 +78,7 @@ assets = new rack.Rack([
     }),
     new rack.LessAsset({
         url: '/style.css'
-        filename: __dirname + './style.less'
+        filename: __dirname + '/style.less'
     }
 ])
 ```
@@ -137,7 +137,7 @@ We have some professional grade assets included.
 * [Page]() - This is a front page, if your app starts static, then you need on of these guys.
 
 # Deploying to the Cloud
-A static-web framework needs be deployed.  The deploy mechanism is extremely sophisticated.
+Your assets need to be deployed! Here are the current providers that are supported.
 
 ### Amazon S3
 
@@ -171,7 +171,7 @@ assets.deploy(
 ```
 
 
-# Roll your own
+## Roll your own
 
 Asset-Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
 
@@ -192,7 +192,7 @@ class SuperCoolAsset extends rack.Asset
         @emit 'created'
 ```
 
-[Learn more!]()
+Checkout the [tutorial.]()
 
 # Examples
 
@@ -200,9 +200,9 @@ Here are some examples!
 
 
 * [express-io.org]() - A realtime-web framework with a static page.
-* [techpines.com](https://github.com/techpines/techpines.com) - We open sourced techpines.com, so you can see a static-web project in action.
+* [techpines.com](https://github.com/techpines/techpines.com) - Open source for you viewing pleasure.
 
-If you have an example you would like to show, then drop my a line. 
+If you have an example you would like to show, then drop me a line. 
 
 ## FAQ
 
@@ -227,11 +227,11 @@ If you have "genuine" build issues, then by all means please use Grunt.  You can
 
 However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
 
-__Why is this better than Wintersmith/Jekyll?__
+__Why is this better than (Winter/Black)smith?__
 
-Asset Rack is a static web framework, and at it's core there are only two core abstractions, the `Asset` and `Rack` classes.  Wintersmith and Jekyll are high level frameworks that solve more specific problems.
+Asset Rack is a static web framework, and at it's core there are only two abstractions, the `Asset` and `Rack` classes.  Wintersmith is a high level frameworks that solves more specific problems.
 
-Wintersmith could consume Asset Rack as a dependency.  If something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need the flexibilty and power of the entire Static Web at your fingertips.
+Wintersmith could consume Asset Rack as a dependency.  If something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need more flexibilty and power, then I'm sure you can guess my opinion on that.
 
 # License
 
