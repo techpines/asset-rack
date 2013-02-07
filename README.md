@@ -8,12 +8,9 @@ rack = require 'asset-rack'
 ```
 ### The Static Web is:
 
-* __blisteringly fast__
-* __ultra efficient__
-* __cutting edge__
+The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
 
-
-The Static-Web is an amazing, modern, high-performance, platform for delivering apps and services.  But before you dive head first into the deep end, you need to start with the basics.  You need to understand the fundamental building block of the static web, the asset.
+The Static-Web is an amazing, modern, high-performance, platform for delivering apps and services.  But before you dive-in head first, you need to start with the basics.  You need to understand the fundamental building block of the static web, the asset.
 
 ## What is an Asset?
 
@@ -23,11 +20,11 @@ The Static-Web is an amazing, modern, high-performance, platform for delivering 
 2. __Contents (HTTP Response Body)__: The body of the response received by a web client.
 3. __Meta Data (HTTP Headers)__: Gives information about the resource, like content-type, caching info.
 
-Conceptually, this definition is the bedrock foundation of __asset-rack__.
+This simple definition is the theoretical bedrock of this entire framework.
 
 ## Getting Started
 
-Asset-rack is the most advanced static-web framework on any platform.
+Asset-Rack is the most advanced Static-Web framework on any platform. Let's look at the most basic example.
 
 ```js
 asset = new rack.Asset({
@@ -36,7 +33,7 @@ asset = new rack.Asset({
 })
 ```
 
-Need to serve your assets with a blisteringly fast in memory cache using express?  Try this:
+Need to serve your assets with a blisteringly fast in memory cache using express?
 
 ```
 app.use(asset)
@@ -68,10 +65,6 @@ assets = new rack.AssetRack([
 # Batteries Included
 
 The above assets are simple to say the least, but we have some professional grade assets included.
-
-
-
-Here is our complete list of assets currently available:
 
 #### For Stylesheets
 * [Less]() - Compile less assets, ability to use dependencies, gzip, minification.
@@ -110,7 +103,7 @@ assets.deploy({
 assets.deploy(
     provider: 'rackspace',
     container: 'some-container',
-    username: 'rackspace-usernam',
+    username: 'rackspace-username',
     apiKey: 'rackspace-api-key',
 }, function(error, config) {})
 ```
@@ -126,18 +119,26 @@ assets.deploy(
 ```
 
 
-# Create your Own!
+# Roll your own
 
-This framework is extremely flexible.  Extend the __Asset__ class and override the __create__ method to create your own awesome assets, and watch them get automatically ka-pow'ed by your rack.
+Asset-Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesome assets, and watch them get automatically ka-pow'ed by your rack.
 
 ```js
-var SuperCoolAsset = rack.newAsset({
+var SuperCoolAsset = rack.Asset.extend({
     create: function(options) {
         this.contents = 'easy, easy' // set your contents
         this.emit 'created' // let us know your done
     }
 
 })
+```
+Or in a  more civilized tongue:
+
+```coffee
+class SuperCoolAsset extends rack.Asset
+    create: (options) ->
+        @contents = 'even easier with coffee'
+        @emit 'created'
 ```
 
 [Learn more!]()
