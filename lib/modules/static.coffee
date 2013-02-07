@@ -7,7 +7,7 @@ mime = require 'mime'
 EventEmitter = require('events').EventEmitter
 Asset = require('../.').Asset
 
-class exports.StaticAssetBuilder extends Asset
+class exports.StaticAssets extends Asset
     create: (options) ->
         @dirname = options.dirname
         @urlPrefix = options.urlPrefix

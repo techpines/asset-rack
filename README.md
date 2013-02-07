@@ -24,7 +24,7 @@ This simple definition is the theoretical bedrock of this entire framework.
 
 ## Getting Started
 
-Asset-Rack is the most advanced Static-Web framework on any platform. Let's look at the most basic example.
+Let's look at a simple example.
 
 ```js
 asset = new rack.Asset({
@@ -33,7 +33,7 @@ asset = new rack.Asset({
 })
 ```
 
-Need to serve your assets with a blisteringly fast in memory cache using express?
+Need to serve that asset with a blisteringly fast in memory cache using express?
 
 ```
 app.use(asset)
@@ -55,20 +55,20 @@ And here
 
 That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to __never expire__.  
 
-Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.
-
-You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
+Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.  You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
 
 ### One Rack to rule them all
 
-Assets need to be managed.  Enter the __Rack__.  The rack serializes your assets, allows you to deploy static assets to the cloud, allows you to reference.
+Assets need to be managed.  Enter the __Rack__.  The rack serializes your assets, allows you to deploy static assets to the cloud, and allows you to reference them in templates.
 
-Check out a more serious example, where we have a directory structure like this:
+Say you have a directory structure like this:
 
 ```
 /static      # all your images, fonts, etc.
 /style.less  # a less files with your styles
 ```
+
+You can use a __Rack__ to easily manage these assets.
 
 ```js
 assets = new rack.Rack([

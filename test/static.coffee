@@ -11,7 +11,7 @@ describe 'a static asset builder', ->
     it 'should work', (done) ->
         compiled = fs.readFileSync "#{__dirname}/fixtures/static/blank.txt", 'utf8'
         app = express().http()
-        app.use new rack.StaticAssetBuilder
+        app.use new rack.StaticAssets
             dirname: "#{__dirname}/fixtures/static"
             urlPrefix: '/static'
         app.listen 7076, ->
