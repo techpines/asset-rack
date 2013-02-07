@@ -121,6 +121,7 @@ new rack.Rack(assets)
 ```javascript
 app.use(assets);
 ```
+__Important__: You have to call `app.use(assets)` before `app.use(app.router)` or else the `assets` markup functions will not be available in your templates.  The assets middleware needs to come first.
 
 ### Deploying
 
