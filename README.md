@@ -28,7 +28,7 @@ Asset-Rack is the most advanced Static-Web framework on any platform. Let's look
 
 ```js
 asset = new rack.Asset({
-    url: '/hello.txt'
+    url: '/hello.txt',
     contents: 'hello world'
 })
 ```
@@ -44,7 +44,7 @@ app.use(asset)
 What's cool is that this new asset is available both here:
 
 ```
-/hello
+/hello.txt
 ```
 
 And here
@@ -53,30 +53,52 @@ And here
 /hello-5eb63bbbe01eeed093cb22bb8f5acdc3.txt
 ```
 
-That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to never expire.  Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.
+That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to __never expire__.  
+
+Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.
 
 You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
 
 ### Enter the Rack
 
-Try using a rack!
+Assets need to be managed.  Enter the __Rack__.  The rack serializes your assets, allows you to deploy static assets to the cloud, allows you to reference.
+
+Check out a more serious example, where we have maybe a directory structure like this:
+
+```
+/static # all your images, fonts, etc.
+/style  #
+```
+
+Keep in mind, that unlike other frameworks you decide your own directory structure, url structure, and overall project layout.
 
 ```js
-assets = new rack.AssetRack([
-    new rack.Asset({
-        url: '/hello.txt',
-        contents: 'hello world',
+assets = new rack.Rack([
+    new rack.StaticAssets({
+        urlPrefix: '/static'
+        dirname: __dirname + '/static'
     }),
-    new rack.Asset({
-        url: '/hello-again.txt',
-        contents: 'hello world again',
-    })
+    new rack.LessAsset({
+        url: '/style.css'
+        filename: __dirname + './style.less'
+    }
 ])
+```
+
+And now you can reference in your templates, let's say jade:
+
+```jade
+!= assets.tag('/style.css')
+```
+Or when there is not an obvious tag, it's easy enough to just grab the url.
+
+```
+img(src="#{assets.url('/logo.png')})
 ```
 
 # Batteries Included
 
-The above assets are simple to say the least, but we have some professional grade assets included.
+We have some professional grade assets included.
 
 #### For Stylesheets
 * [Less]() - Compile less assets, ability to use dependencies, gzip, minification.
