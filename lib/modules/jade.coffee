@@ -9,7 +9,7 @@ Asset = require('../index').Asset
 class exports.JadeAsset extends Asset
     mimetype: 'text/javascript'
     create: (options) ->
-        @dirname = options.dirname
+        @dirname = pathutil.resolve options.dirname
         @separator = options.separator or '/'
         @compress = options.compress or false
         @clientVariable = options.clientVariable or 'Templates'

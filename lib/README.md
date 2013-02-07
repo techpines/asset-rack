@@ -1,0 +1,284 @@
+
+
+![asset-rack!](http://www.techpines.com/static/logo/asset-rack.png)
+
+# API Reference
+
+## Install
+
+```bash
+npm install asset-rack
+```
+
+## Asset
+
+This is the base class from which all assets derive.  It can represent both a single asset or a collection of assets.
+
+```js
+asset = new Asset({
+    url: '/fun.txt',
+    contents: 'I am having fun!'
+})
+```
+
+## Use with Express
+
+Generally, you should wrap your assets in a rack, but for quick and dirty smaller projects you can just use the asset directly.
+
+```
+app.use(asset);
+```
+
+### Properties
+* `url`: The url where our resource will be served.
+* `contents`: The actual contents to be deliverd by the url.
+* `headers`: Any specific headers you want associated with this asset.
+* `mimetype`: The content type for the asset.
+* `hash`: (defaults to undefined) Serves both hashed and unhashed urls.  If set to `true` then it only serves the hashed version, and if false then it only serves the unhashed version.
+* `allowNoHashCache`: By default unhashed urls will not be cached.  To allow them to be hashed, set this option to `true`.
+* `maxAge`: How long to cache the resource, defaults to 1 year for hashed urls, and no cache for unhashed urls.
+* `specificUrl`: The hashed version of the url.
+* `assets`: If the asset is actually a collection of assets, then this is where all of it's assets are.
+
+### Methods
+* `tag()`: Returns the tag that should be used in HTML. (js and css assets only)
+* `respond(req,res)`: Given an express request and response object, this will respond with the contents and headers for the asset.
+
+### Events
+* `complete`: Triggered once the asset is fully initialized with contents or assets, and has headers, hashed url etc.
+* `created`: Emitted when just the contents or assets have been created, before headers and hashing.
+* `error`: Emitted if there is an error with the asset.
+
+## Extending the Asset Class
+
+It is easy to extend the base asset class.  The procedure for javascript is similar to that of Backbone.js.  You must override the create method for your asset.
+
+```js
+MyCoolAsset = rack.Asset.extend({
+    create: function(options) {
+        this.contents = 'hey there'
+        this.emit 'created'
+    }
+})
+```
+
+In coffescript it is a little simpler:
+
+```coffee
+class MyCoolAsset extends rack.Asset
+    create: (options) ->
+        @contents = 'yea!'
+        @emit 'created'
+```
+
+Whenever you finish creating your contents you emit a `created` event.
+
+The `options` object passed to `create` is the same `options` object that gets passed to the constructor of new objects.
+
+```coffee
+asset = new MyCoolAsset(options)
+```
+
+You can also create create a collection of assets by extending the `Asset` class, but instead of setting the contents, you would set an array of assets.  Here is a simple, but meaningful example.
+
+```js
+LotsOfAssets = rack.Asset.extend({
+    create: function(options) {
+        this.assets = []
+        filenames = fs.readdirSync(options.dirname)
+        async.forEachSeries(filenames, function(filename) {
+            var asset = new rack.Asset({
+                url: filename,
+                contents: fs.readFileSync(filename) 
+            })
+            this.assets.push(asset)
+            asset.on('complete', next)
+        }, function() {
+            this.emit('created');
+        })
+    }
+})
+```
+
+This is pretty self-explanatory, the only caveat is that you need to wait for the assets you create to `complete` or else you will probably run into some strange behavior.
+
+
+
+## Rack
+
+This is your initial collection of assets.
+
+```javascript
+assets = new AssetRack([
+    new rack.LessAsset({
+        url: '/style.css',
+        filename: __dirname + '/path/to/file.less'
+    }),
+    new rack.BrowserifyAsset({
+        url: '/app.js',
+        filename: __dirname + '/path/to/app.coffee'
+    }),
+    new rack.JadeAsset({
+        url: '/templates.js',
+        dirname: __dirname + '/templates'
+    })
+])
+```
+
+To use with express:
+
+```javascript
+app.use(assets);
+```
+
+### Methods
+* `tag(url)`: Given a url, returns the tag that should be used in HTML.
+* `pushS3({key:key, secret:secret, bucket:bucket})`: Pushes all asset contents to their respective
+urls in an Amazon S3 bucket.
+
+### Events
+
+* `complete`: Emitted after all assets have been created.
+* `s3-upload-complete`: Emitted after assets have been loaded to s3.
+* `error`: Emitted for any errors.
+
+## BrowserifyAsset (js/coffeescript)
+
+Browserify is an awesome node project that converts node-style requires
+to requirejs for the frontend.  For more details, check it out,
+[here](https://github.com/substack/node-browserify).
+
+```javascript
+new BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/client/app.js',
+    compress: true
+});
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `filename`: A filename or list of filenames to be executed by the browser.
+* `require`: A filename or list of filenames to require, should not be necessary
+as the `filename` argument should pull in any requires you need.
+* `debug` (defaults to false): enables the browserify debug option.
+* `compress` (defaults to false): whether to run the javascript through a minifier.
+* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
+## Snockets (js/coffeescript)
+
+Snockets is a JavaScript/CoffeeScript concatenation tool for Node.js inspired by Sprockets. Used by connect-assets to create a Rails 3.1-style asset pipeline.  For more details, check it out,
+[here](https://github.com/TrevorBurnham/snockets).
+
+```javascript
+new SnocketsAsset({
+    url: '/app.js',
+    filename: __dirname + '/client/app.js',
+    compress: true
+});
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `filename`: A filename or list of filenames to be executed by the browser.
+* `compress` (defaults to false): whether to run the javascript through a minifier.
+* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
+* `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
+## JadeAsset
+This is an awesome asset.  Ever wanted the simplicity of jade templates
+on the browser with lightning fast performance.  Here you go.
+
+```javascript
+new JadeAsset({
+    url: '/templates.js',
+    dirname: __dirname + '/templates'
+});
+```
+
+So if your template directory looked like this:
+
+```
+index.jade
+contact.jade
+user/
+    profile.jade
+    info.jade
+```
+
+Then in the browser, you would first need to include the [jade runtime](https://github.com/visionmedia/jade/blob/master/runtime.js) script:
+
+```
+script(src="/static/js/jade-runtime.js", type="text/javascript")
+```
+
+then you could reference your templates like so:
+
+```javascript
+$('body').append(Templates['index']());
+$('body').append(Templates['user/profile']({username: 'brad', status: 'fun'}));
+$('body').append(Templates['user/info']());
+```
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `dirname`: Directory where template files are located, will grab them recursively.
+* `separator` (defaults to '/'): The character that separates directories, i like to change it to an underscore, `_`.  So that you get more javascript friendly template names like `Templates.user_profile` or `Templates.friends_interests_list`.
+* `compress` (defaults to false): Whether to minify the javascript or not.
+* `clientVariable` (defaults to 'Templates'): Client side template
+variable.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+
+## AngularTemplatesAsset
+
+The angular templates asset packages all .html templates ready to be injected into the client side angularjs template cache.
+You can read more about angularjs [here](http://angularjs.org/).
+
+```javascript
+new AngularTemplatesAsset({
+    url: '/js/templates.js',
+    directory: __dirname + '/templates'
+});
+```
+
+Then see the following example client js code which loads templates into the template cache, where `angularTemplates` is the function provided by AngularTemplatesAsset:
+
+```javascript
+//replace this with your module initialization logic
+var myApp = angular.module("myApp", []);
+
+//use this line to add the templates to the cache
+myApp.run(['$templateCache', angularTemplates]);
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+* `directory`: Directory where the .html templates are stored.
+* `compress` (defaults to false): Whether to unglify the js.
+
+## LessAsset
+
+The less asset basically compiles up and serves your less files as css.  You
+can read more about less [here](https://github.com/cloudhead/less.js).
+
+```javascript
+new LessAsset({
+    url: '/style.css',
+    filename: __dirname + '/style/app.less'
+});
+```
+
+### Options
+
+* `url`: The url that should retrieve this resource.
+* `hash` (defaults to true): Set to false if you don't want the md5 sum added to your urls.
+* `filename`: Filename of the less file you want to serve.
+* `compress` (defaults to false): Whether to minify the css.
+* `paths`: List of paths to search for `@import` directives.
+

@@ -9,7 +9,7 @@ Asset = require('../.').Asset
 
 class exports.StaticAssets extends Asset
     create: (options) ->
-        @dirname = options.dirname
+        @dirname = pathutil.resolve options.dirname
         @urlPrefix = options.urlPrefix
         @assets = []
         @getAssets @dirname, @urlPrefix, =>

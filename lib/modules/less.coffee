@@ -6,7 +6,7 @@ Asset = require('../.').Asset
 
 class exports.LessAsset extends Asset
     create: (options) ->
-        @filename = options.filename
+        @filename = pathutil.resolve options.filename
         @paths = options.paths
         @paths ?= []
         @paths.push pathutil.dirname options.filename

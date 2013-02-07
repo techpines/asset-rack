@@ -7,7 +7,7 @@ Asset = require('../.').Asset
 
 class exports.StylusAsset extends Asset
     create: (options) ->
-        @filename = options.filename
+        @filename = pathutil.resolve options.filename
         @compress = options.compress
         @compress ?= false
 

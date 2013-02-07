@@ -1,4 +1,4 @@
-path = require('path')
+pathutil = require('path')
 Snockets = require 'snockets'
 Asset = require('../index').Asset
 
@@ -6,7 +6,7 @@ class exports.SnocketsAsset extends Asset
     mimetype: 'text/javascript'
 
     create: (options) ->
-        @filename = options.filename
+        @filename = pathutil.resolve options.filename
         @compress = options.compress or false
         @debug = options.debug or false
         snockets = new Snockets()
@@ -19,7 +19,7 @@ class exports.SnocketsAsset extends Asset
                     .replace(/\n/g, '\\n')
                     .replace(/\r/g, '')
                     .replace(/'/g, '\\\'')
-                filename = path.relative(path.dirname(@filename), file.filename)
+                filename = pathutil.relative(pathutil.dirname(@filename), file.filename)
                     .replace(/\\/g, '/')
                 scripts.push "// #{filename}\neval('#{script}\\n//@ sourceURL=#{filename}')\n"
             @contents = scripts.join('\n')

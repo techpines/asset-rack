@@ -12,7 +12,7 @@ describe 'a static asset builder', ->
         compiled = fs.readFileSync "#{__dirname}/fixtures/static/blank.txt", 'utf8'
         app = express().http()
         app.use new rack.StaticAssets
-            dirname: "#{__dirname}/fixtures/static"
+            dirname: "./fixtures/static"
             urlPrefix: '/static'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/static/blank.txt', (error, response, body) ->
