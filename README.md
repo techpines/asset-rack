@@ -204,13 +204,26 @@ Here are some examples!
 
 If you have an example you would like to show, then drop my a line. 
 
-# FAQ
+## FAQ
 
-[Why is this better than Grunt?]()
+__Why is this better than Connect-Assets?__
 
-[Why is this better than Connect-Assets?]()
+Asset-rack is far superior to Connect-Assets, because:
 
-[Why is this better than the Rails Asset Pipeline]()
+* It works with node.js multi-process and cluster.
+* More built-in assets.
+* Unopionated, connect-assets dictates your url structure AND directory structure.
+* Ability to deploy to the cloud.
+* Simpler to use.
+* Much more extensible.
+
+__Why is this better than Grunt?__
+
+Grunt is a great build tool.  Asset Rack is not a build a tool.  It never writes files to disk, there is no "build step".  Everything happens "just in time".
+
+If you have "genuine" build issues, then by all means please use Grunt.  You can even use Grunt with Asset Rack if you want.
+
+However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
 
 # License
 
