@@ -29,7 +29,7 @@ Generally, you should wrap your assets in a rack, but for quick and dirty smalle
 app.use(asset);
 ```
 
-### Properties
+### Options
 * `url`: The url where our resource will be served.
 * `contents`: The actual contents to be deliverd by the url.
 * `headers`: Any specific headers you want associated with this asset.
@@ -71,9 +71,9 @@ class MyCoolAsset extends rack.Asset
         @emit 'created'
 ```
 
-Whenever you finish creating your contents you emit a `created` event.
+Whenever you finish creating your contents you emit a created event.
 
-The `options` object passed to `create` is the same `options` object that gets passed to the constructor of new objects.
+The options object passed to create is the same options object that gets passed to the constructor of new objects.
 
 ```coffee
 asset = new MyCoolAsset(options)
@@ -85,51 +85,34 @@ You can also create create a collection of assets by extending the `Asset` class
 LotsOfAssets = rack.Asset.extend({
     create: function(options) {
         this.assets = []
-        filenames = fs.readdirSync(options.dirname)
-        async.forEachSeries(filenames, function(filename) {
-            var asset = new rack.Asset({
-                url: filename,
-                contents: fs.readFileSync(filename) 
-            })
-            this.assets.push(asset)
-            asset.on('complete', next)
-        }, function() {
-            this.emit('created');
-        })
+
+        // add assets to the collection
+
+        this.emit('created')
     }
 })
 ```
 
-This is pretty self-explanatory, the only caveat is that you need to wait for the assets you create to `complete` or else you will probably run into some strange behavior.
-
-
+This is pretty self-explanatory, the only caveat is that you need to wait for the assets that you create to `complete` or else you will probably run into some strange behavior.
 
 ## Rack
 
 Manage your assets more easily with a rack.
 
-```javascript
-assets = new rack.Rack([
-    new rack.LessAsset({
-        url: '/style.css',
-        filename: '/path/to/file.less'
-    }),
-    new rack.BrowserifyAsset({
-        url: '/app.js',
-        filename: '/path/to/app.coffee'
-    }),
-    new rack.JadeAsset({
-        url: '/templates.js',
-        dirname: '/templates'
-    })
-])
+```js
+new rack.Rack(assets)
 ```
+
+* `assets`: A collection of assets.
 
 To use with express:
 
 ```javascript
 app.use(assets);
 ```
+
+### Options
+* 
 
 ### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
