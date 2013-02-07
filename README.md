@@ -1,12 +1,9 @@
 
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
-```bash
+```coffee
 npm install asset-rack
 ```
-<div>
-<pre>npm install <span style="color: orange;">asset-rack</span></pre>
-</div>
 
 # The Static Web is here
 
