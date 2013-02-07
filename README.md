@@ -1,10 +1,6 @@
 
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
-```coffee
-npm install asset-rack
-```
-
 # The Static Web is here
 
 The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
