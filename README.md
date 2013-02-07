@@ -39,13 +39,25 @@ Need to serve your assets with a blisteringly fast in memory cache using express
 app.use(asset)
 ```
 
+### Hashing for Speed and Efficiency
+
 What's cool is that this new asset is available both here:
 
 ```
-/hello-238jf202390fj40.txt
+/hello
 ```
 
-What if you have lots of complex assets that depend on one another?  Is there a hero to save us?
+And here
+
+```
+/hello-5eb63bbbe01eeed093cb22bb8f5acdc3.txt
+```
+
+That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to never expire.  Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.
+
+You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
+
+### Enter the Rack
 
 Try using a rack!
 
