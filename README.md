@@ -123,18 +123,17 @@ assets.deploy(
 
 # Roll your own
 
-Asset-Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesome assets, and watch them get automatically ka-pow'ed by your rack.
+Asset-Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
 
 ```js
-var SuperCoolAsset = rack.Asset.extend({
+SuperCoolAsset = rack.Asset.extend({
     create: function(options) {
-        this.contents = 'easy, easy' // set your contents
-        this.emit 'created' // let us know your done
+        this.contents = 'easy, easy'
+        this.emit 'created'
     }
-
 })
 ```
-Or in a  more civilized tongue:
+Or, for those with more refined taste:
 
 ```coffee
 class SuperCoolAsset extends rack.Asset
