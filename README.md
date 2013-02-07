@@ -208,14 +208,16 @@ If you have an example you would like to show, then drop my a line.
 
 __Why is this better than Connect-Assets?__
 
-Asset-rack is far superior to Connect-Assets, because:
+That's easy!
 
 * It works with node.js multi-process and cluster.
 * More built-in assets.
-* Unopionated, connect-assets dictates your url structure AND directory structure.
+* Un-opionated, connect-assets dictates your url structure AND directory structure.
 * Ability to deploy to the cloud.
+* Easy to extend.
 * Simpler to use.
-* Much more extensible.
+
+With all that said, much thanks to Trevor for writing connect-assets. 
 
 __Why is this better than Grunt?__
 
@@ -224,6 +226,12 @@ Grunt is a great build tool.  Asset Rack is not a build a tool.  It never writes
 If you have "genuine" build issues, then by all means please use Grunt.  You can even use Grunt with Asset Rack if you want.
 
 However, if you are only using Grunt to manage your static assets, then you should consider upgrading to a badass static web framework like Asset Rack.
+
+__Why is this better than Wintersmith/Jekyll?__
+
+Asset Rack is a static web framework, and at it's core there are only two core abstractions, the `Asset` and `Rack` classes.  Wintersmith and Jekyll are high level frameworks that solve more specific problems.
+
+Wintersmith could consume Asset Rack as a dependency.  If something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need the flexibilty and power of the entire Static Web at your fingertips.
 
 # License
 
