@@ -39,7 +39,7 @@ Need to serve your assets with a blisteringly fast in memory cache using express
 app.use(asset)
 ```
 
-### Hashing for Speed and Efficiency
+### Hash for speed and efficiency
 
 What's cool is that this new asset is available both here:
 
@@ -59,7 +59,7 @@ Now proxies, browsers, cloud storage, content delivery networks only need to dow
 
 You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
 
-### Enter the Rack
+### One Rack to rule them all
 
 Assets need to be managed.  Enter the __Rack__.  The rack serializes your assets, allows you to deploy static assets to the cloud, allows you to reference.
 
@@ -85,15 +85,29 @@ assets = new rack.Rack([
 ])
 ```
 
-And now you can reference in your templates, let's say jade:
+Hook into express:
 
-```jade
-!= assets.tag('/style.css')
+```js
+app.use(assets)
 ```
-Or when there is not an obvious tag, it's easy enough to just grab the url.
 
+### Easy to use in your Templates
+
+And now you can reference your assets in your server side templates.
+
+```js
+assets.tag('/style.css')
 ```
-img(src="#{assets.url('/logo.png')})
+Which gives you the html tag.
+
+```html
+<link href="/style-0f2j9fj039fuw0e9f23.css" rel="stylesheet">
+```
+
+Or you can grab just the url.
+
+```js
+assets.url('/logo.png')
 ```
 
 # Batteries Included
