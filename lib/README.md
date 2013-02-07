@@ -132,7 +132,7 @@ assets.deploy({
     container: 'some-bucket',
     accessKey: 'aws-access-key',
     secretKey: 'aws-secret-key',
-}, function(error, config) {})
+}, function(error) {})
 ```
 
 #### Rackspace Cloud Files
@@ -142,7 +142,7 @@ assets.deploy(
     container: 'some-container',
     username: 'rackspace-username',
     apiKey: 'rackspace-api-key',
-}, function(error, config) {})
+}, function(error) {})
 ```
 
 #### Azure Storage
@@ -152,7 +152,7 @@ assets.deploy(
     container: 'some-container',
     storageAccount: 'test-storage-account',
     storageAccessKey: 'test-storage-access-key'
-}, function(error, config) {})
+}, function(error) {})
 ```
 
 ## Javascript/Coffeescript
