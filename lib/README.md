@@ -102,14 +102,9 @@ Manage your assets more easily with a rack.
 ```js
 new rack.Rack(assets)
 ```
+#### Options
 
 * `assets`: A collection of assets.
-
-To use with express:
-
-```javascript
-app.use(assets);
-```
 
 #### Methods
 * `tag(url)`: Given a url, returns the tag that should be used in HTML.
@@ -120,6 +115,12 @@ app.use(assets);
 
 * `complete`: Emitted after all assets have been created.
 * `error`: Emitted for any errors.
+
+### With Express
+
+```javascript
+app.use(assets);
+```
 
 ### Deploying
 

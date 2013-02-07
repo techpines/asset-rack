@@ -126,7 +126,7 @@ We have some professional grade assets included.
 * [AngularTemplates](https://github.com/techpines/asset-rack-new/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
 
 #### Static
-* [StaticAssets]() - Images(png, jpg, gif), fonts, whatever you got.
+* [StaticAssets](https://github.com/techpines/asset-rack-new/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
 
 
 ## Deploying to the Cloud
