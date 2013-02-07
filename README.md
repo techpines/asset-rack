@@ -1,18 +1,19 @@
 
-
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
-
-static-web framework for node.js
+<br>
+Static-web framework for node.js.
 
 ```coffeescript
 rack = require 'asset-rack'
 ```
-## Welcome to the Static Web
+### The Static Web is:
 
-The Static Web is __amazing__.  The Static Web is __blisteringly fast__.  The Static Web is __ultra efficient__.
-Get started with asset-rack.  It will change your life. :)  The rest of the docs are in javascript, this one example is in coffeescript for beauty's sake.
+* __blisteringly fast__
+* __ultra efficient__
+* __cutting edge__
 
-The Static-Web is a modern, high-performance, cutting edge take on the most prolific platform.
+
+The Static-Web is an amazing, modern, high-performance, platform for delivering apps and services.  But before you dive head first into the deep end, you need to start with the basics.  You need to understand the fundamental building block of the static web, the asset.
 
 ## What is an Asset?
 
