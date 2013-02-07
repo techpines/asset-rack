@@ -51,7 +51,7 @@ app.use(asset);
 
 ### Extending the Asset Class
 
-It is easy to extend the base asset class.  The procedure for javascript is similar to that of Backbone.js.  You must override the create method for your asset.
+It is easy to extend the base Asset class.  The procedure for javascript is similar to that of Backbone.js.  You must override the create method for your asset.
 
 ```js
 MyCoolAsset = rack.Asset.extend({
@@ -71,7 +71,7 @@ class MyCoolAsset extends rack.Asset
         @emit 'created'
 ```
 
-Whenever you finish creating your contents you emit a created event.
+Whenever you finish creating your contents you emit a __created__ event.
 
 The options object passed to create is the same options object that gets passed to the constructor of new objects.
 
@@ -79,7 +79,7 @@ The options object passed to create is the same options object that gets passed 
 asset = new MyCoolAsset(options)
 ```
 
-You can also create create a collection of assets by extending the `Asset` class, but instead of setting the contents, you would set an array of assets.  Here is a simple, but meaningful example.
+You can also create create a collection of assets by extending the `Asset` class, but instead of setting the contents, you would set an array of assets.
 
 ```js
 LotsOfAssets = rack.Asset.extend({
