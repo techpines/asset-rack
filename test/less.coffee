@@ -53,6 +53,9 @@ describe 'a less asset', ->
                 url: '/background.png'
                 contents: 'not a real png'
             new rack.LessAsset
+                filename: "#{__dirname}/fixtures/less/simple.less"
+                url: '/simple.css'
+            new rack.LessAsset
                 filename: "#{__dirname}/fixtures/less/dependency.less"
                 url: '/style.css'
         ]
