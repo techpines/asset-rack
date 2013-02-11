@@ -9,7 +9,7 @@ describe 'a less asset', ->
     app = null
 
     it 'should work', (done) ->
-        compiled = fs.readFileSync './fixtures/less/simple.css', 'utf8'
+        compiled = fs.readFileSync "#{__dirname}/fixtures/less/simple.css", 'utf8'
         app = express().http()
         app.use new rack.LessAsset
             filename: "#{__dirname}/fixtures/less/simple.less"
@@ -21,7 +21,7 @@ describe 'a less asset', ->
                 done()
 
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync './fixtures/less/simple.min.css', 'utf8'
+        compiled = fs.readFileSync "#{__dirname}/fixtures/less/simple.min.css", 'utf8'
         app = express().http()
         app.use new rack.LessAsset
             filename: "#{__dirname}/fixtures/less/simple.less"
