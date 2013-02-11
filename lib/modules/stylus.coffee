@@ -23,10 +23,11 @@ class exports.StylusAsset extends Asset
                     if @rack?
                         urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
                         results = css.match /url\s*\(\s*'([^']+)'\s*\)/g
-                        for result in results
-                            match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
-                            url = match[1]
-                            specificUrl = @rack.url url
-                            if specificUrl?
-                                css = css.replace result, "url('#{specificUrl}')"
+                        if results
+                            for result in results
+                                match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
+                                url = match[1]
+                                specificUrl = @rack.url url
+                                if specificUrl?
+                                    css = css.replace result, "url('#{specificUrl}')"
                     @emit 'created', contents: css

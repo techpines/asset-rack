@@ -33,7 +33,25 @@ describe 'a stylus asset', ->
                 body.should.equal compiled
                 done()
 
-    #TODO: it should work with a rack', ->
+    it 'should work with a rack', (done) ->
+        app = express().http()
+        app.use new rack.Rack [
+            new rack.Asset
+                url: '/background.png'
+                contents: 'not a real png'
+            new rack.StylusAsset
+                filename: "#{__dirname}/fixtures/stylus/simple.styl"
+                url: '/simple.css'
+            new rack.StylusAsset
+                filename: "#{__dirname}/fixtures/stylus/dependency.styl"
+                url: '/dependency.css'
+                compress: true
+        ]
+        app.listen 7076, ->
+            easyrequest 'http://localhost:7076/dependency.css', (error, response, body) ->
+                response.headers['content-type'].should.equal 'text/css'
+                # TODO: Test more thoroughly.
+                done()
         
     afterEach (done) -> process.nextTick ->
         app.server.close done
