@@ -11,6 +11,7 @@ class exports.StaticAssets extends Asset
     create: (options) ->
         @dirname = pathutil.resolve options.dirname
         @urlPrefix = options.urlPrefix
+        @urlPrefix += '/' unless @urlPrefix.substr(-1, 1) is '/'
         @assets = []
         @getAssets @dirname, @urlPrefix, =>
             @emit 'created'
@@ -27,8 +28,7 @@ class exports.StaticAssets extends Asset
                     @assets.concat newAssets
                     next()
             else
-                basePath = pathutil.dirname @dirname
-                url = path.replace basePath, ''
+                url = prefix + filename
                 ext = pathutil.extname path
                 mimetype = mime.types[ext.slice(1, ext.length)]
                 contents = fs.readFileSync path
