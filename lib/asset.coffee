@@ -83,7 +83,7 @@ class exports.Asset extends EventEmitter
 
     createHeaders: ->
         @headers['content-type'] ?= @mimetype
-        @headers['content-length'] = @contents.length
+        #@headers['content-length'] = @contents.length
         if @maxAge?
             @headers['cache-control'] ?= "public, max-age=#{@maxAge}"
 
