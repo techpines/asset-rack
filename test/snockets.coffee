@@ -7,12 +7,13 @@ fs = require 'fs'
 
 describe 'a snockets asset', ->
     app = null
+    fixturesDir = "#{__dirname}/fixtures/snockets"
 
     it 'should work', (done) ->
-        compiled = fs.readFileSync './fixtures/snockets/app.js', 'utf8'
+        compiled = fs.readFileSync "#{fixturesDir}/app.js", 'utf8'
         app = express().http()
         app.use new rack.SnocketsAsset
-            filename: "#{__dirname}/fixtures/snockets/app.coffee"
+            filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
@@ -21,10 +22,10 @@ describe 'a snockets asset', ->
                 done()
 
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync './fixtures/snockets/app.min.js', 'utf8'
+        compiled = fs.readFileSync "#{fixturesDir}/app.min.js", 'utf8'
         app = express().http()
         app.use new rack.SnocketsAsset
-            filename: "#{__dirname}/fixtures/snockets/app.coffee"
+            filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
             compress: true
         app.listen 7076, ->
