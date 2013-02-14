@@ -64,19 +64,23 @@ class exports.Rack extends EventEmitter
         options.key = options.secretKey
         deploy = =>
             client = pkgcloud.storage.createClient options
-            async.forEachSeries @assets, (asset, next) =>
+            assets = @assets
+            # Big time hack for rackspace, first asset doesn't upload, very strange.
+            # Might be bug with pkgcloud.  This hack just uploads the first file again
+            # at the end.
+            assets = @assets.concat @assets[0] if options.provider is 'rackspace'
+            async.forEachSeries assets, (asset, next) =>
                 stream = new BufferStream asset.contents
                 url = asset.specificUrl.slice 1, asset.specificUrl.length
                 headers = {}
                 for key, value of asset.headers
                     headers[key] = value
-                headers['x-amz-acl'] = 'public-read'
+                headers['x-amz-acl'] = 'public-read' if options.provider is 'amazon'
                 options =
                     container: options.container
                     remote: url
                     headers: headers
                     stream: stream
-
                 client.upload options, (error) ->
                     return next error if error?
                     next()
