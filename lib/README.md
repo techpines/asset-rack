@@ -240,6 +240,7 @@ new LessAsset({
 
 * `url`: The url that should retrieve this resource.
 * `filename`: Filename of the less file you want to serve.
+* `compress` (defaults to false): Whether to minify the css.
 
 ## Templates
 
