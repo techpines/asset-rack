@@ -20,7 +20,7 @@ describe 'a jade asset', ->
             url: '/templates.js'
         easyrequest 'http://localhost:7076/templates.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled
+            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -41,7 +41,7 @@ describe 'a jade asset', ->
         ]
         easyrequest 'http://localhost:7076/templates-rack.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled
+            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -60,7 +60,7 @@ describe 'a jade asset', ->
             compress: true
         easyrequest 'http://localhost:7076/templates.min.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled
+            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
