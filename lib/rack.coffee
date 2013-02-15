@@ -81,14 +81,15 @@ class exports.Rack extends EventEmitter
                 headers = {}
                 for key, value of asset.headers
                     headers[key] = value
+
                 headers['x-amz-acl'] = 'public-read' if options.provider is 'amazon'
-                options =
+                clientOptions =
                     container: options.container
                     remote: url
                     headers: headers
                     stream: stream
 
-                client.upload options, (error) ->
+                client.upload clientOptions, (error) ->
                     return next error if error?
                     next()
             , (error) ->
