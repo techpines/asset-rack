@@ -178,7 +178,15 @@ exports.rethrow = function rethrow(err, filename, lineno){
 
 })({});
 window.Templates = {
-'dependency': function anonymous(locals, attrs, escape, rethrow, merge) {
+'test': function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<div class="container"><table><tr><td>I</td><td>like</td></tr><tr><td>Tables</td><td>!</td></tr></table></div>');
+}
+return buf.join("");
+},'dependency': function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
@@ -188,12 +196,12 @@ buf.push(attrs({ 'src':("" + (assets.url('/image.png')) + "") }, {"src":true}));
 buf.push('/>');
 }
 return buf.join("");
-},'test': function anonymous(locals, attrs, escape, rethrow, merge) {
+},'user': function anonymous(locals, attrs, escape, rethrow, merge) {
 attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="container"><table><tr><td>I</td><td>like</td></tr><tr><td>Tables</td><td>!</td></tr></table></div>');
+buf.push('<div id="user"><ul><li>First: ' + escape((interp = users[0]) == null ? '' : interp) + '</li><li>Second: ' + escape((interp = users[1]) == null ? '' : interp) + '</li></ul></div>');
 }
 return buf.join("");
 },'fun/fun': function anonymous(locals, attrs, escape, rethrow, merge) {
@@ -202,14 +210,6 @@ var buf = [];
 with (locals || {}) {
 var interp;
 buf.push('<p>i like to have fun</p>');
-}
-return buf.join("");
-},'user': function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
-var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<div id="user"><ul><li>First: ' + escape((interp = users[0]) == null ? '' : interp) + '</li><li>Second: ' + escape((interp = users[1]) == null ? '' : interp) + '</li></ul></div>');
 }
 return buf.join("");
 },};
