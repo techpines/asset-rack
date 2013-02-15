@@ -1,4 +1,3 @@
-
 async = require 'async'
 pkgcloud = require 'pkgcloud'
 {BufferStream, extend} = require('./util')
@@ -36,22 +35,28 @@ class exports.Rack extends EventEmitter
             return @emit 'error', error if error?
             @emit 'complete'
 
+    ready: (task) ->
+        if @completed
+            task()
+        else @on 'complete', task
+
     createClientRack: ->
         clientRack =  new ClientRack
         clientRack.rack = this
         clientRack.emit 'start'
         clientRack
-    
+
     addClientRack: (next) ->
         clientRack = @createClientRack()
         clientRack.on 'complete', =>
             @assets.push clientRack
             next()
-        
+
     handle: (request, response, next) ->
-        response.locals assets: this
+        response.locals assets: this if response.locals # only present with Express
         handle = =>
             for asset in @assets
+                console.log "asset '#{asset.url}':", asset unless asset.checkUrl
                 check = asset.checkUrl request.url
                 return asset.respond request, response if check
             next()
@@ -64,6 +69,7 @@ class exports.Rack extends EventEmitter
         options.key = options.secretKey
         deploy = =>
             client = pkgcloud.storage.createClient options
+
             assets = @assets
             # Big time hack for rackspace, first asset doesn't upload, very strange.
             # Might be bug with pkgcloud.  This hack just uploads the first file again
@@ -81,6 +87,7 @@ class exports.Rack extends EventEmitter
                     remote: url
                     headers: headers
                     stream: stream
+
                 client.upload options, (error) ->
                     return next error if error?
                     next()

@@ -49,6 +49,11 @@ class exports.Asset extends EventEmitter
             @maxAge ?= @defaultMaxAge
             return @create options unless @rack?
 
+    ready: (task) ->
+        if @completed
+            task()
+        else @on 'complete', task
+
     respond: (request, response) ->
         headers = {}
         if request.url is @url and @allowNoHashCache isnt true
@@ -57,10 +62,10 @@ class exports.Asset extends EventEmitter
             delete headers['cache-control']
         else
             headers = @headers
-        for key, value of headers
-            response.header key, value
-        return response.send @contents
-        
+
+        response.writeHead 200, headers
+        return response.end @contents
+
     checkUrl: (url) ->
         url is @specificUrl or (not @hash? and url is @url)
 
@@ -77,7 +82,7 @@ class exports.Asset extends EventEmitter
             handle()
         else @on 'complete', ->
             handle()
-        
+
     create: (options) ->
         @emit 'created'
 
@@ -103,7 +108,7 @@ class exports.Asset extends EventEmitter
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
-        
+
     isRelevantUrl: (specificUrl) ->
         baseUrl = @url.slice(0, @url.length - @ext.length)
         if specificUrl.indexOf baseUrl isnt -1 and @ext is pathutil.extname specificUrl
