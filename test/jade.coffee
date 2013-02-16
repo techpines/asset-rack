@@ -5,6 +5,9 @@ express = require 'express.io'
 easyrequest = require 'request'
 fs = require 'fs'
 
+# Note: Direct file comparisons for tests exhibited
+# cross platform testing issues. 
+
 describe 'a jade asset', ->
     app = null
     fixturesDir = "#{__dirname}/fixtures/jade"
@@ -14,13 +17,11 @@ describe 'a jade asset', ->
         app.listen 7076, done
 
     it 'should work', (done) ->
-        compiled = fs.readFileSync "#{fixturesDir}/templates.js", 'utf8'
         app.use new rack.JadeAsset
             dirname: fixturesDir
             url: '/templates.js'
         easyrequest 'http://localhost:7076/templates.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -41,7 +42,6 @@ describe 'a jade asset', ->
         ]
         easyrequest 'http://localhost:7076/templates-rack.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -54,20 +54,27 @@ describe 'a jade asset', ->
 
     it 'should work compressed', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/templates.min.js", 'utf8'
-        app.use new rack.JadeAsset
-            dirname: "#{fixturesDir}"
-            url: '/templates.min.js'
-            compress: true
+        app.use new rack.Rack [
+            new rack.JadeAsset
+                dirname: "#{fixturesDir}"
+                url: '/templates.js'
+            new rack.JadeAsset
+                dirname: "#{fixturesDir}"
+                url: '/templates.min.js'
+                compress: true
+        ]
+            
         easyrequest 'http://localhost:7076/templates.min.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
-            body.should.equal compiled.trimRight()
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
             window.Templates.test().should.equal testFile
             userFile = fs.readFileSync "#{fixturesDir}/user.html", 'utf8'
             window.Templates.user(users: ['fred', 'steve']).should.equal userFile
-            done()
+            easyrequest 'http://localhost:7076/templates.js', (error, response, bodyLong) ->
+                bodyLong.length.should.be.above(body.length)
+                done()
 
     afterEach (done) ->
         app.server.close done
