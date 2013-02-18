@@ -114,8 +114,8 @@ Which gives the hashed url.
 We have some professional grade assets included.
 
 #### For Javascript
-* [Browserify](https://github.com/techpines/asset-rack/tree/master/lib#browserify-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
-* [Snockets](https://github.com/techpines/asset-rack/tree/master/lib#snockets-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+* [Browserify](https://github.com/techpines/asset-rack/tree/master/lib#browserifyasset-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
+* [Snockets](https://github.com/techpines/asset-rack/tree/master/lib#snocketsasset-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
 
 #### For Stylesheets
 * [Less](http://github.com/techpines/asset-rack/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
