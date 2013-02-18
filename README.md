@@ -114,19 +114,19 @@ Which gives the hashed url.
 We have some professional grade assets included.
 
 #### For Javascript
-* [Browserify](https://github.com/techpines/asset-rack-new/tree/master/lib#browserify-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
-* [Snockets](https://github.com/techpines/asset-rack-new/tree/master/lib#snockets-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+* [Browserify](https://github.com/techpines/asset-rack/tree/master/lib#browserify-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
+* [Snockets](https://github.com/techpines/asset-rack/tree/master/lib#snockets-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
 
 #### For Stylesheets
-* [Less](http://github.com/techpines/asset-rack-new/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
-* [Stylus](https://github.com/techpines/asset-rack-new/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
+* [Less](http://github.com/techpines/asset-rack/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
+* [Stylus](https://github.com/techpines/asset-rack/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
 
 #### Templates
-* [Jade](https://github.com/techpines/asset-rack-new/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
-* [AngularTemplates](https://github.com/techpines/asset-rack-new/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
+* [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
+* [AngularTemplates](https://github.com/techpines/asset-rack/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
 
 #### Static
-* [StaticAssets](https://github.com/techpines/asset-rack-new/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
+* [StaticAssets](https://github.com/techpines/asset-rack/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
 
 ## Roll your own
 
@@ -149,7 +149,7 @@ class SuperCoolAsset extends rack.Asset
         @emit 'created'
 ```
 
-Checkout the [tutorial.](https://github.com/techpines/asset-rack-new/tree/master/lib#extending-the-asset-class)
+Checkout the [tutorial.](https://github.com/techpines/asset-rack/tree/master/lib#extending-the-asset-class)
 
 
 ## Deploying to the Cloud
