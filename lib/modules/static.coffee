@@ -42,6 +42,8 @@ class exports.StaticAssets extends Asset
                     asset.on 'complete', =>
                         @assets.push asset
                         next()
+                else
+                    next()
         , (error) ->
             next()
         
