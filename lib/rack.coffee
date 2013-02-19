@@ -56,7 +56,6 @@ class exports.Rack extends EventEmitter
         response.locals assets: this if response.locals # only present with Express
         handle = =>
             for asset in @assets
-                console.log "asset '#{asset.url}':", asset unless asset.checkUrl
                 check = asset.checkUrl request.url
                 return asset.respond request, response if check
             next()

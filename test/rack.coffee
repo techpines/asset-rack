@@ -1,4 +1,3 @@
-
 async = require 'async'
 should = require('chai').should()
 rack = require '../.'
@@ -81,7 +80,7 @@ describe 'a rack', ->
                 done()
             #easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
             #    throw new Error 'should not work' if response.statusCode is 200
-        
+
     it 'should set caches', (done) ->
         app = express().http()
         app.use new rack.AssetRack [
@@ -179,7 +178,6 @@ describe 'a rack', ->
                         next()
             ], ->
                 done()
-        
+
     afterEach (done) -> process.nextTick ->
         app.server.close done
-        
