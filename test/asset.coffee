@@ -1,4 +1,3 @@
-
 async = require 'async'
 should = require('chai').should()
 rack = require '../.'
@@ -8,14 +7,17 @@ fs = require 'fs'
 
 describe 'an asset', ->
     app = null
+    origUrl = '/blank.txt'
+    hashedUrl = 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt'
+    absoluteUrl = 'http://localhost:7076/blank.txt'
 
     it 'should work with no hash', (done) ->
         app = express().http()
         app.use asset = new rack.Asset
-            url: '/blank.txt',
+            url: origUrl,
             contents: 'asset-rack'
         app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+            easyrequest absoluteUrl, (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/plain'
                 should.not.exist response.headers['cache-control']
                 body.should.equal 'asset-rack'
@@ -24,10 +26,10 @@ describe 'an asset', ->
     it 'should work with hash', (done) ->
         app = express().http()
         app.use new rack.Asset
-            url: '/blank.txt',
+            url: origUrl,
             contents: 'asset-rack'
         app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
+            easyrequest hashedUrl, (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/plain'
                 response.headers['cache-control'].should.equal 'public, max-age=31536000'
                 body.should.equal 'asset-rack'
@@ -36,77 +38,96 @@ describe 'an asset', ->
     it 'should work with no hash option', (done) ->
         app = express().http()
         app.use asset = new rack.Asset
-            url: '/blank.txt',
+            url: origUrl,
             contents: 'asset-rack'
             hash: false
         app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
-                response.headers['content-type'].should.equal 'text/plain'
-                should.not.exist response.headers['cache-control']
-                body.should.equal 'asset-rack'
-                done()
-            easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
-                throw new Error 'should not work' if response.statusCode is 200
 
-    it 'should work with hash option', (done) ->
-        app = express().http()
-        app.use new rack.Asset
-            url: '/blank.txt'
-            contents: 'asset-rack'
-            hash: true
-        app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
-                throw new Error 'should not work' if response.statusCode is 200
-            easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
-                response.headers['content-type'].should.equal 'text/plain'
-                response.headers['cache-control'].should.equal 'public, max-age=31536000'
-                body.should.equal 'asset-rack'
-                done()
-        
-    it 'should set caches', (done) ->
-        app = express().http()
-        app.use new rack.Asset
-            url: '/blank.txt'
-            contents: 'asset-rack'
-            maxAge: 3600
-        app.listen 7076, ->
             async.parallel [
                 (next) ->
-                    easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+                    easyrequest absoluteUrl, (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         should.not.exist response.headers['cache-control']
                         body.should.equal 'asset-rack'
                         next()
-                    easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
+
+                (next) ->
+                    easyrequest hashedUrl, (error, response, body) ->
+                        throw new Error 'should not work' if response.statusCode is 200
+                        next()
+            ], done
+
+    it 'should work with hash option', (done) ->
+        app = express().http()
+        app.use new rack.Asset
+            url: origUrl
+            contents: 'asset-rack'
+            hash: true
+        app.listen 7076, ->
+
+            async.parallel [
+                (next) ->
+                    easyrequest absoluteUrl, (error, response, body) ->
+                        throw new Error 'should not work' if response.statusCode is 200
+                        next()
+
+                (next) ->
+                    easyrequest hashedUrl, (error, response, body) ->
+                        response.headers['content-type'].should.equal 'text/plain'
+                        response.headers['cache-control'].should.equal 'public, max-age=31536000'
+                        body.should.equal 'asset-rack'
+                        next()
+
+            ], done
+
+    it 'should set caches', (done) ->
+        app = express().http()
+        app.use new rack.Asset
+            url: origUrl
+            contents: 'asset-rack'
+            maxAge: 3600
+        app.listen 7076, ->
+
+            async.parallel [
+                (next) ->
+                    easyrequest absoluteUrl, (error, response, body) ->
+                        response.headers['content-type'].should.equal 'text/plain'
+                        should.not.exist response.headers['cache-control']
+                        body.should.equal 'asset-rack'
+                        next()
+
+                (next) ->
+                    easyrequest hashedUrl, (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
+            ], done
 
     it 'should set caches with allow no hash option', (done) ->
         app = express().http()
         app.use new rack.Asset
-            url: '/blank.txt'
+            url: origUrl
             contents: 'asset-rack'
             maxAge: 3600
             allowNoHashCache: true
         app.listen 7076, ->
+
             async.parallel [
                 (next) ->
-                    easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+                    easyrequest absoluteUrl, (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-                    easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
+
+                (next) ->
+                    easyrequest hashedUrl, (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
-        
+            ], done
+
     afterEach (done) -> process.nextTick ->
         app.server.close done

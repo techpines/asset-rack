@@ -1,4 +1,3 @@
-
 should = require('chai').should()
 rack = require '../.'
 express = require 'express.io'
