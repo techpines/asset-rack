@@ -1,10 +1,7 @@
 fs = require 'fs'
 pathutil = require 'path'
-async = require 'async'
 mime = require 'mime'
-{EventEmitter} = require 'events'
 
-rack = require '../index'
 {Asset} = require '../.'
 {walk} = require '../helpers'
 
@@ -14,18 +11,23 @@ class exports.StaticAssets extends Asset
         @urlPrefix = options.urlPrefix
         @urlPrefix += '/' unless @urlPrefix.substr(-1, 1) is '/'
         @assets = []
+        {@filter} = options
         @getAssets @dirname, @urlPrefix, =>
             @emit 'created'
 
     getAssets: (dirname, prefix='', done) ->
 
-        loadAsset = (path, next) ->
-            relPath = pathutil.relative dirname, path
+        loadAsset = (path, next) =>
+            relPath = if dirname == path
+                pathutil.basename path
+            else
+                pathutil.relative dirname, path
+
             url = pathutil.join prefix, relPath
             ext = pathutil.extname path
             mimetype = mime.types[ext.slice(1, ext.length)]
-            fs.readFile path, (err, contents) =>
-                if mimetype?
+            if mimetype?
+                fs.readFile path, (err, contents) =>
                     asset = new Asset
                         url: url
                         contents: contents
@@ -34,7 +36,9 @@ class exports.StaticAssets extends Asset
                         maxAge: @maxAge
                     asset.on 'complete', =>
                         next null, asset
+            else
+                next()
 
-        walk dirname, loadAsset, (err, assets) =>
-            @assets.push assets... if assets?.length > 0
+        walk {processFile: loadAsset, filter: @filter}, dirname, (err, assets) =>
+            @assets.push assets...
             done err
