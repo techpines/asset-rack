@@ -1,11 +1,12 @@
-
 fs = require 'fs'
 pathutil = require 'path'
 async = require 'async'
-rack = require '../index'
 mime = require 'mime'
-EventEmitter = require('events').EventEmitter
-Asset = require('../.').Asset
+{EventEmitter} = require 'events'
+
+rack = require '../index'
+{Asset} = require '../.'
+{walk} = require '../helpers'
 
 class exports.StaticAssets extends Asset
     create: (options) ->
@@ -15,23 +16,15 @@ class exports.StaticAssets extends Asset
         @assets = []
         @getAssets @dirname, @urlPrefix, =>
             @emit 'created'
-    
-    getAssets: (dirname, prefix='', next) ->
-        filenames = fs.readdirSync dirname
-        async.forEachSeries filenames, (filename, next) =>
-            return next() if filename.slice(0, 1) is '.'
-            path = pathutil.join dirname, filename
-            stats = fs.statSync path
-            if stats.isDirectory()
-                newPrefix = "#{prefix}#{pathutil.basename(path)}/"
-                @getAssets path, newPrefix, (newAssets) =>
-                    @assets.concat newAssets
-                    next()
-            else
-                url = prefix + filename
-                ext = pathutil.extname path
-                mimetype = mime.types[ext.slice(1, ext.length)]
-                contents = fs.readFileSync path
+
+    getAssets: (dirname, prefix='', done) ->
+
+        loadAsset = (path, next) ->
+            relPath = pathutil.relative dirname, path
+            url = pathutil.join prefix, relPath
+            ext = pathutil.extname path
+            mimetype = mime.types[ext.slice(1, ext.length)]
+            fs.readFile path, (err, contents) =>
                 if mimetype?
                     asset = new Asset
                         url: url
@@ -40,8 +33,8 @@ class exports.StaticAssets extends Asset
                         hash: @hash
                         maxAge: @maxAge
                     asset.on 'complete', =>
-                        @assets.push asset
-                        next()
-        , (error) ->
-            next()
-        
+                        next null, asset
+
+        walk dirname, loadAsset, (err, assets) =>
+            @assets.push assets... if assets?.length > 0
+            done err
