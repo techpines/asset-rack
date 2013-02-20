@@ -20,7 +20,7 @@ class exports.Rack extends EventEmitter
         for asset in assets
             asset.rack = this
         @assets = []
-        async.forEachSeries assets, (asset, next) =>
+        async.forEach assets, (asset, next) =>
             asset.on 'error', (error) =>
                 next error
             asset.on 'complete', =>
