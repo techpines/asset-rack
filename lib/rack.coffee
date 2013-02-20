@@ -66,7 +66,7 @@ class exports.Rack extends EventEmitter
     deploy: (options, next) ->
         options.keyId = options.accessKey
         options.key = options.secretKey
-        deploy = =>
+        @ready =>
             client = pkgcloud.storage.createClient options
 
             assets = @assets
@@ -74,7 +74,7 @@ class exports.Rack extends EventEmitter
             # Might be bug with pkgcloud.  This hack just uploads the first file again
             # at the end.
             assets = @assets.concat @assets[0] if options.provider is 'rackspace'
-            async.forEachSeries assets, (asset, next) =>
+            uploadAsset = (asset, next) =>
                 stream = new BufferStream asset.contents
                 url = asset.specificUrl.slice 1, asset.specificUrl.length
                 headers = {}
@@ -91,22 +91,21 @@ class exports.Rack extends EventEmitter
                 client.upload clientOptions, (error) ->
                     return next error if error?
                     next()
-            , (error) ->
-                if error?
-                    return next error if next?
-                    throw error
-                next() if next?
-        if @completed
-            deploy()
-        else @on 'complete', deploy
+
+            async.forEachSeries assets, uploadAsset, (error) ->
+                if next?
+                  return next error
+                else if error?
+                  throw error
 
     tag: (url) ->
         for asset in @assets
             return asset.tag() if asset.url is url
-        throw new Error "No asset found for url: #{url}"
+        return undefined
 
     url: (url) ->
         for asset in @assets
             return asset.specificUrl if url is asset.url
+        return undefined
 
     @extend: extend
