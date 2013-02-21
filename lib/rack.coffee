@@ -1,8 +1,10 @@
 async = require 'async'
 pkgcloud = require 'pkgcloud'
-{BufferStream, extend} = require('./util')
-ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
+
+{BufferStream, extend} = require('./util')
+ClientRack = require('./client').ClientRack
+AmdRack = require('./modules/amd').AmdRack
 
 class exports.Rack extends EventEmitter
     constructor: (assets, options) ->
@@ -50,7 +52,19 @@ class exports.Rack extends EventEmitter
         clientRack = @createClientRack()
         clientRack.on 'complete', =>
             @assets.push clientRack
-            next()
+            next null, clientRack
+
+    createAmdRack: (options) ->
+        amdRack = new AmdRack options
+        amdRack.rack = this
+        amdRack.emit 'start'
+        amdRack
+
+    addAmdRack: (options, next) ->
+        amdRack = @createAmdRack(options)
+        amdRack.on 'complete', =>
+            @assets.push amdRack
+            next null, amdRack
 
     handle: (request, response, next) ->
         response.locals assets: this if response.locals # only present with Express
