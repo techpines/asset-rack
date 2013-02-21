@@ -2,6 +2,7 @@
 Asset = require('./.').Asset
 
 class exports.ClientRack extends Asset
+    mimetype: 'application/javascript'
     url: '/asset-rack.js'
     create: (options) ->
         @assets = {}
