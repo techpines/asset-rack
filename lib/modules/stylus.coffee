@@ -4,6 +4,8 @@ pathutil = require 'path'
 nib = require 'nib'
 stylus = require 'stylus'
 Asset = require('../.').Asset
+urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
+urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.StylusAsset extends Asset
     create: (options) ->
@@ -21,13 +23,13 @@ class exports.StylusAsset extends Asset
                 .render (error, css) =>
                     return @emit 'error', error if error?
                     if @rack?
-                        urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
-                        results = css.match /url\s*\(\s*'([^']+)'\s*\)/g
+                        results = css.match urlRegexGlobal
                         if results
                             for result in results
-                                match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
-                                url = match[1]
+                                match = urlRegex.exec result
+                                quote = match[1]
+                                url = match[2]
                                 specificUrl = @rack.url url
                                 if specificUrl?
-                                    css = css.replace result, "url('#{specificUrl}')"
+                                    css = css.replace result, "url(#{quote}#{specificUrl}#{quote})"
                     @emit 'created', contents: css

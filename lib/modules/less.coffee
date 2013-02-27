@@ -3,6 +3,8 @@ less = require 'less'
 fs = require 'fs'
 pathutil = require 'path'
 Asset = require('../.').Asset
+urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
+urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.LessAsset extends Asset
     create: (options) ->
@@ -22,15 +24,15 @@ class exports.LessAsset extends Asset
                 return @emit 'error', error if error?
                 raw = tree.toCSS compress: @compress
                 if @rack?
-                    urlRegex = "url\s*\(\s*'([^']+)'\s*\)"
-                    results = raw.match /url\s*\(\s*'([^']+)'\s*\)/g
+                    results = raw.match urlRegexGlobal
                     if results
                         for result in results
-                            match = /url\s*\(\s*'([^']+)'\s*\)/.exec result
-                            url = match[1]
+                            match = urlRegex.exec result
+                            quote = match[1]
+                            url = match[2]
                             specificUrl = @rack.url url
                             if specificUrl?
-                                raw = raw.replace result, "url('#{specificUrl}')"
+                                raw = raw.replace result, "url(#{quote}#{specificUrl}#{quote})"
                 @emit 'created', contents: raw
         catch error
             @emit 'error', error
