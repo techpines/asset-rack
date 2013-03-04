@@ -13,6 +13,7 @@ class exports.JadeAsset extends Asset
         @separator = options.separator or '/'
         @compress = options.compress or false
         @clientVariable = options.clientVariable or 'Templates'
+        @beforeCompile = options.beforeCompile or null
         @fileObjects = @getFileobjects @dirname
         return @createContents() unless @rack
         @clientRack = @rack.createClientRack()
@@ -45,6 +46,7 @@ class exports.JadeAsset extends Asset
                 continue if filename.indexOf('.jade') is -1
                 funcName = "#{prefix}#{pathutil.basename(path, '.jade')}"
                 fileContents = fs.readFileSync path, 'utf8'
+                fileContents = @beforeCompile fileContents if @beforeCompile?
                 compiled = jade.compile fileContents,
                     client: true,
                     compileDebug: false,
