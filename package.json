@@ -26,7 +26,7 @@
         "chai": "1.4.2"
     },
     "scripts": {
-        "test": "mocha --compilers coffee:coffee-script test/test.coffee --reporter spec --timeout 5000 --ignore-leaks",
+        "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/test.coffee --reporter spec --timeout 5000 --ignore-leaks",
         "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
         "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
         "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
