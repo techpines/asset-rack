@@ -186,6 +186,29 @@ assets.deploy(
 }, function(error) {})
 ```
 
+### Running in Production Mode
+
+If you provide the options `configFile` in your deploy options then a config file will be written:
+
+```js
+assets.deploy(
+    configFile: __dirname + '/rack.json'
+    provider: 'amazon'
+    container: ...
+)
+```
+
+Then you can create your assets from the file like this:
+
+```js
+assets = rack.fromConfigFile({
+    configFile: __dirname + '/rack.json'
+    hostname: 'cdn.example.com'
+});
+app.use(assets);
+```
+
+And now all of your server side templates will reference your CDN.  Also, if you do happen to hit one of your static urls on the server, then you will be redirected to the CDN.
 
 ## FAQ
 

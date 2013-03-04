@@ -1,6 +1,8 @@
 
 async = require 'async'
 pkgcloud = require 'pkgcloud'
+fs = require 'fs'
+pathutil = require 'path'
 {BufferStream, extend} = require('./util')
 ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
@@ -59,6 +61,12 @@ class exports.Rack extends EventEmitter
             handle()
         else @on 'complete', handle
 
+    writeConfigFile: (filename) ->
+        config = {}
+        for asset in @assets
+            config[asset.url] = asset.specificUrl
+        fs.writeFileSync filename, JSON.stringify(config)
+
     deploy: (options, next) ->
         options.keyId = options.accessKey
         options.key = options.secretKey
@@ -84,10 +92,12 @@ class exports.Rack extends EventEmitter
                 client.upload clientOptions, (error) ->
                     return next error if error?
                     next()
-            , (error) ->
+            , (error) =>
                 if error?
                     return next error if next?
                     throw error
+                if options.configFile?
+                    @writeConfigFile options.configFile
                 next() if next?
         if @completed
             deploy()
@@ -103,3 +113,30 @@ class exports.Rack extends EventEmitter
             return asset.specificUrl if url is asset.url
 
     @extend: extend
+
+class ConfigRack
+    constructor: (options) ->
+        throw new Error('options.configFile is required') unless options.configFile?
+        throw new Error('options.hostname is required') unless options.hostname?
+        @assetMap = require options.configFile
+        @hostname = options.hostname
+        
+    handle: (request, response, next) ->
+        response.locals assets: this
+        for url, specificUrl of @assetMap
+            if request.url is url or request.url is specificUrl
+                return response.redirect "//#{@hostname}#{specificUrl}"
+        next()
+    tag: (url) ->
+        switch pathutil.extname(url)
+            when '.js'
+                tag = "\n<script type=\"text/javascript\" "
+                return tag += "src=\"//#{@hostname}#{@assetMap[url]}\"></script>"
+            when '.css'
+                return "\n<link rel=\"stylesheet\" href=\"//#{@hostname}#{@assetMap[url]}\">"
+    url: (url) ->
+        return "//#{@hostname}#{@assetMap[url]}"
+        
+        
+exports.fromConfigFile = (options) ->
+    return new ConfigRack(options)
