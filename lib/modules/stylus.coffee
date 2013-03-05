@@ -15,7 +15,11 @@ class exports.StylusAsset extends Asset
 
         fs.readFile @filename, 'utf8', (error, data) =>
             return @emit 'error', error if error?
-            stylus(data)
+            styl = stylus(data)
+
+            options.config?.call styl, styl
+
+            styl
                 .set('filename', @filename)
                 .set('compress', @compress)
                 .set('include css', true)
