@@ -280,6 +280,7 @@ $('body').append(Templates['user/info']());
 * `compress` (defaults to false): Whether to minify the javascript or not.
 * `clientVariable` (defaults to 'Templates'): Client side template
 variable.
+* `beforeCompile`: A function that takes the jade template as a string and returns a new jade template string before it's compiled into javascript.
 
 ### AngularTemplatesAsset
 
