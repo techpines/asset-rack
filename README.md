@@ -239,6 +239,35 @@ Asset Rack is a static web framework, and at it's core there are only two abstra
 
 Wintersmith could consume Asset Rack as a dependency, and if something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need more flexibilty and power, then go with Asset Rack.
 
+# Changelog
+
+### 2.1.2
+
+* Added ability to configure Stylus, thanks to @noc7c9.
+
+```coffee
+new StylusAsset
+  url: '/style.css'
+  filename: __dirname + '/style/fun.styl'
+  config: ->
+    @use bootstrap()
+    @define 'setting', 90
+```
+
+And for javascript:
+
+```js
+new StylusAsset({
+  url: '/style.css',
+  filename: __dirname + '/style/fun.styl',
+  config: function (stylus) {
+    stylus // using "this" here seems a little unnatural
+      .use(bootstrap())
+      .define('setting', 90);
+  }
+});
+```
+
 # License
 
 ©2012 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
