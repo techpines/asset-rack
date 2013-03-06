@@ -11,15 +11,21 @@ class exports.StylusAsset extends Asset
     create: (options) ->
         @filename = pathutil.resolve options.filename
         @compress = options.compress
-        @compress ?= false
+        @compress ?= process.env.NODE_ENV == 'production'
+        @config = options.config
+        @config ?= ->
+          @use nib()
 
         fs.readFile @filename, 'utf8', (error, data) =>
             return @emit 'error', error if error?
-            stylus(data)
-                .set('filename', @filename)
+            styl = stylus(data)
                 .set('compress', @compress)
                 .set('include css', true)
-                .use(nib())
+
+            @config.call styl, styl
+
+            styl
+                .set('filename', @filename)
                 .render (error, css) =>
                     return @emit 'error', error if error?
                     if @rack?
