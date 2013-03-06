@@ -11,7 +11,7 @@ class exports.StylusAsset extends Asset
     create: (options) ->
         @filename = pathutil.resolve options.filename
         @compress = options.compress
-        @compress ?= false
+        @compress ?= process.env.NODE_ENV == 'production'
         @config = options.config
         @config ?= ->
           @use nib()
