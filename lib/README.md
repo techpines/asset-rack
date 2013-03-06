@@ -240,7 +240,30 @@ new LessAsset({
 
 * `url`: The url that should retrieve this resource.
 * `filename`: Filename of the less file you want to serve.
-* `compress` (defaults to false): Whether to minify the css.
+* `compress` (defaults to false, or true in production mode): Whether to minify the css.
+* `config`: A function that allows custom configuration of the stylus object:
+```coffee
+new StylusAsset
+  url: '/style.css'
+  filename: __dirname + '/style/fun.styl'
+  config: ->
+    @use bootstrap()
+    @define 'setting', 90
+```
+
+And javascript: 
+```js
+new StylusAsset({
+  url: '/style.css',
+  filename: __dirname + '/style/fun.styl',
+  config: function (stylus) {
+    stylus // using "this" here seems a little unnatural
+      .use(bootstrap())
+      .define('setting', 90);
+  }
+});
+```
+
 
 ## Templates
 
