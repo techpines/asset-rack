@@ -313,7 +313,7 @@ You can read more about angularjs [here](http://angularjs.org/).
 ```javascript
 new AngularTemplatesAsset({
     url: '/js/templates.js',
-    directory: __dirname + '/templates'
+    dirname: __dirname + '/templates'
 });
 ```
 
