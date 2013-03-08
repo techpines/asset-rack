@@ -8,8 +8,9 @@ async = require 'async'
 class exports.DynamicAssets extends Asset
     create: (options) ->
         @dirname = pathutil.resolve options.dirname
-        {@type, @urlPrefix, @options, @filter} = options
+        {@type, @urlPrefix, @options, @filter, @rewriteExt} = options
         @urlPrefix += '/' unless @urlPrefix.slice(-1) is '/'
+        @rewriteExt = '.' + @rewriteExt if @rewriteExt? and @rewriteExt[0] isnt '.'
         @options ?= {}
         @options.hash = @hash
         @options.maxAge = @maxAge
@@ -19,10 +20,19 @@ class exports.DynamicAssets extends Asset
           ignoreFolders: true
           filter: @filter
           , (file, done) =>
+            url = pathutil.dirname(file.relpath)
+            url = url.split pathutil.sep
+            url = [] if url[0] is '.'
+            if @rewriteExt?
+              url.push file.namenoext + @rewriteExt
+            else
+              url.push file.name
+
             opts =
-                url: @urlPrefix + file.relpath
+                url: @urlPrefix + url.join '/'
                 filename: file.path
             opts[k] = v for own k, v of @options
+
             asset = new @type opts
             asset.on 'complete', =>
                 @assets.push asset
