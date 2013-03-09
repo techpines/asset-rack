@@ -2,6 +2,7 @@
 fs = require 'fs'
 pathutil = require 'path'
 async = require 'async'
+mime = require 'mime'
 {Asset} = require '../.'
 {walk} = require '../util'
 
@@ -10,6 +11,7 @@ class exports.DynamicAssets extends Asset
         @dirname = pathutil.resolve options.dirname
         {@type, @urlPrefix, @options, @filter, @rewriteExt} = options
         @urlPrefix += '/' unless @urlPrefix.slice(-1) is '/'
+        @rewriteExt ?= mime.extensions[@type.mimetype] if @type.mimetype?
         @rewriteExt = '.' + @rewriteExt if @rewriteExt? and @rewriteExt[0] isnt '.'
         @options ?= {}
         @options.hash = @hash

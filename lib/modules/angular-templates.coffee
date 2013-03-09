@@ -4,6 +4,8 @@ uglify = require 'uglify-js'
 Asset = require('../index').Asset
 
 class exports.AngularTemplatesAsset extends Asset
+    @mimetype: 'application/javascript'
+
     create: (options) ->
         options.dirname ?= options.directory # for backwards compatiblity
         @dirname = pathutil.resolve options.dirname
