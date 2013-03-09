@@ -11,7 +11,7 @@ class StaticAsset extends Asset
         @filename = pathutil.resolve options.filename
         @mimetype ?= mime.types[pathutil.extname(@filename).slice 1] || 'text/plain'
 
-        fs.readFile @filename, 'utf8', (error, data) =>
+        fs.readFile @filename, (error, data) =>
             return @emit 'error', error if error?
             @emit 'created', contents: data
 
