@@ -1,0 +1,12 @@
+.content-navigation {
+  border-color: #33aa33;
+  color: #288728; }
+
+.border {
+  padding: 8px;
+  margin: 8px;
+  border-color: #33aa33; }
+
+body {
+  background-color: #33aa33;
+  background-image: url("/background.png"); }

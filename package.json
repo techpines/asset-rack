@@ -1,36 +1,39 @@
 {
-    "name": "asset-rack",
-    "version": "2.1.2",
-    "description": "Static Web Framework for Nodejs",
-    "author": "Brad Carleton <brad@techpines.com>",
-    "repository": "https://github.com/techpines/asset-rack",
-    "dependencies": {
-        "browserify": "1.17.3",
-        "snockets": "1.3.8",
-        "uglify-js": "2.2.4",
-        "async": "0.1.22",
-        "pkgcloud": "0.6.6",
-        "less": "1.3.3",
-        "jade": "0.27.7",
-        "mime": "1.2.7",
-        "nib": "0.9.1",
-        "stylus": "0.32.0",
-        "underscore": "1.4.4",
-        "coffee-script": "1.4.0",
-        "markdown": "0.4.0"
-    },
-    "devDependencies": {
-        "express.io": "1.1.8",
-        "request": "2.12.0",
-        "mocha": "1.8.1",
-        "chai": "1.4.2"
-    },
-    "scripts": {
-        "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/test.coffee --reporter spec --timeout 5000 --ignore-leaks",
-        "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
-        "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
-        "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
-    },
-    "main": "switch.js",
-    "engines": { "node":">= 0.5.0" }
+  "name": "asset-rack",
+  "version": "2.1.2",
+  "description": "Static Web Framework for Nodejs",
+  "author": "Brad Carleton <brad@techpines.com>",
+  "repository": "https://github.com/techpines/asset-rack",
+  "dependencies": {
+    "browserify": "1.17.3",
+    "snockets": "1.3.8",
+    "uglify-js": "2.2.4",
+    "async": "0.1.22",
+    "pkgcloud": "0.6.6",
+    "less": "1.3.3",
+    "jade": "0.27.7",
+    "mime": "1.2.7",
+    "nib": "0.9.1",
+    "stylus": "0.32.0",
+    "underscore": "1.4.4",
+    "coffee-script": "1.4.0",
+    "markdown": "0.4.0",
+    "node-sassy": "0.0.1"
+  },
+  "devDependencies": {
+    "express.io": "1.1.8",
+    "request": "2.12.0",
+    "mocha": "1.8.1",
+    "chai": "1.4.2"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/test.coffee --reporter spec --timeout 5000 --ignore-leaks",
+    "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
+    "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
+    "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
+  },
+  "main": "switch.js",
+  "engines": {
+    "node": ">= 0.5.0"
+  }
 }
