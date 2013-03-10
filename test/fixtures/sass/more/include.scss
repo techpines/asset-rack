@@ -1,0 +1,13 @@
+$purple: #33aa33;
+$margin: 16px;
+
+.content-navigation {
+  border-color: $purple;
+  color: darken($purple, 9%);
+}
+
+.border {
+  padding: $margin / 2;
+  margin: $margin / 2;
+  border-color: $purple;
+}
