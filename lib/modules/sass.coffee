@@ -9,6 +9,8 @@ urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.SassAsset extends Asset
+    @mimetype: 'text/css'
+
     create: (options) ->
         @filename = pathutil.resolve options.filename
         @paths = options.paths
