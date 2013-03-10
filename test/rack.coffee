@@ -32,8 +32,7 @@ describe 'a rack', ->
                         should.not.exist response.headers['cache-control']
                         body.should.equal 'test-again'
                         next()
-            ], ->
-                done()
+            ], done
 
     it 'should work with hash', (done) ->
         app = express().http()
@@ -58,13 +57,18 @@ describe 'a rack', ->
                 hash: false
         ]
         app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
-                response.headers['content-type'].should.equal 'text/plain'
-                should.not.exist response.headers['cache-control']
-                body.should.equal 'asset-rack'
-                done()
-            #easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
-            #    throw new Error 'should not work' if response.statusCode is 200
+            async.parallel [
+                (next) ->
+                    easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+                        response.headers['content-type'].should.equal 'text/plain'
+                        should.not.exist response.headers['cache-control']
+                        body.should.equal 'asset-rack'
+                        next()
+                (next) ->
+                    easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
+                        response.statusCode.should.equal 404
+                        next()
+            ], done
 
     it 'should work with hash option', (done) ->
         app = express().http()
@@ -72,16 +76,22 @@ describe 'a rack', ->
             new rack.Asset
                 url: '/blank.txt'
                 contents: 'asset-rack'
+                hash: true
         ]
         app.listen 7076, ->
-            easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
-                response.headers['content-type'].should.equal 'text/plain'
-                response.headers['cache-control'].should.equal 'public, max-age=31536000'
-                body.should.equal 'asset-rack'
-                done()
-            #easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
-            #    throw new Error 'should not work' if response.statusCode is 200
-        
+            async.parallel [
+                (next) ->
+                    easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
+                        response.headers['content-type'].should.equal 'text/plain'
+                        response.headers['cache-control'].should.equal 'public, max-age=31536000'
+                        body.should.equal 'asset-rack'
+                        next()
+                (next) ->
+                    easyrequest 'http://localhost:7076/blank.txt', (error, response, body) ->
+                        response.statusCode.should.equal 404
+                        next()
+            ], done
+
     it 'should set caches', (done) ->
         app = express().http()
         app.use new rack.AssetRack [
@@ -98,13 +108,13 @@ describe 'a rack', ->
                         should.not.exist response.headers['cache-control']
                         body.should.equal 'asset-rack'
                         next()
+                (next) ->
                     easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
+            ], done
 
     it 'should set caches with allow no hash option', (done) ->
         app = express().http()
@@ -123,13 +133,13 @@ describe 'a rack', ->
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
+                (next) ->
                     easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
+            ], done
 
     it 'should set caches for globals', (done) ->
         app = express().http()
@@ -147,13 +157,13 @@ describe 'a rack', ->
                         should.not.exist response.headers['cache-control']
                         body.should.equal 'asset-rack'
                         next()
+                (next) ->
                     easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
+            ], done
 
     it 'should set caches with allow no hash option for globals', (done) ->
         app = express().http()
@@ -172,14 +182,14 @@ describe 'a rack', ->
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
+                (next) ->
                     easyrequest 'http://localhost:7076/blank-8ac5a0913aa77cb8570e8f2b96e0a1e7.txt', (error, response, body) ->
                         response.headers['content-type'].should.equal 'text/plain'
                         response.headers['cache-control'].should.equal 'public, max-age=3600'
                         body.should.equal 'asset-rack'
                         next()
-            ], ->
-                done()
-        
+            ], done
+
     afterEach (done) -> process.nextTick ->
         app.server.close done
-        
+
