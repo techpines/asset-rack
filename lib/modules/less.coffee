@@ -1,4 +1,3 @@
-
 less = require 'less'
 fs = require 'fs'
 pathutil = require 'path'
@@ -7,6 +6,8 @@ urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.LessAsset extends Asset
+    @mimetype: 'text/css'
+
     create: (options) ->
         @filename = pathutil.resolve options.filename
         @paths = options.paths

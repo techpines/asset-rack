@@ -51,6 +51,7 @@ exports.walk = (root, options, iterator, cb) ->
           return done err if err?
           fobj =
             name: pathutil.basename file
+            namenoext: pathutil.basename file, pathutil.extname file
             relpath: pathutil.relative root, path
             path: path
             ext: pathutil.extname file
