@@ -1,4 +1,3 @@
-
 fs = require 'fs'
 pathutil = require 'path'
 browserify = require 'browserify'
@@ -6,7 +5,8 @@ uglify = require('uglify-js')
 Asset = require('../index').Asset
 
 class exports.BrowserifyAsset extends Asset
-    mimetype: 'text/javascript'
+    @mimetype: 'application/javascript'
+
     create: (options) ->
         @filename = options.filename
         @require = options.require
