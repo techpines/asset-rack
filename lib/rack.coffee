@@ -78,7 +78,12 @@ class exports.Rack extends EventEmitter
             # at the end.
             assets = @assets.concat @assets[0] if options.provider is 'rackspace'
             async.forEachSeries assets, (asset, next) =>
-                stream = new BufferStream asset.contents
+                console.log asset.url
+                stream = null
+                if asset.gzip
+                    stream = new BufferStream asset.gzipContents
+                else
+                    stream = new BufferStream asset.contents
                 url = asset.specificUrl.slice 1, asset.specificUrl.length
                 headers = {}
                 for key, value of asset.headers

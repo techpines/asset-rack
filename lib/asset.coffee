@@ -2,6 +2,7 @@
 async = require 'async'
 crypto = require 'crypto'
 pathutil = require 'path'
+zlib = require 'zlib'
 mime = require 'mime'
 
 # IE8 Compatibility 
@@ -27,6 +28,7 @@ class exports.Asset extends EventEmitter
         @mimetype = options.mimetype if options.mimetype?
         @mimetype ?= mime.types[@ext.slice(1, @ext.length)]
         @mimetype ?= 'text/plain'
+        @gzip = options.gzip
         @hash = options.hash if options.hash?
         @maxAge = options.maxAge if options.maxAge?
         @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
@@ -64,7 +66,9 @@ class exports.Asset extends EventEmitter
             headers = @headers
         for key, value of headers
             response.header key, value
-        return response.send @contents
+        if @gzip
+            response.send @gzipContents
+        else response.send @contents
         
     checkUrl: (url) ->
         url is @specificUrl or (not @hash? and url is @url)
@@ -87,7 +91,9 @@ class exports.Asset extends EventEmitter
         @emit 'created'
 
     createHeaders: ->
-        @headers['content-type'] ?= @mimetype
+        @headers['content-type'] ?= "#{@mimetype};charset=UTF-8"
+        if @gzip
+            @headers['content-encoding'] ?= 'gzip'
         #@headers['content-length'] = @contents.length
         if @maxAge?
             @headers['cache-control'] ?= "public, max-age=#{@maxAge}"
@@ -108,6 +114,9 @@ class exports.Asset extends EventEmitter
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
+        if @gzip
+            zlib.gzip @contents, (error, gzip) =>
+                @gzipContents = gzip
         
     isRelevantUrl: (specificUrl) ->
         baseUrl = @url.slice(0, @url.length - @ext.length)
