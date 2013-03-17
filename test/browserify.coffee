@@ -17,7 +17,7 @@ describe 'a browserify asset', ->
             url: '/app.js'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
-                response.headers['content-type'].should.equal 'application/javascript'
+                response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal compiled
                 done()
 
@@ -30,7 +30,7 @@ describe 'a browserify asset', ->
             compress: true
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
-                response.headers['content-type'].should.equal 'application/javascript'
+                response.headers['content-type'].should.equal 'text/javascript'
                 console.log body.length
                 console.log compiled.length
                 console.log body is compiled

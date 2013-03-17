@@ -21,7 +21,7 @@ describe 'a jade asset', ->
             dirname: fixturesDir
             url: '/templates.js'
         easyrequest 'http://localhost:7076/templates.js', (error, response, body) ->
-            response.headers['content-type'].should.equal 'application/javascript'
+            response.headers['content-type'].should.equal 'text/javascript'
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -41,7 +41,7 @@ describe 'a jade asset', ->
                 url: '/templates-rack.js'
         ]
         easyrequest 'http://localhost:7076/templates-rack.js', (error, response, body) ->
-            response.headers['content-type'].should.equal 'application/javascript'
+            response.headers['content-type'].should.equal 'text/javascript'
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -65,7 +65,7 @@ describe 'a jade asset', ->
         ]
             
         easyrequest 'http://localhost:7076/templates.min.js', (error, response, body) ->
-            response.headers['content-type'].should.equal 'application/javascript'
+            response.headers['content-type'].should.equal 'text/javascript'
             window = {}
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'

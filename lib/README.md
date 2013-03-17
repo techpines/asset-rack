@@ -333,7 +333,7 @@ myApp.run(['$templateCache', angularTemplates]);
 * `dirname`: Directory where the .html templates are stored.
 * `compress` (defaults to false): Whether to unglify the js.
 
-## Static
+## Other
 
 ### StaticAssets
 
@@ -347,3 +347,28 @@ new StaticAssets({
 #### Options
 * `dirname`: The folder to recursively pull assets from.
 * `urlPrefix`: Base url where all assets will be available from.
+
+### DynamicAssets
+
+```js
+new DyanmicAssets({
+    type: LessAsset
+    urlPrefix: '/styles'
+    dirname: './less'
+})
+```
+
+Then this would be the equivalent of going through every file in `/custom` and doing this:
+
+```js
+new CustomAsset({
+    filename: './less/some-file.less'
+    url: '/styles/some-file.css'
+})
+```
+
+#### Options
+* `dirname`: The folder to recursively grab files from.
+* `type`: The type of Asset to use for each file.
+* `urlPrefix`: The url prefix to serve the assets from.
+* `options`: Other options to pass to the individual assets.

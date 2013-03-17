@@ -150,7 +150,7 @@ describe 'a dynamic asset builder', ->
             filter: 'coffee'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
-                response.headers['content-type'].should.equal 'application/javascript'
+                response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal fs.readFileSync join(fixturesDir, 'snockets/app.js'), 'utf8'
                 done()
 
@@ -162,7 +162,7 @@ describe 'a dynamic asset builder', ->
             filter: 'coffee'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
-                response.headers['content-type'].should.equal 'application/javascript'
+                response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal fs.readFileSync join(fixturesDir, 'browserify/app.js'), 'utf8'
                 done()
 

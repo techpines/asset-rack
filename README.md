@@ -125,8 +125,9 @@ We have some professional grade assets included.
 * [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
 * [AngularTemplates](https://github.com/techpines/asset-rack/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
 
-#### Static
+#### Other
 * [StaticAssets](https://github.com/techpines/asset-rack/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
+* [DynamicAssets](https://github.com/techpines/asset-rack/tree/master/lib#dynamicassets) - For compiling file-based assets like Less or Stylus in an entire directory.
 
 ## Roll your own
 
@@ -241,6 +242,12 @@ Wintersmith could consume Asset Rack as a dependency, and if something more high
 
 # Changelog
 
+### 2.1.3
+
+* @noc7c9 Added generalized `rack.util.walk` function, need to document the function.
+* @noc7c9 Added `DynamicAssets` class.
+* @noc7c9 is awesome.
+
 ### 2.1.2
 
 * Added ability to configure Stylus, thanks to @noc7c9.
@@ -266,6 +273,16 @@ new StylusAsset({
       .define('setting', 90);
   }
 });
+```
+
+# Test
+
+Testing is easy and fun!
+
+```js
+cd asset-rack
+npm install
+npm test
 ```
 
 # License
