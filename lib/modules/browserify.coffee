@@ -5,7 +5,7 @@ uglify = require('uglify-js')
 Asset = require('../index').Asset
 
 class exports.BrowserifyAsset extends Asset
-    @mimetype: 'application/javascript'
+    @mimetype: 'text/javascript'
 
     create: (options) ->
         @filename = options.filename

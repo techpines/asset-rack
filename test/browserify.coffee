@@ -31,9 +31,6 @@ describe 'a browserify asset', ->
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/javascript'
-                console.log body.length
-                console.log compiled.length
-                console.log body is compiled
                 done()
 
     #it 'should work with extension handlers', (done) ->

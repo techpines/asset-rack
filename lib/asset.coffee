@@ -3,7 +3,11 @@ async = require 'async'
 crypto = require 'crypto'
 pathutil = require 'path'
 mime = require 'mime'
-mime.types.js = 'text/javascript' # IE8 compatibility
+
+# IE8 Compatibility 
+mime.types.js = 'text/javascript'
+mime.extensions['text/javascript'] = 'js'
+
 {extend} = require './util'
 {EventEmitter} = require 'events'
 

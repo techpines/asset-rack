@@ -3,7 +3,7 @@ Snockets = require 'snockets'
 Asset = require('../index').Asset
 
 class exports.SnocketsAsset extends Asset
-    @mimetype: 'application/javascript'
+    @mimetype: 'text/javascript'
 
     create: (options) ->
         @filename = pathutil.resolve options.filename
