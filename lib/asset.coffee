@@ -91,7 +91,7 @@ class exports.Asset extends EventEmitter
         @emit 'created'
 
     createHeaders: ->
-        @headers['content-type'] ?= "#{@mimetype};charset=UTF-8"
+        @headers['content-type'] ?= "#{@mimetype}"
         if @gzip
             @headers['content-encoding'] ?= 'gzip'
         #@headers['content-length'] = @contents.length
