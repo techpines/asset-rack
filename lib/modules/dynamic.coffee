@@ -10,6 +10,7 @@ class exports.DynamicAssets extends Asset
     create: (options) ->
         @dirname = pathutil.resolve options.dirname
         {@type, @urlPrefix, @options, @filter, @rewriteExt} = options
+        @urlPrefix ?= '/'
         @urlPrefix += '/' unless @urlPrefix.slice(-1) is '/'
         @rewriteExt ?= mime.extensions[@type.mimetype] if @type.mimetype?
         @rewriteExt = '.' + @rewriteExt if @rewriteExt? and @rewriteExt[0] isnt '.'
