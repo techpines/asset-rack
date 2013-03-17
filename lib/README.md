@@ -353,17 +353,17 @@ new StaticAssets({
 ```js
 new DyanmicAssets({
     type: LessAsset
-    urlPrefix: '/styles'
-    dirname: './less'
+    urlPrefix: '/style'
+    dirname: './style'
 })
 ```
 
-Then this would be the equivalent of going through every file in `/custom` and doing this:
+Then this would be the equivalent of going through every file in `/style` and doing this:
 
 ```js
-new CustomAsset({
-    filename: './less/some-file.less'
-    url: '/styles/some-file.css'
+new LessAsset({
+    filename: './style/some-file.less'
+    url: '/style/some-file.css'
 })
 ```
 
