@@ -120,7 +120,7 @@ describe 'a dynamic asset builder', ->
         app.use new rack.DynamicAssets
             type: rack.LessAsset
             dirname: join fixturesDir, 'less'
-            filter: (file) -> file.ext is '.less' and file.name isnt 'another.less'
+            filter: (file) -> file.ext is '.less' and file.name isnt 'another.less' and file.name isnt 'syntax-error.less'
         app.listen 7076, ->
             easyrequest 'http://localhost:7076/simple.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
