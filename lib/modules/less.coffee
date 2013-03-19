@@ -36,5 +36,8 @@ class exports.LessAsset extends Asset
                                 raw = raw.replace result, "url(#{quote}#{specificUrl}#{quote})"
                 @emit 'created', contents: raw
         catch error
+            if !(error instanceof Error)
+                less.writeError error
+                error = new Error "Less compilation error"
             @emit 'error', error
 
