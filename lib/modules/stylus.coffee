@@ -7,7 +7,7 @@ urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.StylusAsset extends Asset
-    @mimetype: 'text/css'
+    mimetype: 'text/css'
 
     create: (options) ->
         @filename = pathutil.resolve options.filename
