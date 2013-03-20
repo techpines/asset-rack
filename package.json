@@ -21,7 +21,7 @@
     "node-sassy": "0.0.1"
   },
   "devDependencies": {
-    "express.io": "1.1.8",
+    "express": "3.1.0",
     "request": "2.12.0",
     "mocha": "1.8.1",
     "chai": "1.4.2"
