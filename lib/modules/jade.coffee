@@ -6,7 +6,7 @@ jade = require 'jade'
 Asset = require('../index').Asset
 
 class exports.JadeAsset extends Asset
-    @mimetype: 'text/javascript'
+    mimetype: 'text/javascript'
 
     create: (options) ->
         @dirname = pathutil.resolve options.dirname
