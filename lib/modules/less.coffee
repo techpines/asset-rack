@@ -6,8 +6,7 @@ urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.LessAsset extends Asset
-    @mimetype: 'text/css'
-
+    mimetype: 'text/css'
     create: (options) ->
         if options.filename
             @filename = pathutil.resolve options.filename
