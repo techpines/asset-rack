@@ -27,10 +27,10 @@
     "chai": "1.4.2"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/test.coffee",
-    "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
-    "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
-    "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
+    "test": "mocha test/test.coffee",
+    "compile": "coffee -o compiled/ -c lib/",
+    "prepublish": "coffee -o compiled/ -c lib/",
+    "postpublish": "rm -rf compiled/"
   },
   "main": "switch.js",
   "engines": {
