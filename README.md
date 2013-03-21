@@ -242,6 +242,10 @@ Wintersmith could consume Asset Rack as a dependency, and if something more high
 
 # Changelog
 
+### 2.1.4
+
+* @vicapow Better error handling for `LessAsset`.
+
 ### 2.1.3
 
 * @noc7c9 Added generalized `rack.util.walk` function, need to document the function.
