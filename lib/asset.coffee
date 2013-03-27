@@ -43,8 +43,17 @@ class exports.Asset extends EventEmitter
             if @contents?
                 @createSpecificUrl()
                 @createHeaders()
-            @completed = true
-            @emit 'complete'
+            if @assets?
+              async.forEach @assets, (asset, done) ->
+                asset.on 'error', done
+                asset.on 'complete', done
+              , (err) =>
+                return @emit 'error', err if err?
+                @completed = true
+                @emit 'complete'
+            else
+              @completed = true
+              @emit 'complete'
         @on 'error', (error) =>
             throw error if @listeners 'error' is 1
         @on 'start', =>
@@ -55,6 +64,10 @@ class exports.Asset extends EventEmitter
         process.nextTick =>
             @maxAge ?= @defaultMaxAge
             return @create options unless @rack?
+
+    addAsset: (asset) ->
+      @assets = [] unless @assets?
+      @assets.push asset
 
     respond: (request, response) ->
         headers = {}
