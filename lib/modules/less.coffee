@@ -52,9 +52,10 @@ ensureLessError = (error) ->
 \tline #{error.line} column #{error.column}"""
         line = error.line
         msg += "\n\t..."
-        for extract in error.extract
-          if extract
-            msg += "\n\t " + (line++) + ": " + extract
+        if error.extract?
+            for extract in error.extract
+              if extract
+                msg += "\n\t " + (line++) + ": " + extract
         msg += "\n\t..."
         error = new Error msg
     return error
