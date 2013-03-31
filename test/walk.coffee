@@ -1,8 +1,8 @@
 should = require('chai').should()
 {join} = require 'path'
-{walk} = require('../.').utils
+{walk} = require('../.').util
 
-describe 'utils.walk', ->
+describe 'util.walk', ->
     app = null
     fixtures = join __dirname, 'fixtures/walk'
     numberOfFilesAndFolders = 26
