@@ -54,13 +54,17 @@ exports.walk = (root, options, iterator, cb) ->
             namenoext: pathutil.basename file, pathutil.extname file
             relpath: pathutil.relative root, path
             path: path
+            dirname: pathutil.dirname path
             ext: pathutil.extname file
             stats: stats
-          skip = (ignoreFolders and stats.isDirectory()) or !filter fobj
+          skip = !filter fobj
           if stats.isDirectory()
-            readdir path, (err) ->
-              return done err if err?
-              if skip then done() else iterator fobj, done
+            if skip
+              done()
+            else
+              readdir path, (err) ->
+                return done err if err?
+                iterator fobj, done unless ignoreFolders
           else
             if skip then done() else iterator fobj, done
       async.forEach files, iter, cb
