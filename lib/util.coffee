@@ -37,9 +37,12 @@ exports.walk = (root, options, iterator, cb) ->
   filter = options.filter || -> true
 
   if _.isString filter
+    # if filter is a string, folders shouldn't be passed to the iterator
+    # but should be recursed
+    ignoreFolders = true
     filter = ((ext) ->
       ext = if ext[0] is '.' then ext else '.' + ext
-      (file) -> file.ext == ext
+      (file) -> file.stats.isDirectory() or file.ext == ext
     ) filter
 
   readdir = (dir, cb) ->
@@ -64,7 +67,10 @@ exports.walk = (root, options, iterator, cb) ->
             else
               readdir path, (err) ->
                 return done err if err?
-                iterator fobj, done unless ignoreFolders
+                if ignoreFolders
+                  done()
+                else
+                  iterator fobj, done
           else
             if skip then done() else iterator fobj, done
       async.forEach files, iter, cb
