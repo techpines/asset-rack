@@ -1,7 +1,7 @@
 
 should = require('chai').should()
 rack = require '../.'
-express = require 'express.io'
+express = require 'express'
 easyrequest = require 'request'
 fs = require 'fs'
 
@@ -11,11 +11,11 @@ describe 'a browserify asset', ->
 
     it 'should work', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/app.js", 'utf8'
-        app = express().http()
+        app = express()
         app.use new rack.BrowserifyAsset
             filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
-        app.listen 7076, ->
+        app.server = app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal compiled
@@ -23,12 +23,12 @@ describe 'a browserify asset', ->
 
     it 'should work compressed', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/app.min.js", 'utf8'
-        app = express().http()
+        app = express()
         app.use asset = new rack.BrowserifyAsset
             filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
             compress: true
-        app.listen 7076, ->
+        app.server = app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/javascript'
                 done()

@@ -21,16 +21,16 @@
     "node-sassy": "0.0.1"
   },
   "devDependencies": {
-    "express.io": "1.1.8",
+    "express": "3.1.0",
     "request": "2.12.0",
     "mocha": "1.8.1",
     "chai": "1.4.2"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/test.coffee",
-    "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
-    "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
-    "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
+    "test": "mocha test/test.coffee",
+    "compile": "coffee -o compiled/ -c lib/",
+    "prepublish": "coffee -o compiled/ -c lib/",
+    "postpublish": "rm -rf compiled"
   },
   "main": "switch.js",
   "engines": {

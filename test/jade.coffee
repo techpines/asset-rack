@@ -1,7 +1,7 @@
 
 should = require('chai').should()
 rack = require '../.'
-express = require 'express.io'
+express = require 'express'
 easyrequest = require 'request'
 fs = require 'fs'
 
@@ -13,8 +13,8 @@ describe 'a jade asset', ->
     fixturesDir = "#{__dirname}/fixtures/jade"
 
     beforeEach (done) ->
-        app = express().http()
-        app.listen 7076, done
+        app = express()
+        app.server = app.listen 7076, done
 
     it 'should work', (done) ->
         app.use new rack.JadeAsset
