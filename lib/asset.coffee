@@ -58,7 +58,7 @@ class exports.Asset extends EventEmitter
 
     respond: (request, response) ->
         headers = {}
-        if request.url is @url and @allowNoHashCache isnt true
+        if request.path is @url and @allowNoHashCache isnt true
             for key, value of @headers
                 headers[key] = value
             delete headers['cache-control']
@@ -77,9 +77,9 @@ class exports.Asset extends EventEmitter
         handle = =>
             if @assets?
                 for asset in @assets
-                    if asset.checkUrl request.url
+                    if asset.checkUrl request.path
                         return asset.respond request, response
-            if @checkUrl(request.url)
+            if @checkUrl(request.path)
                 @respond request, response
             else next()
         if @completed is true

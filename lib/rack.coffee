@@ -54,7 +54,7 @@ class exports.Rack extends EventEmitter
         response.locals assets: this
         handle = =>
             for asset in @assets
-                check = asset.checkUrl request.url
+                check = asset.checkUrl request.path
                 return asset.respond request, response if check
             next()
         if @completed
@@ -129,7 +129,7 @@ class ConfigRack
     handle: (request, response, next) ->
         response.locals assets: this
         for url, specificUrl of @assetMap
-            if request.url is url or request.url is specificUrl
+            if request.path is url or request.path is specificUrl
                 return response.redirect "//#{@hostname}#{specificUrl}"
         next()
     tag: (url) ->
