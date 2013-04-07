@@ -1,5 +1,4 @@
 (function() {
-
   window.cone = 'gravy';
 
 }).call(this);
