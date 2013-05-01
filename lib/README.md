@@ -1,4 +1,3 @@
-
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
 
@@ -230,7 +229,7 @@ new LessAsset({
 The stylus asset serves up your stylus assets.
 
 ```javascript
-new LessAsset({
+new StylusAsset({
     url: '/style.css',
     filename: __dirname + '/style/fun.styl'
 });
