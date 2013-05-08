@@ -46,7 +46,7 @@ class exports.Asset extends EventEmitter
             @completed = true
             @emit 'complete'
         @on 'error', (error) =>
-            throw error if @listeners 'error' is 1
+            throw error if @listeners('error') is 1
         @on 'start', =>
             @maxAge ?= @rack?.maxAge
             @maxAge ?= @defaultMaxAge unless @hash is false
