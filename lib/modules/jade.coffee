@@ -25,8 +25,14 @@ class exports.JadeAsset extends Asset
         @contents += '(function(){ \n' if @clientRack?
         @contents += @clientRack.contents if @clientRack?
         @contents += "window.#{@clientVariable} = {\n"
+        @fileContents = ""
+
         for fileObject in @fileObjects
-            @contents += "'#{fileObject.funcName}': #{fileObject.compiled},"
+            if @fileContents.length > 0
+                @fileContents += ","
+            @fileContents += "'#{fileObject.funcName}': #{fileObject.compiled}"
+            
+        @contents += @fileContents
         @contents += '};'
         @contents += '})();' if @clientRack?
         @contents = uglify.minify(@contents, {fromString: true}).code if @compress
