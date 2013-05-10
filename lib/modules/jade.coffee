@@ -28,9 +28,9 @@ class exports.JadeAsset extends Asset
         @fileContents = ""
 
         for fileObject in @fileObjects
-            if @fileContents.lenght > 0
+            if @fileContents.length > 0
                 @fileContents += ","
-            @contents += "'#{fileObject.funcName}': #{fileObject.compiled}"
+            @fileContents += "'#{fileObject.funcName}': #{fileObject.compiled}"
             
         @contents += @fileContents
         @contents += '};'
