@@ -8,6 +8,7 @@ class exports.SnocketsAsset extends Asset
     create: (options) ->
         try
             @filename = pathutil.resolve options.filename
+            @toWatch = pathutil.dirname @filename
             @compress = options.compress or false
             @debug = options.debug or false
             snockets = new Snockets()

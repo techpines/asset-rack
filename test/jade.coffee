@@ -43,12 +43,14 @@ describe 'a jade asset', ->
         easyrequest 'http://localhost:7076/templates-rack.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
             window = {}
+            fs.writeFileSync '/tmp/test.js', body
             eval(body)
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
             window.Templates.test().should.equal testFile
             userFile = fs.readFileSync "#{fixturesDir}/user.html", 'utf8'
             window.Templates.user(users: ['fred', 'steve']).should.equal userFile
             dependencyFile = fs.readFileSync "#{fixturesDir}/dependency.html", 'utf8'
+            console.log window.Templates.dependency()
             window.Templates.dependency().should.equal dependencyFile
             done()
 

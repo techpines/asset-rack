@@ -5,6 +5,7 @@
 async = require 'async'
 crypto = require 'crypto'
 pathutil = require 'path'
+fs = require 'fs'
 zlib = require 'zlib'
 mime = require 'mime'
 {extend} = require './util'
@@ -39,6 +40,10 @@ class exports.Asset extends EventEmitter
 
         # Get the extension from the url
         @ext = pathutil.extname @url
+
+        # Set whether to watch or not
+        @watch = options.watch
+        @watch ?= false
 
         # Set the correct mimetype
         @mimetype = options.mimetype if options.mimetype?
@@ -79,6 +84,7 @@ class exports.Asset extends EventEmitter
                 @createSpecificUrl()
                 @createHeaders()
 
+
             # If it's a muti asset then make sure they are all completed
             if @assets?
                 async.forEach @assets, (asset, done) ->
@@ -89,9 +95,25 @@ class exports.Asset extends EventEmitter
                     @completed = true
                     @emit 'complete'
             else
-                # If it's not then it's done
                 @completed = true
-                @emit 'complete'
+
+                # Handles gzipping
+                if @gzip
+                    zlib.gzip @contents, (error, gzip) =>
+                        @gzipContents = gzip
+                        @emit 'complete'
+                else
+                    @emit 'complete'
+        
+            # Does the file watching
+            if @watch
+                @watcher = fs.watch @toWatch, (event, filename) =>
+                    if event is 'change'
+                        @watcher.close()
+                        @completed = false
+                        @assets = false
+                        process.nextTick =>
+                            @emit 'start'
 
         # Listen for errors and throw if no listeners
         @on 'error', (error) =>
@@ -191,11 +213,6 @@ class exports.Asset extends EventEmitter
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
 
-        # Handles gzipping
-        if @gzip
-            zlib.gzip @contents, (error, gzip) =>
-                @gzipContents = gzip
-        
 
     # For extending this class in javascript
     # for coffeescript you can use the builtin extends

@@ -13,6 +13,7 @@ class exports.SassAsset extends Asset
 
     create: (options) ->
         @filename = pathutil.resolve options.filename
+        @toWatch = pathutil.dirname @filename
         @paths = options.paths
         @paths ?= []
         @paths.push pathutil.dirname options.filename

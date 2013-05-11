@@ -9,6 +9,7 @@ class exports.BrowserifyAsset extends Asset
 
     create: (options) ->
         @filename = options.filename
+        @toWatch = pathutil.dirname pathutil.resolve @filename
         @require = options.require
         @debug = options.debug or false
         @compress = options.compress

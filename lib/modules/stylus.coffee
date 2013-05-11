@@ -11,6 +11,7 @@ class exports.StylusAsset extends Asset
 
     create: (options) ->
         @filename = pathutil.resolve options.filename
+        @toWatch = pathutil.dirname @filename
         @compress = options.compress
         @compress ?= process.env.NODE_ENV == 'production'
         @config = options.config

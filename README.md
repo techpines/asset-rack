@@ -242,6 +242,33 @@ Wintersmith could consume Asset Rack as a dependency, and if something more high
 
 # Changelog
 
+### 2.2.0
+
+* Watch and asset recreation is now working.  This should be considered experimental for this version.
+
+```js
+new StylusAsset({
+    watch: true,
+    ...
+});
+```
+
+* Gzip is here finally.
+
+new BrowserifyAsset({
+    gzip: true,
+    ...
+});
+
+* Now adding sub assets to an asset is much simpler, just use `addAsset`.
+
+```js
+this.addAsset(asset);
+this.emit('created');
+```
+
+Thanks @moellenbeck, @d1plo1d, @undashes, and @noc7c9 for contributing!
+
 ### 2.1.4
 
 * @vicapow Better error handling for `LessAsset`.

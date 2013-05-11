@@ -9,6 +9,7 @@ mime = require 'mime'
 class exports.DynamicAssets extends Asset
     create: (options) ->
         @dirname = pathutil.resolve options.dirname
+        @toWatch = @dirname
         {@type, @urlPrefix, @options, @filter, @rewriteExt} = options
         @urlPrefix ?= '/'
         @urlPrefix += '/' unless @urlPrefix.slice(-1) is '/'

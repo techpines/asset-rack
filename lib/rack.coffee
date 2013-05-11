@@ -7,7 +7,6 @@ pkgcloud = require 'pkgcloud'
 fs = require 'fs'
 pathutil = require 'path'
 {BufferStream, extend} = require('./util')
-ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
 
 # Rack - Manages multiple assets
@@ -54,6 +53,9 @@ class exports.Rack extends EventEmitter
 
             # Wait for assets to finish completing
             asset.on 'complete', =>
+
+                # This is necessary because of asset recompilation
+                return if @completed
         
                 # If the asset has contents, it's a single asset
                 if asset.contents?
@@ -71,20 +73,6 @@ class exports.Rack extends EventEmitter
         , (error) =>
             return @emit 'error', error if error?
             @emit 'complete'
-
-    # Client rack is a clientside mapping of urls to hashed urls
-    createClientRack: ->
-        clientRack =  new ClientRack
-        clientRack.rack = this
-        clientRack.emit 'start'
-        clientRack
-    
-    # Adds the client rack to the rack
-    addClientRack: (next) ->
-        clientRack = @createClientRack()
-        clientRack.on 'complete', =>
-            @assets.push clientRack
-            next()
         
     # Makes the rack function as express middleware
     handle: (request, response, next) ->
@@ -117,14 +105,15 @@ class exports.Rack extends EventEmitter
             # at the end.
             assets = @assets.concat @assets[0] if options.provider is 'rackspace'
             async.forEachSeries assets, (asset, next) =>
-                console.log asset.url
                 stream = null
+                headers = {}
+                console.log asset.url
                 if asset.gzip
                     stream = new BufferStream asset.gzipContents
+                    headers['content-encoding'] = 'gzip'
                 else
                     stream = new BufferStream asset.contents
                 url = asset.specificUrl.slice 1, asset.specificUrl.length
-                headers = {}
                 for key, value of asset.headers
                     headers[key] = value
                 headers['x-amz-acl'] = 'public-read' if options.provider is 'amazon'
