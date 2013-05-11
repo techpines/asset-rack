@@ -255,10 +255,12 @@ new StylusAsset({
 
 * Gzip is here finally.
 
+```js
 new BrowserifyAsset({
     gzip: true,
     ...
 });
+```
 
 * Now adding sub assets to an asset is much simpler, just use `addAsset`.
 
