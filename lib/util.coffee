@@ -1,4 +1,7 @@
 
+# Util.coffee - A few utility methods
+
+# Pull in dependencies
 EventEmitter = require('events').EventEmitter
 Buffer = require('buffer').Buffer
 _ = require 'underscore'
@@ -6,6 +9,7 @@ fs = require 'fs'
 pathutil = require 'path'
 async = require 'async'
 
+# Fake stream for buffer that pretends like it's a stream
 class exports.BufferStream extends EventEmitter
     constructor: (buffer) ->
         @data = new Buffer buffer
@@ -21,12 +25,14 @@ class exports.BufferStream extends EventEmitter
     destroy: ->
     readable: true
 
+# Ability to extend a base class
 exports.extend = (object) ->
     class Asset extends this
     for key, value of object
         Asset::[key] = value
     Asset
 
+# Generalized walk function
 exports.walk = (root, options, iterator, cb) ->
   if _.isFunction options
     cb = iterator
