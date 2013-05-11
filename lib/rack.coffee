@@ -1,4 +1,7 @@
 
+# Rack.coffee - A Rack is an asset manager
+
+# Pull in our dependencies
 async = require 'async'
 pkgcloud = require 'pkgcloud'
 fs = require 'fs'
@@ -7,49 +10,83 @@ pathutil = require 'path'
 ClientRack = require('./.').ClientRack
 {EventEmitter} = require 'events'
 
+# Rack - Manages multiple assets
 class exports.Rack extends EventEmitter
     constructor: (assets, options) ->
         super()
+
+        # Set a default options object
         options ?= {}
+
+        # Max age for HTTP Cache-Control
         @maxAge = options.maxAge
+
+        # Allow non-hahshed urls to be cached
         @allowNoHashCache = options.allowNoHashCache
+
+        # Once complete always set the completed flag
         @on 'complete', =>
             @completed = true
+
+        # If someone listens for the "complete" event
+        # check if it's already been called
         @on 'newListener', (event, listener) =>
             if event is 'complete' and @completed is true
                 listener()
+
+        # Listen for the error event, throw if no listeners
         @on 'error', (error) =>
             throw error if @listeners('error').length is 1
+
+        # Give assets in the rack a reference to the rack
         for asset in assets
             asset.rack = this
+
+        # Create a flattened array of assets
         @assets = []
+    
+        # Do this in series for dependency conflicts
         async.forEachSeries assets, (asset, next) =>
+
+            # Listen for any asset error events
             asset.on 'error', (error) =>
                 next error
+
+            # Wait for assets to finish completing
             asset.on 'complete', =>
+        
+                # If the asset has contents, it's a single asset
                 if asset.contents?
                     @assets.push asset
+                
+                # If it has assets, then it's multi-asset
                 if asset.assets?
                     @assets = @assets.concat asset.assets
                 next()
-            asset.rack = this
+    
+            # This tells our asset to start
             asset.emit 'start'
+
+        # Handle any errors for the assets
         , (error) =>
             return @emit 'error', error if error?
             @emit 'complete'
 
+    # Client rack is a clientside mapping of urls to hashed urls
     createClientRack: ->
         clientRack =  new ClientRack
         clientRack.rack = this
         clientRack.emit 'start'
         clientRack
     
+    # Adds the client rack to the rack
     addClientRack: (next) ->
         clientRack = @createClientRack()
         clientRack.on 'complete', =>
             @assets.push clientRack
             next()
         
+    # Makes the rack function as express middleware
     handle: (request, response, next) ->
         response.locals assets: this
         handle = =>
@@ -61,12 +98,14 @@ class exports.Rack extends EventEmitter
             handle()
         else @on 'complete', handle
 
+    # Writes a config file of urls to hashed urls for CDN use
     writeConfigFile: (filename) ->
         config = {}
         for asset in @assets
             config[asset.url] = asset.specificUrl
         fs.writeFileSync filename, JSON.stringify(config)
 
+    # Deploy assets to a CDN
     deploy: (options, next) ->
         options.keyId = options.accessKey
         options.key = options.secretKey
@@ -108,30 +147,42 @@ class exports.Rack extends EventEmitter
             deploy()
         else @on 'complete', deploy
 
+    # Creates an HTML tag for a given asset
     tag: (url) ->
         for asset in @assets
             return asset.tag() if asset.url is url
         throw new Error "No asset found for url: #{url}"
 
+    # Gets the hashed url for a given url
     url: (url) ->
         for asset in @assets
             return asset.specificUrl if url is asset.url
 
     @extend: extend
 
+# The ConfigRack uses a json file and a hostname to map assets to a url
+# without actually compiling them
 class ConfigRack
     constructor: (options) ->
+        # Check for required options
         throw new Error('options.configFile is required') unless options.configFile?
         throw new Error('options.hostname is required') unless options.hostname?
+    
+        # Setup our options
         @assetMap = require options.configFile
         @hostname = options.hostname
         
+    # For hooking up as express middleware
     handle: (request, response, next) ->
         response.locals assets: this
         for url, specificUrl of @assetMap
             if request.path is url or request.path is specificUrl
+
+                # Redirect to the CDN, the config does not have the files
                 return response.redirect "//#{@hostname}#{specificUrl}"
         next()
+    
+    # Simple function to get the tag for a url
     tag: (url) ->
         switch pathutil.extname(url)
             when '.js'
@@ -139,9 +190,12 @@ class ConfigRack
                 return tag += "src=\"//#{@hostname}#{@assetMap[url]}\"></script>"
             when '.css'
                 return "\n<link rel=\"stylesheet\" href=\"//#{@hostname}#{@assetMap[url]}\">"
+
+    # Get the hashed url for a given url
     url: (url) ->
         return "//#{@hostname}#{@assetMap[url]}"
         
         
+# Shortcut function
 exports.fromConfigFile = (options) ->
     return new ConfigRack(options)
