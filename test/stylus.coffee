@@ -1,7 +1,7 @@
 
 should = require('chai').should()
 rack = require '../.'
-express = require 'express'
+express = require 'express.io'
 easyrequest = require 'request'
 fs = require 'fs'
 
@@ -11,11 +11,11 @@ describe 'a stylus asset', ->
 
     it 'should work', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/simple.css", 'utf8'
-        app = express()
+        app = express().http()
         app.use new rack.StylusAsset
             filename: "#{fixturesDir}/simple.styl"
             url: '/style.css'
-        app.server = app.listen 7076, ->
+        app.listen 7076, ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
                 body.should.equal compiled
@@ -23,19 +23,19 @@ describe 'a stylus asset', ->
 
     it 'should work compressed', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/simple.min.css", 'utf8'
-        app = express()
+        app = express().http()
         app.use new rack.StylusAsset
             filename: "#{fixturesDir}/simple.styl"
             url: '/style.css'
             compress: true
-        app.server = app.listen 7076, ->
+        app.listen 7076, ->
             easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
                 body.should.equal compiled
                 done()
 
     it 'should work with a rack', (done) ->
-        app = express()
+        app = express().http()
         app.use new rack.Rack [
             new rack.Asset
                 url: '/background.png'
@@ -48,7 +48,7 @@ describe 'a stylus asset', ->
                 url: '/dependency.css'
                 compress: true
         ]
-        app.server = app.listen 7076, ->
+        app.listen 7076, ->
             easyrequest 'http://localhost:7076/dependency.css', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/css'
                 # TODO: Test more thoroughly.

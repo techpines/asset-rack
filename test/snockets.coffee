@@ -1,7 +1,7 @@
 
 should = require('chai').should()
 rack = require '../.'
-express = require 'express'
+express = require 'express.io'
 easyrequest = require 'request'
 fs = require 'fs'
 
@@ -11,11 +11,11 @@ describe 'a snockets asset', ->
 
     it 'should work', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/app.js", 'utf8'
-        app = express()
+        app = express().http()
         app.use new rack.SnocketsAsset
             filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
-        app.server = app.listen 7076, ->
+        app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal compiled
@@ -23,12 +23,12 @@ describe 'a snockets asset', ->
 
     it 'should work compressed', (done) ->
         compiled = fs.readFileSync "#{fixturesDir}/app.min.js", 'utf8'
-        app = express()
+        app = express().http()
         app.use new rack.SnocketsAsset
             filename: "#{fixturesDir}/app.coffee"
             url: '/app.js'
             compress: true
-        app.server = app.listen 7076, ->
+        app.listen 7076, ->
             easyrequest 'http://localhost:7076/app.js', (error, response, body) ->
                 response.headers['content-type'].should.equal 'text/javascript'
                 body.should.equal compiled
