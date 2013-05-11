@@ -36,10 +36,6 @@ class exports.DynamicAssets extends Asset
                 filename: file.path
             opts[k] = v for own k, v of @options
 
-            asset = new @type opts
-            asset.on 'complete', =>
-                @assets.push asset
-                done()
-          , (err) =>
-            return @emit 'error', err if err?
-            @emit 'created'
+            @addAsset new @type opts
+            done()
+        , => @emit 'created'

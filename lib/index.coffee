@@ -1,4 +1,6 @@
 
+# Index.coffee - Entry point puts all the code together
+
 exports.Asset = require('./asset').Asset
 exports.ClientRack = require('./client').ClientRack
 exports.Rack = require('./rack').Rack

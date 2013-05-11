@@ -158,6 +158,7 @@ class exports.Rack extends EventEmitter
         for asset in @assets
             return asset.specificUrl if url is asset.url
 
+    # Extend the class for javascript 
     @extend: extend
 
 # The ConfigRack uses a json file and a hostname to map assets to a url
