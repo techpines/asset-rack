@@ -95,9 +95,7 @@ class exports.Asset extends EventEmitter
 
         # Listen for errors and throw if no listeners
         @on 'error', (error) =>
-            throw error if @listeners 'error' is 1
-
-        # Ability for the rack to trigger the creation of an asset
+            throw error if @listeners('error') is 1
         @on 'start', =>
             @maxAge ?= @rack?.maxAge
             @maxAge ?= @defaultMaxAge unless @hash is false
