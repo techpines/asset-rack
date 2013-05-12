@@ -5,7 +5,7 @@
   "author": "Brad Carleton <brad@techpines.com>",
   "repository": "https://github.com/techpines/asset-rack",
   "dependencies": {
-    "browserify": ">=1.17.3",
+    "browserify": "1.17.3",
     "snockets": ">=1.3.8",
     "uglify-js": ">=2.2.4",
     "async": "0.1.22",
