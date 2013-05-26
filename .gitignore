@@ -3,6 +3,7 @@ _exrc
 node_modules
 *.log
 *.swo
+*.swn
 *.swp
 compiled
 .sass-cache
