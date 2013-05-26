@@ -18,7 +18,7 @@
     "underscore": "1.4.4",
     "coffee-script": "~1.6.2",
     "markdown": "0.4.0",
-    "node-sassy": "0.0.1"
+    "node-sass": "~0.5.0"
   },
   "devDependencies": {
     "express.io": "1.1.8",
