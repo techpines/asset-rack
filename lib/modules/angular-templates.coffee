@@ -9,6 +9,7 @@ class exports.AngularTemplatesAsset extends Asset
     create: (options) ->
         options.dirname ?= options.directory # for backwards compatiblity
         @dirname = pathutil.resolve options.dirname
+        @toWatch = @dirname
         @compress = options.compress or false
         files = fs.readdirSync @dirname
         templates = []
