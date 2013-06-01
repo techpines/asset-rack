@@ -1,12 +1,24 @@
 fs = require 'fs'
 path = require 'path'
-sass = require 'node-sass'
 {Asset} = require '../.'
+
+try
+  sassy = false
+  sass = require 'node-sass'
+catch err
+  sassy = true
+  sass = require 'node-sassy'
+  sass.render = (opts) ->
+    sassOpts = includeFrom: opts.includePaths, '--style': opts.outputStyle
+    sass.compile opts.file, sassOpts, (err, css) ->
+      return opts.error err if err?
+      opts.success css
 
 urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.SassAsset extends Asset
+  @sassy: sassy
   mimetype: 'text/css'
 
   postProcess: (css) ->

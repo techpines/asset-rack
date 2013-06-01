@@ -21,7 +21,9 @@ describe 'a sass asset', ->
                 done()
     
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync "#{__dirname}/fixtures/sass/simple.min.css", 'utf8'
+        file = "#{__dirname}/fixtures/sass/simple.min.css"
+        file = "#{file}.sassy" if rack.SassAsset.sassy
+        compiled = fs.readFileSync file, 'utf8'
         app = express().http()
         app.use new rack.SassAsset
             filename: "#{__dirname}/fixtures/sass/simple.scss"
@@ -34,7 +36,9 @@ describe 'a sass asset', ->
                 done()
 
     it 'should work with paths', (done) ->
-        compiled = fs.readFileSync "#{__dirname}/fixtures/sass/another.css", 'utf8'
+        file = "#{__dirname}/fixtures/sass/another.css"
+        file = "#{file}.sassy" if rack.SassAsset.sassy
+        compiled = fs.readFileSync file, 'utf8'
         app = express().http()
         app.use new rack.SassAsset
             filename: "#{__dirname}/fixtures/sass/another.scss"
