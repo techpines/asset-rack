@@ -1,47 +1,45 @@
 fs = require 'fs'
-pathutil = require 'path'
-
-sassy = require "node-sassy"
-
+path = require 'path'
 {Asset} = require '../.'
+
+try
+  sassy = false
+  sass = require 'node-sass'
+catch err
+  sassy = true
+  sass = require 'node-sassy'
+  sass.render = (opts) ->
+    sassOpts = includeFrom: opts.includePaths, '--style': opts.outputStyle
+    sass.compile opts.file, sassOpts, (err, css) ->
+      return opts.error err if err?
+      opts.success css
 
 urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/
 urlRegexGlobal = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/g
 
 class exports.SassAsset extends Asset
-    mimetype: 'text/css'
+  @sassy: sassy
+  mimetype: 'text/css'
 
-    create: (options) ->
-        @filename = pathutil.resolve options.filename
-        @toWatch = pathutil.dirname @filename
-        @paths = options.paths
-        @paths ?= []
-        @paths.push pathutil.dirname options.filename
-        
-        @compress = options.compress
-        @compress ?= false
+  postProcess: (css) ->
+    return css unless @rack?
+    results = css.match urlRegexGlobal
+    return css unless results?
+    for result in results
+      match = urlRegex.exec result
+      quote = match[1]
+      url = match[2]
+      specificUrl = @rack.url url
+      css = css.replace result, "url(#{quote}#{specificUrl}#{quote})" if specificUrl?
+    css
 
-        sassOpts = {}
-        if options.paths
-            sassOpts.includeFrom = options.paths
-
-        if @compress
-            sassOpts["--style"] = "compressed"
-            
-        # Render the sass to css
-        sassy.compile @filename, sassOpts, (err, css) =>
-            return @emit 'error', err if err?
-            
-            if @rack?
-                results = css.match urlRegexGlobal
-                if results
-                    for result in results
-                        match = urlRegex.exec result
-                        quote = match[1]
-                        url = match[2]
-                        specificUrl = @rack.url url
-                        if specificUrl?
-                            css = css.replace result, "url(#{quote}#{specificUrl}#{quote})"
-
-            @emit 'created', 
-                contents: css
+  create: (options) ->
+    throw new Error 'Invalid options' unless options? and options.filename?
+    @filename = path.resolve options.filename
+    @toWatch = path.dirname @filename
+    sass.render
+      file: @filename
+      includePaths: options.paths ? [path.dirname options.filename]
+      outputStyle: if options.compress then 'compressed' else 'nested'
+      error: (err) => @emit 'error', err
+      success: (css) => @emit 'created', contents: @postProcess css

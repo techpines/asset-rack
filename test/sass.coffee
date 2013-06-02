@@ -19,21 +19,11 @@ describe 'a sass asset', ->
                 response.headers['content-type'].should.equal 'text/css'
                 body.should.equal compiled
                 done()
-
-    it 'should work with .sass', (done) ->
-        compiled = fs.readFileSync "#{__dirname}/fixtures/sass/simple.css", 'utf8'
-        app = express().http()
-        app.use new rack.SassAsset
-            filename: "#{__dirname}/fixtures/sass/simple.sass"
-            url: '/style.css'
-        app.listen 7076, ->
-            easyrequest 'http://localhost:7076/style.css', (error, response, body) ->
-                response.headers['content-type'].should.equal 'text/css'
-                body.should.equal compiled
-                done()
     
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync "#{__dirname}/fixtures/sass/simple.min.css", 'utf8'
+        file = "#{__dirname}/fixtures/sass/simple.min.css"
+        file = "#{file}.sassy" if rack.SassAsset.sassy
+        compiled = fs.readFileSync file, 'utf8'
         app = express().http()
         app.use new rack.SassAsset
             filename: "#{__dirname}/fixtures/sass/simple.scss"
@@ -46,7 +36,9 @@ describe 'a sass asset', ->
                 done()
 
     it 'should work with paths', (done) ->
-        compiled = fs.readFileSync "#{__dirname}/fixtures/sass/another.css", 'utf8'
+        file = "#{__dirname}/fixtures/sass/another.css"
+        file = "#{file}.sassy" if rack.SassAsset.sassy
+        compiled = fs.readFileSync file, 'utf8'
         app = express().http()
         app.use new rack.SassAsset
             filename: "#{__dirname}/fixtures/sass/another.scss"

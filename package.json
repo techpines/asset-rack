@@ -18,13 +18,16 @@
     "underscore": "1.4.4",
     "coffee-script": "~1.6.2",
     "markdown": "0.4.0",
-    "node-sassy": "0.0.1"
+    "node-sassy": "~0.0.1"
   },
   "devDependencies": {
     "express.io": "1.1.8",
     "request": "2.12.0",
     "mocha": "1.8.1",
     "chai": "1.4.2"
+  },
+  "optionalDependencies": {
+    "node-sass": "~0.5.0"
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/test.coffee",
