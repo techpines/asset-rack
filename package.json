@@ -1,6 +1,6 @@
 {
   "name": "asset-rack",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Static Web Framework for Nodejs",
   "author": "Brad Carleton <brad@techpines.com>",
   "repository": "https://github.com/techpines/asset-rack",

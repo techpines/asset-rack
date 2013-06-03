@@ -242,6 +242,10 @@ Wintersmith could consume Asset Rack as a dependency, and if something more high
 
 # Changelog
 
+### 2.2.1
+
+* A few small tweaks.
+
 ### 2.2.0
 
 * Watch and asset recreation is now working.  This should be considered experimental for this version.
