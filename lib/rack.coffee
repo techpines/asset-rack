@@ -5,6 +5,7 @@
 async = require 'async'
 pkgcloud = require 'pkgcloud'
 fs = require 'fs'
+jade = require 'jade'
 pathutil = require 'path'
 {BufferStream, extend} = require('./util')
 {EventEmitter} = require 'events'
@@ -35,7 +36,8 @@ class exports.Rack extends EventEmitter
 
         # Listen for the error event, throw if no listeners
         @on 'error', (error) =>
-            throw error if @listeners('error').length is 1
+            @hasError = true
+            @currentError = error
 
         # Give assets in the rack a reference to the rack
         for asset in assets
@@ -77,6 +79,13 @@ class exports.Rack extends EventEmitter
     # Makes the rack function as express middleware
     handle: (request, response, next) ->
         response.locals assets: this
+        if request.url.slice(0,11) is '/asset-rack'
+            return @handleAdmin request, response, next
+        if @hasError
+            for asset in @assets
+                check = asset.checkUrl request.path
+                return asset.respond request, response if check
+            return response.redirect '/asset-rack/error'
         handle = =>
             for asset in @assets
                 check = asset.checkUrl request.path
@@ -85,6 +94,31 @@ class exports.Rack extends EventEmitter
         if @completed
             handle()
         else @on 'complete', handle
+
+    handleError: (request, response, next) ->
+        errorPath = pathutil.join __dirname, 'admin/templates/error.jade'
+        fs.readFile errorPath, 'utf8', (error, contents) =>
+            return next error if error?
+            compiled = jade.compile contents,
+                filename: errorPath
+            response.send compiled
+                stack: @currentError.stack.split '\n'
+
+    handleAdmin: (request, response, next) ->
+        split = request.url.split('/')
+        if split.length > 2
+            path = request.url.replace '/asset-rack/', ''
+            if path is 'error'
+                return @handleError request, response, next
+            response.sendfile pathutil.join __dirname, 'admin', path
+        else
+            adminPath = pathutil.join __dirname, 'admin/templates/admin.jade'
+            fs.readFile adminPath, 'utf8', (error, contents) =>
+                return next error if error?
+                compiled = jade.compile contents,
+                    filename: adminPath
+                response.send compiled
+                    assets: @assets
 
     # Writes a config file of urls to hashed urls for CDN use
     writeConfigFile: (filename) ->

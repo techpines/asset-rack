@@ -1,0 +1,28 @@
+!!! 5
+html
+  head
+    include head
+  body
+    script
+      console.log(!{assets})
+    include header
+    table.table
+      tr
+        th URL
+        th Specific URL
+        th Hash
+        th Gzip
+        th Mimetype
+        th Headers
+        th Max Age
+      for asset in assets
+        tr
+          td
+            a(href="#{asset.specificUrl}") #{asset.url}
+          td
+            a(href="#{asset.specificUrl}") #{asset.specificUrl}
+          td #{asset.hash}
+          td #{asset.gzip}
+          td #{asset.mimetype}
+          td #{JSON.stringify(asset.headers)}
+          td #{asset.maxAge}

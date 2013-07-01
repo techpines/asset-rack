@@ -1,0 +1,11 @@
+!!! 5
+html
+  head
+    include head
+  body
+    include header
+    #contents
+      h2 #{stack[0]}
+      ul.stack
+        for line in stack
+          li #{line}
