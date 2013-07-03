@@ -99,6 +99,7 @@ class exports.Rack extends EventEmitter
         errorPath = pathutil.join __dirname, 'admin/templates/error.jade'
         fs.readFile errorPath, 'utf8', (error, contents) =>
             return next error if error?
+            console.log error
             compiled = jade.compile contents,
                 filename: errorPath
             response.send compiled
@@ -141,7 +142,6 @@ class exports.Rack extends EventEmitter
             async.forEachSeries assets, (asset, next) =>
                 stream = null
                 headers = {}
-                console.log asset.url
                 if asset.gzip
                     stream = new BufferStream asset.gzipContents
                     headers['content-encoding'] = 'gzip'

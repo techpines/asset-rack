@@ -45,7 +45,8 @@ class exports.JadeAsset extends Asset
         @contents += '};'
         @contents += '})();' if @assetsMap?
         @contents = uglify.minify(@contents, {fromString: true}).code if @compress
-        @emit 'created'
+        unless @hasError
+            @emit 'created'
         
     getFileobjects: (dirname, prefix='') ->
         filenames = fs.readdirSync dirname
@@ -62,14 +63,18 @@ class exports.JadeAsset extends Asset
                 funcName = "#{prefix}#{pathutil.basename(path, '.jade')}"
                 fileContents = fs.readFileSync path, 'utf8'
                 fileContents = @beforeCompile fileContents if @beforeCompile?
-                compiled = jade.compile fileContents,
-                    client: true,
-                    compileDebug: false,
-                    filename: path
-                paths.push
-                    path: path
-                    funcName: funcName
-                    compiled: compiled
+                try
+                    compiled = jade.compile fileContents,
+                        client: true,
+                        compileDebug: false,
+                        filename: path
+                    paths.push
+                        path: path
+                        funcName: funcName
+                        compiled: compiled
+                catch error
+                    @hasError = true
+                    @emit 'error', error
         paths
 
 

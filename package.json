@@ -8,7 +8,7 @@
     "browserify": "1.17.3",
     "snockets": "~1.3.8",
     "uglify-js": "~2.2.4",
-    "async": "0.1.22",
+    "async": "0.2.9",
     "pkgcloud": "0.6.6",
     "less": "~1.3.3",
     "jade": "~0.28.2",

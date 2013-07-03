@@ -3,13 +3,11 @@ html
   head
     include head
   body
-    script
-      console.log(!{assets})
     include header
     table.table
       tr
         th URL
-        th Specific URL
+        th MD5
         th Hash
         th Gzip
         th Mimetype
@@ -19,8 +17,7 @@ html
         tr
           td
             a(href="#{asset.specificUrl}") #{asset.url}
-          td
-            a(href="#{asset.specificUrl}") #{asset.specificUrl}
+          td #{asset.md5}
           td #{asset.hash}
           td #{asset.gzip}
           td #{asset.mimetype}
