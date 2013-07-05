@@ -1,131 +1,163 @@
+
 ![Asset Rack](https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png "Asset Rack")
 
-# API Reference
+# The Static Web is here
 
-## Install
+The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
 
-```bash
-npm install asset-rack
+```coffee
+rack = require 'asset-rack'
 ```
 
-## Asset
+The Static Web is an incredibly modern, high-performance platform for delivering apps and services.  But before you dive-in, you need to start with the basics.  You need to understand the fundamental building block of the static web, the __asset__.
 
-This is the base class from which all assets derive.  It can represent both a single asset or a collection of assets.
+
+## What is an Asset?
+
+> __An asset is a resource on the web that has the following three features:__
+
+1. __Location (URL)__: Where on the web the resource is located.
+2. __Contents (HTTP Response Body)__: The body of the response received by a web client.
+3. __Meta Data (HTTP Headers)__: Gives information about the resource, like content-type, caching info.
+
+This simple definition is the theoretical bedrock of this entire framework.
+
+## Getting Started
+
+Let's look at a simple example.
 
 ```js
-asset = new Asset({
-    url: '/fun.txt',
-    contents: 'I am having fun!'
+asset = new rack.Asset({
+    url: '/hello.txt',
+    contents: 'hello world'
 })
 ```
 
-### Use with Express
-
-Generally, you should wrap your assets in a rack, but for quick and dirty smaller projects you can just use the asset directly.
+Need to serve that asset with a blisteringly fast in memory cache using express?
 
 ```
-app.use(asset);
+app.use(asset)
 ```
 
-### Options
-* `url`: The url where our resource will be served.
-* `contents`: The actual contents to be deliverd by the url.
-* `headers`: Any specific headers you want associated with this asset.
-* `mimetype`: The content type for the asset.
-* `hash`: (defaults to undefined) Serves both hashed and unhashed urls.  If set to `true` then it only serves the hashed version, and if false then it only serves the unhashed version.
-* `watch`: (defaults to false) Watches for file changes and recreates assets.
-* `gzip`: (defaults to false) Whether to gzip the contents
-* `allowNoHashCache`: By default unhashed urls will not be cached.  To allow them to be hashed, set this option to `true`.
-* `maxAge`: How long to cache the resource, defaults to 1 year for hashed urls, and no cache for unhashed urls.
-* `specificUrl`: The hashed version of the url.
-* `assets`: If the asset is actually a collection of assets, then this is where all of it's assets are.
+### Hash for speed and efficiency
 
-### Methods
-* `tag()`: Returns the tag that should be used in HTML. (js and css assets only)
-* `respond(req,res)`: Given an express request and response object, this will respond with the contents and headers for the asset.
+What's cool is that this new asset is available both here:
 
-### Events
-* `complete`: Triggered once the asset is fully initialized with contents or assets, and has headers, hashed url etc.
-* `created`: Emitted when just the contents or assets have been created, before headers and hashing.
-* `error`: Emitted if there is an error with the asset.
+```
+/hello.txt
+```
 
-### Extending the Asset Class
+And here
 
-It is easy to extend the base Asset class.  The procedure for javascript is similar to that of Backbone.js.  You must override the create method for your asset.
+```
+/hello-5eb63bbbe01eeed093cb22bb8f5acdc3.txt
+```
+
+That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to __never expire__.  
+
+Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.  You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
+
+### One Rack to rule them All
+
+Assets need to be managed.  Enter the Rack.  A Rack serializes your assets, allows you to deploy to the cloud, and reference urls and tags in your templates.
+
+Say you have a directory structure like this:
+
+```
+/static      # all your images, fonts, etc.
+/style.less  # a less files with your styles
+```
+
+You can create a Rack to put all your assets in.
 
 ```js
-MyCoolAsset = rack.Asset.extend({
+assets = new rack.Rack([
+    new rack.StaticAssets({
+        urlPrefix: '/static'
+        dirname: __dirname + '/static'
+    }),
+    new rack.LessAsset({
+        url: '/style.css'
+        filename: __dirname + '/style.less'
+    }
+])
+```
+
+### Use in your Templates
+
+After you hook into express, you can reference your assets in your server side templates.
+
+```js
+assets.tag('/style.css')
+```
+
+Which gives you the html tag.
+
+```html
+<link href="/style-0f2j9fj039fuw0e9f23.css" rel="stylesheet">
+```
+
+Or you can grab just the url.
+
+```js
+assets.url('/logo.png')
+```
+
+Which gives the hashed url.
+
+```
+/logo-34t90j0re9g034o4f3o4f3.png
+```
+
+# Batteries Included
+
+We have some professional grade assets included.
+
+#### For Javascript
+* [Browserify](https://github.com/techpines/asset-rack/tree/master/lib#browserifyasset-jscoffeescript) - Create browserify assets that allow you to use "node-style" requires on the client-side.
+* [Snockets](https://github.com/techpines/asset-rack/tree/master/lib#snocketsasset-jscoffeescript) - Create snockets assets, to get the node-flavor of the "sprockets" from rails.
+
+#### For Stylesheets
+* [Less](http://github.com/techpines/asset-rack/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
+* [Stylus](https://github.com/techpines/asset-rack/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
+
+#### Templates
+* [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
+* [AngularTemplates](https://github.com/techpines/asset-rack/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
+
+#### Other
+* [StaticAssets](https://github.com/techpines/asset-rack/tree/master/lib#staticassets) - Images(png, jpg, gif), fonts, whatever you got.
+* [DynamicAssets](https://github.com/techpines/asset-rack/tree/master/lib#dynamicassets) - For compiling file-based assets like Less or Stylus in an entire directory.
+
+## Roll your own
+
+Asset Rack is extremely flexible.  Extend the __Asset__ class and override the __create__ method to roll your own awesomeness, and watch them get automatically ka-pow'ed by your rack.
+
+```js
+SuperCoolAsset = rack.Asset.extend({
     create: function(options) {
-        this.contents = 'hey there'
+        this.contents = 'easy, easy'
         this.emit 'created'
     }
 })
 ```
 
-In coffescript it is a little simpler:
+Or, for those with more refined taste:
 
 ```coffee
-class MyCoolAsset extends rack.Asset
+class SuperCoolAsset extends rack.Asset
     create: (options) ->
-        @contents = 'yea!'
+        @contents = 'even easier with coffee'
         @emit 'created'
 ```
 
-Whenever you finish creating your contents you emit a __created__ event.
+Checkout the [tutorial.](https://github.com/techpines/asset-rack/tree/master/lib#extending-the-asset-class)
 
-The options object passed to create is the same options object that gets passed to the constructor of new objects.
 
-```coffee
-asset = new MyCoolAsset(options)
-```
+## Deploying to the Cloud
+Your assets need to be deployed! Here are the current providers that are supported.
 
-You can also create create a collection of assets by extending the `Asset` class, but instead of setting the contents, you would set an array of assets.
-
-```js
-LotsOfAssets = rack.Asset.extend({
-    create: function(options) {
-        this.assets = []
-
-        // add assets to the collection
-
-        this.emit('created')
-    }
-})
-```
-
-This is pretty self-explanatory, the only caveat is that you need to wait for the assets that you create to `complete` or else you will probably run into some strange behavior.
-
-## Rack
-
-Manage your assets more easily with a rack.
-
-```js
-new rack.Rack(assets)
-```
-#### Options
-
-* `assets`: A collection of assets.
-
-#### Methods
-* `tag(url)`: Given a url, returns the tag that should be used in HTML.
-* `url(url)`: Get the hashed url from the unhashed url.
-* `deploy(options, callback)`: Deploy to the cloud see below.
-
-#### Events
-
-* `complete`: Emitted after all assets have been created.
-* `error`: Emitted for any errors.
-
-### With Express
-
-```javascript
-app.use(assets);
-```
-__Important__: You have to call `app.use(assets)` before `app.use(app.router)` or else the `assets` markup functions will not be available in your templates.  The assets middleware needs to come first.
-
-### Deploying
-
-#### Amazon S3
+### Amazon S3
 
 ```js
 assets.deploy({
@@ -136,7 +168,7 @@ assets.deploy({
 }, function(error) {})
 ```
 
-#### Rackspace Cloud Files
+### Rackspace Cloud Files
 ```js
 assets.deploy(
     provider: 'rackspace',
@@ -146,7 +178,7 @@ assets.deploy(
 }, function(error) {})
 ```
 
-#### Azure Storage
+### Azure Storage
 ```js
 assets.deploy(
     provider: 'azure',
@@ -156,92 +188,108 @@ assets.deploy(
 }, function(error) {})
 ```
 
-## Javascript/Coffeescript
+### Running in Production Mode
 
-### BrowserifyAsset (js/coffeescript)
+If you provide the options `configFile` in your deploy options then a config file will be written:
 
-Browserify is an awesome node project that converts node-style requires
-to requirejs for the frontend.  For more details, check it out,
-[here](https://github.com/substack/node-browserify).
-
-```javascript
-new BrowserifyAsset({
-    url: '/app.js',
-    filename: __dirname + '/client/app.js',
-    compress: true
-});
+```js
+assets.deploy(
+    configFile: __dirname + '/rack.json'
+    provider: 'amazon'
+    container: ...
+)
 ```
 
-#### Options
+Then you can create your assets from the file like this:
 
-* `url`: The url that should retrieve this resource.
-* `filename`: A filename or list of filenames to be executed by the browser.
-* `require`: A filename or list of filenames to require, should not be necessary
-as the `filename` argument should pull in any requires you need.
-* `debug` (defaults to false): enables the browserify debug option.
-* `compress` (defaults to false): whether to run the javascript through a minifier.
-* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
-
-### SnocketsAsset (js/coffeescript)
-
-Snockets is a JavaScript/CoffeeScript concatenation tool for Node.js inspired by Sprockets. Used by connect-assets to create a Rails 3.1-style asset pipeline.  For more details, check it out,
-[here](https://github.com/TrevorBurnham/snockets).
-
-```javascript
-new SnocketsAsset({
-    url: '/app.js',
-    filename: __dirname + '/client/app.js',
-    compress: true
+```js
+assets = rack.fromConfigFile({
+    configFile: __dirname + '/rack.json'
+    hostname: 'cdn.example.com'
 });
+app.use(assets);
 ```
 
-#### Options
+And now all of your server side templates will reference your CDN.  Also, if you do happen to hit one of your static urls on the server, then you will be redirected to the CDN.
 
-* `url`: The url that should retrieve this resource.
-* `filename`: A filename or list of filenames to be executed by the browser.
-* `compress` (defaults to false): whether to run the javascript through a minifier.
-* `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
-* `debug` (defaults to false): output scripts via eval with trailing //@ sourceURL
+## FAQ
 
+#### __Why is this better than Connect-Assets?__
 
-## Stylesheets
+That's easy!
 
-### LessAsset
+* It works with node.js multi-process and cluster.
+* More built-in assets.
+* Un-opionated, connect-assets dictates your url structure AND directory structure.
+* Ability to deploy to the cloud.
+* Easy to extend.
+* Simpler to use.
 
-The less asset basically compiles up and serves your less files as css.  You
-can read more about less [here](https://github.com/cloudhead/less.js).
+With all that said, much thanks to Trevor for writing connect-assets. 
 
-```javascript
-new LessAsset({
-    url: '/style.css',
-    filename: __dirname + '/style/app.less'
-});
-```
+#### __Why is this better than Grunt?__
 
-#### Options
+Grunt is a great build tool.  Asset Rack is not a build a tool.  It never writes files to disk, there is no "build step".  Everything happens "just in time".
 
-* `url`: The url that should retrieve this resource.
-* `filename`: Filename of the less file you want to serve.
-* `compress` (defaults to false): Whether to minify the css.
-* `paths`: List of paths to search for `@import` directives.
+If you have "genuine" build issues, then by all means use Grunt.  You can even use Grunt with Asset Rack.
 
-### StylusAsset
+However, if you are only using Grunt to manage your static assets, then you should consider upgrading to Asset Rack.
 
-The stylus asset serves up your stylus assets.
+#### __Why is this better than Wintersmith(Blacksmith)?__
 
-```javascript
+Asset Rack is a static web framework, and at it's core there are only two abstractions, the `Asset` and `Rack` classes.  Wintersmith is a high level framework that solves a more specific problem.
+
+Wintersmith could consume Asset Rack as a dependency, and if something more high-level fits your specific use case, then by all means that is probably a good fit.  If you need more flexibilty and power, then go with Asset Rack.
+
+# Changelog
+
+### 2.2.1
+
+* A few small tweaks.
+
+### 2.2.0
+
+* Watch and asset recreation is now working.  This should be considered experimental for this version.
+
+```js
 new StylusAsset({
-    url: '/style.css',
-    filename: __dirname + '/style/fun.styl'
+    watch: true,
+    ...
 });
 ```
 
-#### Options
+* Gzip is here finally.
 
-* `url`: The url that should retrieve this resource.
-* `filename`: Filename of the less file you want to serve.
-* `compress` (defaults to false, or true in production mode): Whether to minify the css.
-* `config`: A function that allows custom configuration of the stylus object:
+```js
+new BrowserifyAsset({
+    gzip: true,
+    ...
+});
+```
+
+* Now adding sub assets to an asset is much simpler, just use `addAsset`.
+
+```js
+this.addAsset(asset);
+this.emit('created');
+```
+
+Thanks @moellenbeck, @d1plo1d, @undashes, and @noc7c9 for contributing!
+
+### 2.1.4
+
+* @vicapow Better error handling for `LessAsset`.
+
+### 2.1.3
+
+* @noc7c9 Added generalized `rack.util.walk` function, need to document the function.
+* @noc7c9 Added `DynamicAssets` class.
+* @noc7c9 is awesome.
+
+### 2.1.2
+
+* Added ability to configure Stylus, thanks to @noc7c9.
+
 ```coffee
 new StylusAsset
   url: '/style.css'
@@ -251,7 +299,8 @@ new StylusAsset
     @define 'setting', 90
 ```
 
-And javascript: 
+And for javascript:
+
 ```js
 new StylusAsset({
   url: '/style.css',
@@ -264,111 +313,22 @@ new StylusAsset({
 });
 ```
 
+# Test
 
-## Templates
-
-### JadeAsset
-This is an awesome asset.  Ever wanted the simplicity of jade templates
-on the browser with lightning fast performance.  Here you go.
-
-```javascript
-new JadeAsset({
-    url: '/templates.js',
-    dirname: './templates'
-});
-```
-
-So if your template directory looked like this:
-
-```
-index.jade
-contact.jade
-user/
-    profile.jade
-    info.jade
-```
-
-Then reference your templates on the client like this:
-
-```javascript
-$('body').append(Templates['index']());
-$('body').append(Templates['user/profile']({username: 'brad', status: 'fun'}));
-$('body').append(Templates['user/info']());
-```
-#### Options
-
-* `url`: The url that should retrieve this resource.
-* `dirname`: Directory where template files are located, will grab them recursively.
-* `separator` (defaults to '/'): The character that separates directories.
-* `compress` (defaults to false): Whether to minify the javascript or not.
-* `clientVariable` (defaults to 'Templates'): Client side template
-variable.
-* `beforeCompile`: A function that takes the jade template as a string and returns a new jade template string before it's compiled into javascript.
-
-### AngularTemplatesAsset
-
-The angular templates asset packages all .html templates ready to be injected into the client side angularjs template cache.
-You can read more about angularjs [here](http://angularjs.org/).
-
-```javascript
-new AngularTemplatesAsset({
-    url: '/js/templates.js',
-    dirname: __dirname + '/templates'
-});
-```
-
-Then see the following example client js code which loads templates into the template cache, where `angularTemplates` is the function provided by AngularTemplatesAsset:
-
-```javascript
-//replace this with your module initialization logic
-var myApp = angular.module("myApp", []);
-
-//use this line to add the templates to the cache
-myApp.run(['$templateCache', angularTemplates]);
-```
-
-#### Options
-
-* `url`: The url that should retrieve this resource.
-* `dirname`: Directory where the .html templates are stored.
-* `compress` (defaults to false): Whether to unglify the js.
-
-## Other
-
-### StaticAssets
+Testing is easy and fun!
 
 ```js
-new StaticAssets({
-    dirname: '/path/to/static'
-    urlPrefix: '/static'
-})
+cd asset-rack
+npm install
+npm test
 ```
 
-#### Options
-* `dirname`: The folder to recursively pull assets from.
-* `urlPrefix`: Base url where all assets will be available from.
+# License
 
-### DynamicAssets
+©2012 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
 
-```js
-new DyanmicAssets({
-    type: LessAsset
-    urlPrefix: '/style'
-    dirname: './style'
-})
-```
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-Then this would be the equivalent of going through every file in `/style` and doing this:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-```js
-new LessAsset({
-    filename: './style/some-file.less'
-    url: '/style/some-file.css'
-})
-```
-
-#### Options
-* `dirname`: The folder to recursively grab files from.
-* `type`: The type of Asset to use for each file.
-* `urlPrefix`: The url prefix to serve the assets from.
-* `options`: Other options to pass to the individual assets.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

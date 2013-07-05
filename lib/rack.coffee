@@ -116,7 +116,28 @@ class exports.Rack extends EventEmitter
                 readmePath = pathutil.join __dirname, 'README.md'
                 fs.readFile readmePath, 'utf8', (error, readmeContents) =>
                     return next error if error?
-                    md = markdown.toHTML(readmeContents) 
+                    md = markdown.toHTML(readmeContents,) 
+                    #need to edit parts of the markdown code
+                    #remove the logo out of the readme, we want to have a logo with a link to the admin section
+                    md = md.split("\n").slice(1).join("\n")
+                    #parse <code> blocks
+                    mdLines = md.split("\n")
+                    codeBlockStart = '<p><code>'
+                    codeBlockEnd =   '</code></p>'
+                    for i in [0..mdLines.length] by 1
+                        if typeof mdLines[i] isnt "undefined"
+                            #format the start of the code block
+                            if mdLines[i]. substring(0, codeBlockStart.length) is codeBlockStart
+                                #console.log('line: '+i+' ', mdLines[i])
+                                codeClass = mdLines[i].replace(codeBlockStart,'')          
+                                if codeClass is ''
+                                    codeClass= 'javascript'
+                                #console.log('line: '+i+' - the type of code is', codeClass)
+                                mdLines[i] = mdLines[i].replace(codeBlockStart, '<p><pre><code class="'+codeClass+'">')
+                            #format the end of the code block
+                            if mdLines[i]. substring(0, codeBlockEnd.length) is codeBlockEnd
+                                mdLines[i] = mdLines[i].replace(codeBlockEnd, '</code></pre></p>')
+                    md= mdLines.join("\n")
                     response.send compiled
                         readme: md
                     
