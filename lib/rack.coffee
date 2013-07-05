@@ -7,6 +7,7 @@ pkgcloud = require 'pkgcloud'
 fs = require 'fs'
 jade = require 'jade'
 pathutil = require 'path'
+markdown = require( "markdown" ).markdown
 {BufferStream, extend} = require('./util')
 {EventEmitter} = require 'events'
 
@@ -106,6 +107,11 @@ class exports.Rack extends EventEmitter
                 filename: errorPath
             response.send compiled
                 stack: @currentError.stack.split '\n'
+    handleReadme: (request, response, next) ->
+            readmePath = pathutil.join __dirname, 'README.md'
+            fs.readFile readmePath, 'utf8', (error, contents) =>
+                return next error if error?
+                response.send markdown.toHTML(contents ) 
 
     handleAdmin: (request, response, next) ->
         # No admin in production for now
@@ -115,6 +121,8 @@ class exports.Rack extends EventEmitter
             path = request.url.replace '/asset-rack/', ''
             if path is 'error'
                 return @handleError request, response, next
+            if path is 'readme'
+                return @handleReadme request, response, next
             response.sendfile pathutil.join __dirname, 'admin', path
         else
             adminPath = pathutil.join __dirname, 'admin/templates/admin.jade'
