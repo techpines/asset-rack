@@ -108,10 +108,18 @@ class exports.Rack extends EventEmitter
             response.send compiled
                 stack: @currentError.stack.split '\n'
     handleReadme: (request, response, next) ->
-            readmePath = pathutil.join __dirname, 'README.md'
-            fs.readFile readmePath, 'utf8', (error, contents) =>
+            readmeTemplate = pathutil.join __dirname, 'admin/templates/readme.jade'
+            fs.readFile readmeTemplate , 'utf8', (error, contents) =>
                 return next error if error?
-                response.send markdown.toHTML(contents ) 
+                compiled = jade.compile contents,
+                    filename: readmeTemplate 
+                readmePath = pathutil.join __dirname, 'README.md'
+                fs.readFile readmePath, 'utf8', (error, readmeContents) =>
+                    return next error if error?
+                    md = markdown.toHTML(readmeContents) 
+                    response.send compiled
+                        readme: md
+                    
 
     handleAdmin: (request, response, next) ->
         # No admin in production for now
