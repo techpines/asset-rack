@@ -10,12 +10,26 @@ class exports.JavascriptAsset extends Asset
         @options = options
         @code = options.code
         @dirname = options.dirname or '/'
+        @compress = options.compress
+        @compress ?= false
         @contents = ''
-        for path in @code
+        if @compress
+        else
+            @assets = []
+        async.eachSeries @code, (path, next) =>
             try
+                if path instanceof Asset
+                    asset = path
+                    return asset.on 'complete', =>
+                        if @compress
+                            @contents += asset.contents
+                        else
+                            @addAsset asset
+                        next()
+                    
                 fileContent = fs.readFileSync pathutil.join(@dirname, path), 'utf8'
-                assetUrl = '/' + path.replace('.coffee', '.js')
-                                     .replace(/\\/g, '/')
+                assetUrl = path.replace('.coffee', '.js')
+                               .replace(/\\/g, '/')
                 jsContent = ''
                 switch
                     when path.indexOf('.coffee') isnt -1
@@ -27,11 +41,29 @@ class exports.JavascriptAsset extends Asset
                             throw error
                     else
                         jsContent = fileContent
-                @contents += jsContent
+                if @compress
+                    @contents += jsContent + '\n'
+                else
+                    @addAsset new Asset {
+                        url: assetUrl
+                        contents: jsContent
+                    }
+                next()
             catch error
                 @emit 'error', error
-        
-        @emit 'created'
+        , =>
+            @emit 'created'
+    
+    tag: ->
+        if @assets?
+            tag = ''
+            for asset in @assets
+                tag += "\n<script type=\"text/javascript\" "
+                tag += "src=\"#{asset.specificUrl}\"></script>"
+            return tag
+        if @contents? and @contents isnt ''
+            tag = "\n<script type=\"#{@mimetype}\" "
+            return tag += "src=\"#{@specificUrl}\"></script>"
                 
     setupCoffeescript: ->
         @coffeescript ?= @options.coffeescript or require 'coffee-script'

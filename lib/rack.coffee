@@ -36,6 +36,7 @@ class exports.Rack extends EventEmitter
 
         # Listen for the error event, throw if no listeners
         @on 'error', (error) =>
+            console.log error
             @hasError = true
             @currentError = error
 
