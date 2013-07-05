@@ -129,11 +129,16 @@ class exports.Rack extends EventEmitter
                             #format the start of the code block
                             if mdLines[i]. substring(0, codeBlockStart.length) is codeBlockStart
                                 #console.log('line: '+i+' ', mdLines[i])
-                                codeClass = mdLines[i].replace(codeBlockStart,'')          
+                                codeClass = mdLines[i].replace(codeBlockStart,'')
                                 if codeClass is ''
                                     codeClass= 'javascript'
                                 #console.log('line: '+i+' - the type of code is', codeClass)
-                                mdLines[i] = mdLines[i].replace(codeBlockStart, '<p><pre><code class="'+codeClass+'">')
+                                #mdLines[i] = mdLines[i].replace(codeBlockStart, '<p><pre><code class="'+codeClass+'">')
+
+                                #mdLines[i] =  '<p><pre><code class="'+codeClass+'">'
+                                #because there is a weird newline character, lets add the new <code> to the next line
+                                mdLines[i] = ''
+                                mdLines[i+1] =  '<p><pre><code class="'+codeClass+'"> ' + mdLines[i+1] 
                             #format the end of the code block
                             if mdLines[i]. substring(0, codeBlockEnd.length) is codeBlockEnd
                                 mdLines[i] = mdLines[i].replace(codeBlockEnd, '</code></pre></p>')
