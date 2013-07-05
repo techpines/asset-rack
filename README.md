@@ -1,5 +1,5 @@
 
-<img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
+![Asset Rack](https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png "Asset Rack")
 
 # The Static Web is here
 

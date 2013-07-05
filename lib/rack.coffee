@@ -7,6 +7,7 @@ pkgcloud = require 'pkgcloud'
 fs = require 'fs'
 jade = require 'jade'
 pathutil = require 'path'
+markdown = require( "markdown" ).markdown
 {BufferStream, extend} = require('./util')
 {EventEmitter} = require 'events'
 
@@ -106,6 +107,45 @@ class exports.Rack extends EventEmitter
                 filename: errorPath
             response.send compiled
                 stack: @currentError.stack.split '\n'
+    handleReadme: (request, response, next) ->
+            readmeTemplate = pathutil.join __dirname, 'admin/templates/readme.jade'
+            fs.readFile readmeTemplate , 'utf8', (error, contents) =>
+                return next error if error?
+                compiled = jade.compile contents,
+                    filename: readmeTemplate 
+                readmePath = pathutil.join __dirname, 'README.md'
+                fs.readFile readmePath, 'utf8', (error, readmeContents) =>
+                    return next error if error?
+                    md = markdown.toHTML(readmeContents,) 
+                    #need to edit parts of the markdown code
+                    #remove the logo out of the readme, we want to have a logo with a link to the admin section
+                    md = md.split("\n").slice(1).join("\n")
+                    #parse <code> blocks
+                    mdLines = md.split("\n")
+                    codeBlockStart = '<p><code>'
+                    codeBlockEnd =   '</code></p>'
+                    for i in [0..mdLines.length] by 1
+                        if typeof mdLines[i] isnt "undefined"
+                            #format the start of the code block
+                            if mdLines[i]. substring(0, codeBlockStart.length) is codeBlockStart
+                                #console.log('line: '+i+' ', mdLines[i])
+                                codeClass = mdLines[i].replace(codeBlockStart,'')
+                                if codeClass is ''
+                                    codeClass= 'javascript'
+                                #console.log('line: '+i+' - the type of code is', codeClass)
+                                #mdLines[i] = mdLines[i].replace(codeBlockStart, '<p><pre><code class="'+codeClass+'">')
+
+                                #mdLines[i] =  '<p><pre><code class="'+codeClass+'">'
+                                #because there is a weird newline character, lets add the new <code> to the next line
+                                mdLines[i] = ''
+                                mdLines[i+1] =  '<p><pre><code class="'+codeClass+'"> ' + mdLines[i+1] 
+                            #format the end of the code block
+                            if mdLines[i]. substring(0, codeBlockEnd.length) is codeBlockEnd
+                                mdLines[i] = mdLines[i].replace(codeBlockEnd, '</code></pre></p>')
+                    md= mdLines.join("\n")
+                    response.send compiled
+                        readme: md
+                    
 
     handleAdmin: (request, response, next) ->
         # No admin in production for now
@@ -115,6 +155,8 @@ class exports.Rack extends EventEmitter
             path = request.url.replace '/asset-rack/', ''
             if path is 'error'
                 return @handleError request, response, next
+            if path is 'readme'
+                return @handleReadme request, response, next
             response.sendfile pathutil.join __dirname, 'admin', path
         else
             adminPath = pathutil.join __dirname, 'admin/templates/admin.jade'
