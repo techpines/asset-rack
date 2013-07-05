@@ -97,6 +97,8 @@ class exports.Rack extends EventEmitter
         else @on 'complete', handle
 
     handleError: (request, response, next) ->
+        # No admin in production for now
+        return next() if process.env.NODE_ENV is 'production'
         errorPath = pathutil.join __dirname, 'admin/templates/error.jade'
         fs.readFile errorPath, 'utf8', (error, contents) =>
             return next error if error?
@@ -106,6 +108,8 @@ class exports.Rack extends EventEmitter
                 stack: @currentError.stack.split '\n'
 
     handleAdmin: (request, response, next) ->
+        # No admin in production for now
+        return next() if process.env.NODE_ENV is 'production'
         split = request.url.split('/')
         if split.length > 2
             path = request.url.replace '/asset-rack/', ''
