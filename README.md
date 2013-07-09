@@ -1,4 +1,3 @@
-
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
 # The Static Web is here
@@ -73,13 +72,13 @@ You can create a Rack to put all your assets in.
 ```js
 assets = new rack.Rack([
     new rack.StaticAssets({
-        urlPrefix: '/static'
+        urlPrefix: '/static',
         dirname: __dirname + '/static'
     }),
     new rack.LessAsset({
-        url: '/style.css'
+        url: '/style.css',
         filename: __dirname + '/style.less'
-    }
+    })
 ])
 ```
 
@@ -136,8 +135,8 @@ Asset Rack is extremely flexible.  Extend the __Asset__ class and override the _
 ```js
 SuperCoolAsset = rack.Asset.extend({
     create: function(options) {
-        this.contents = 'easy, easy'
-        this.emit 'created'
+        this.contents = 'easy, easy',
+        this.emit 'created',
     }
 })
 ```
@@ -193,8 +192,8 @@ If you provide the options `configFile` in your deploy options then a config fil
 
 ```js
 assets.deploy(
-    configFile: __dirname + '/rack.json'
-    provider: 'amazon'
+    configFile: __dirname + '/rack.json',
+    provider: 'amazon',
     container: ...
 )
 ```
@@ -203,7 +202,7 @@ Then you can create your assets from the file like this:
 
 ```js
 assets = rack.fromConfigFile({
-    configFile: __dirname + '/rack.json'
+    configFile: __dirname + '/rack.json',
     hostname: 'cdn.example.com'
 });
 app.use(assets);
