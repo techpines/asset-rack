@@ -24,7 +24,10 @@ class exports.Asset extends EventEmitter
     constructor: (options) ->
         super()
         options ?= {}
-    
+
+#       if options.url
+#           console.log "Asset(): gzip=#{options.gzip} maxAge=#{options.maxAge} hash=#{options.hash} allowNoHashCache=#{options.allowNoHashCache} maxAgeNoHash=#{options.maxAgeNoHash} url=#{options.url}"
+
         # Set the url
         @url = options.url if options.url?
 
