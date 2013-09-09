@@ -20,6 +20,7 @@ class exports.Rack extends EventEmitter
 
         # Max age for HTTP Cache-Control
         @maxAge = options.maxAge
+        @maxAgeNoCache = options.maxAgeNoCache
 
         # Allow non-hahshed urls to be cached
         @allowNoHashCache = options.allowNoHashCache

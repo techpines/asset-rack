@@ -58,6 +58,7 @@ class exports.Asset extends EventEmitter
 
         # Max age for HTTP cache control
         @maxAge = options.maxAge if options.maxAge?
+        @maxAgeNoHash = options.maxAgeNoHash if options.maxAgeNoHash?
 
         # Whether to allow caching of non-hashed urls 
         @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
@@ -124,6 +125,8 @@ class exports.Asset extends EventEmitter
         @on 'start', =>
             @maxAge ?= @rack?.maxAge
             @maxAge ?= @defaultMaxAge unless @hash is false
+            @maxAgeNoHash ?= @rack?.maxAgeNoHash
+            @maxAgeNoHash ?= @maxAge
             @allowNoHashCache ?= @rack?.allowNoHashCache
             @create options
 
@@ -145,10 +148,18 @@ class exports.Asset extends EventEmitter
     # Responds to an express route
     respond: (request, response) ->
         headers = {}
-        if request.path is @url and @allowNoHashCache isnt true
-            for key, value of @headers
-                headers[key] = value
-            delete headers['cache-control']
+        if request.path is @url
+            ## requesting the nohash version of the url
+            if @allowNoHashCache isnt true
+                ## if no cache in nohash, delete the cache-control header
+                for key, value of @headers
+                    headers[key] = value
+                delete headers['cache-control']
+            else
+                ## cache *is* allowed in nohash, so adjust max-age
+                for key, value of @headers
+                    headers[key] = value
+                headers['cache-control'] = "public, max-age=#{@maxAgeNoHash}"
         else
             headers = @headers
         for key, value of headers
