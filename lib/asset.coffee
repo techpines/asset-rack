@@ -95,14 +95,17 @@ class exports.Asset extends EventEmitter
                     @completed = true
                     @emit 'complete'
             else
-                @completed = true
+                # can't mark "@completed" yet, since mutli-assets containing this asset
+				# may get the "complete" callback twice
 
                 # Handles gzipping
                 if @gzip
                     zlib.gzip @contents, (error, gzip) =>
                         @gzipContents = gzip
+                        @completed = true
                         @emit 'complete'
                 else
+                    @completed = true
                     @emit 'complete'
         
             # Does the file watching
