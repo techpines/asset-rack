@@ -58,6 +58,7 @@ class exports.Asset extends EventEmitter
 
         # Whether to hash the url or not or both
         @hash = options.hash if options.hash?
+        @warnNoHash = (not @hash) and options.warnNoHash
 
         # Max age for HTTP cache control
         @maxAge = options.maxAge if options.maxAge?
@@ -153,6 +154,8 @@ class exports.Asset extends EventEmitter
         headers = {}
         if request.path is @url
             ## requesting the nohash version of the url
+            if @warnNoHash
+                console.log "asset-rack WARNING: getting #{request.path} with no hash"
             if @allowNoHashCache isnt true
                 ## if no cache in nohash, delete the cache-control header
                 for key, value of @headers
