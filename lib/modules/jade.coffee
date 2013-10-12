@@ -39,7 +39,15 @@ class exports.JadeAsset extends Asset
         for fileObject in @fileObjects
             if @fileContents.length > 0
                 @fileContents += ","
-            @fileContents += "'#{fileObject.funcName}': #{fileObject.compiled}"
+
+            if @assetsMap?
+                @fileContents += """'#{fileObject.funcName}': function(locals) {
+                    locals = locals || {};
+                    locals['assets'] = assets;
+                    return (#{fileObject.compiled})(locals)
+                }"""
+            else
+                @fileContents += "'#{fileObject.funcName}': #{fileObject.compiled}"
             
         @contents += @fileContents
         @contents += '};'
