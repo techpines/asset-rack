@@ -33,11 +33,10 @@ describe 'a jade asset', ->
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
             window.Templates.test().should.equal testFile
             userFile = fs.readFileSync "#{fixturesDir}/user.html", 'utf8'
-            window.Templates.user(users: ['fred', 'steve'])#.should.equal userFile
+            window.Templates.user(users: ['fred', 'steve']).should.equal userFile
             done()
 
     it 'should work in a rack', (done) ->
-        # compiled = fs.readFileSync "#{fixturesDir}/templates-rack.js", 'utf8'
         app.use new rack.AssetRack [
             new rack.Asset
                 url: '/image.png'
@@ -49,7 +48,6 @@ describe 'a jade asset', ->
         easyrequest 'http://localhost:7076/templates-rack.js', (error, response, body) ->
             response.headers['content-type'].should.equal 'text/javascript'
             window = {}
-            fs.writeFileSync __dirname + '/__test.js', body
             eval(body)
             jade = module.exports;
             testFile = fs.readFileSync "#{fixturesDir}/test.html", 'utf8'
@@ -62,7 +60,6 @@ describe 'a jade asset', ->
             done()
 
     it 'should work compressed', (done) ->
-        # compiled = fs.readFileSync "#{fixturesDir}/templates.min.js", 'utf8'
         app.use new rack.Rack [
             new rack.JadeAsset
                 dirname: "#{fixturesDir}"
