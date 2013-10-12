@@ -28,8 +28,8 @@ class exports.JavascriptAsset extends Asset
                         next()
                     
                 fileContent = fs.readFileSync pathutil.join(@dirname, path), 'utf8'
-                assetUrl = path.replace('.coffee', '.js')
-                               .replace(/\\/g, '/')
+                assetUrl = '/' + path.replace('.coffee', '.js')
+                               .replace(/\\/g, '\/')
                 jsContent = ''
                 switch
                     when path.indexOf('.coffee') isnt -1
