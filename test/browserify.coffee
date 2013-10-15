@@ -10,10 +10,9 @@ describe 'a browserify asset', ->
     fixturesDir = "#{__dirname}/fixtures/browserify"
 
     it 'should work', (done) ->
-        compiled = fs.readFileSync "#{fixturesDir}/app.js", 'utf8'
         app = express().http()
         app.use new rack.BrowserifyAsset {
-            filename: "#{fixturesDir}/app.coffee"
+            filename: "#{fixturesDir}/app.js"
             url: '/app.js'
         }
         app.listen 7076, ->
@@ -22,10 +21,9 @@ describe 'a browserify asset', ->
                 done()
 
     it 'should work compressed', (done) ->
-        compiled = fs.readFileSync "#{fixturesDir}/app.min.js", 'utf8'
         app = express().http()
         app.use asset = new rack.BrowserifyAsset
-            filename: "#{fixturesDir}/app.coffee"
+            filename: "#{fixturesDir}/app.js"
             url: '/app.js'
             compress: true
         app.listen 7076, ->
@@ -35,10 +33,10 @@ describe 'a browserify asset', ->
 
     #it 'should work with extension handlers', (done) ->
     #    done()
-    
+
     #it 'should work with debug option', (done) ->
     #    done()
-    
-                    
+
+
     afterEach (done) -> process.nextTick ->
         app.server.close done
