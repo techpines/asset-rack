@@ -20,7 +20,7 @@ class exports.BrowserifyAsset extends Asset
         agent = browserify watch: false, debug: @debug
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
-        agent.require @filename
+        agent.add @filename
         agent.require @require if @require
 
         agent.external ext for ext in @external if @external
