@@ -21,7 +21,13 @@ class exports.BrowserifyAsset extends Asset
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
         agent.add @filename
-        agent.require @require if @require
+
+        if @require
+            for r in @require
+                if r.file
+                    agent.require r.file, r.options
+                else
+                    agent.require r
 
         agent.external ext for ext in @external if @external
         agent.transform t for t in @transform if @transform
