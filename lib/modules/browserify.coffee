@@ -29,7 +29,7 @@ class exports.BrowserifyAsset extends Asset
         agent.transform 'coffeeify' if /.coffee$/.test @filename
 
         agent.bundle (error, src) =>
-            # return @emit 'error', error if error?
+            return @emit 'error', error if error?
             if @compress is true
                 @contents = uglify.minify(src, {fromString: true}).code
                 @emit 'created'
