@@ -2,6 +2,7 @@ fs = require 'fs'
 pathutil = require 'path'
 uglify = require 'uglify-js'
 Asset = require('../index').Asset
+jade = require 'jade'
 
 class exports.AngularTemplatesAsset extends Asset
     mimetype: 'text/javascript'
@@ -16,9 +17,13 @@ class exports.AngularTemplatesAsset extends Asset
               addTemplates(templates, dir, subpath)
               continue
 
-            continue unless file.match(/\.html$/)
+            continue unless file.match(/(\.html|\.jade)$/)
 
-            template = fs.readFileSync(pathutil.join(dirname, file), 'utf8').replace(/\\/g, '\\\\').replace(/\n|\r\n|\r/g, '\\n').replace(/'/g, '\\\'')
+            if file.match(/\.jade$/)
+                template = jade.renderFile(pathutil.join(dirname, file)).replace(/'/g, '\\\'')
+            else
+                template = fs.readFileSync(pathutil.join(dirname, file), 'utf8').replace(/\\/g, '\\\\').replace(/\n|\r\n|\r/g, '\\n').replace(/'/g, '\\\'')
+
             templates.push "$templateCache.put('" + path + file + "', '" + template + "')"
 
     create: (options) ->
