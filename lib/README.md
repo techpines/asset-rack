@@ -240,7 +240,7 @@ new StylusAsset({
 #### Options
 
 * `url`: The url that should retrieve this resource.
-* `filename`: Filename of the less file you want to serve.
+* `filename`: Filename of the stylus file you want to serve.
 * `compress` (defaults to false, or true in production mode): Whether to minify the css.
 * `config`: A function that allows custom configuration of the stylus object:
 ```coffee
