@@ -107,13 +107,14 @@ class exports.Asset extends EventEmitter
         
             # Does the file watching
             if @watch
-                @watcher = fs.watch @toWatch, (event, filename) =>
-                    if event is 'change'
-                        @watcher.close()
-                        @completed = false
-                        @assets = false
-                        process.nextTick =>
-                            @emit 'start'
+                @watcher = new gaze.Gaze(@toWatch + "/*")
+                @watcher.on 'all', (event, filepath) =>
+                    @watcher.close()
+                    @completed = false
+                    @assets = false
+
+                    process.nextTick =>
+                        @emit 'start'
 
         # Listen for errors and throw if no listeners
         @on 'error', (error) =>
