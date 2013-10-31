@@ -1,5 +1,5 @@
 less = require 'less'
-fs = require 'fs'
+fs = require '../fs'
 pathutil = require 'path'
 Asset = require('../.').Asset
 urlRegex = /url\s*\(\s*(['"])((?:(?!\1).)+)\1\s*\)/

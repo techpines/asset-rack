@@ -5,7 +5,7 @@
 EventEmitter = require('events').EventEmitter
 Buffer = require('buffer').Buffer
 _ = require 'underscore'
-fs = require 'fs'
+fs = require '../fs'
 pathutil = require 'path'
 async = require 'async'
 
