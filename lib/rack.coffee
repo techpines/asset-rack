@@ -4,7 +4,7 @@
 # Pull in our dependencies
 async = require 'async'
 pkgcloud = require 'pkgcloud'
-fs = require 'fs'
+fs = require '../fs'
 jade = require 'jade'
 pathutil = require 'path'
 {BufferStream, extend} = require('./util')

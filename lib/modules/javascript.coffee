@@ -1,5 +1,5 @@
 
-fs = require 'fs'
+fs = require '../fs'
 pathutil = require 'path'
 async = require 'async'
 {Asset} = require '../.'
