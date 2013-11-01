@@ -1,25 +1,37 @@
 <img src="https://s3.amazonaws.com/temp.techpines.com/asset-rack-white.png">
 
-# The Static Web is here
+# Asset Rack speeds your website
 
-The Static Web is __blisteringly fast__.  The Static Web is  __ultra efficient__.  The Static Web is __cutting edge__.  And now it has a hero.
+Asset Rack speeds the delivery of webpages by concatenating, minifying, and compressing Javascript
+and CSS, and then uses fingerprinting so that Javascript and CSS bundles, images, and other assets
+can be cached forever without displaying out-of-date information.
+
+Inspired by the Rails asset pipeline, Asset Rack enables Express apps to compile assets and then
+serve them from either an in-memory cache, or via automatic deployment to multiple cloud hosting platforms.
+
+Asset Rack speeds up webpage delivery by minimizing the need for HTTP roundtrips. Express already
+supports Etags to avoid having to resend an asset if the browser has cached it and the asset has
+not changed. But, a separate HTTP roundtrip is still required for the browser to send an
+`If-None-Match` and get back `304 Not Modified`. Asset Rack improves on this first by concatenating,
+minifying, and compressing potentially dozens of Javascript and CSS files into a single bundle of
+each type.
+
+But the best way of speeding up an HTTP rountrip is to avoid making one at all. When the second
+page of a website uses the same assets as the first page, and those assets have far future cache
+expires headers, then there is no need to even make a single round trip for those assets when
+they are requested after the first time.
+
+Fingerprinting is the technique of giving each asset a unique name that is derived fron its
+content. Then, when even one bit in an asset (such as a CSS bundle) changes, its name changes,
+and so a browser will `GET` the updated asset. And, because Asset Rack fingerpringting uses a
+cryptographic hash of the contents, the unique name is calculated the same across Express servers on multiple
+machines, as long as the asset is identical. Caches everywhere (CDNs, at ISPs, in networking
+equipment, or in web browsers) are able to keep a copy of each asset, but since the HTML references
+the unqiue name of each asset, only the correct version of that asset will ever be served from a cache.
 
 ```coffeescript
 rack = require 'asset-rack'
 ```
-
-The Static Web is an incredibly modern, high-performance platform for delivering apps and services.  But before you dive-in, you need to start with the basics.  You need to understand the fundamental building block of the static web, the __asset__.
-
-
-## What is an Asset?
-
-> __An asset is a resource on the web that has the following three features:__
-
-1. __Location (URL)__: Where on the web the resource is located.
-2. __Contents (HTTP Response Body)__: The body of the response received by a web client.
-3. __Meta Data (HTTP Headers)__: Gives information about the resource, like content-type, caching info.
-
-This simple definition is the theoretical bedrock of this entire framework.
 
 ## Getting Started
 
@@ -54,17 +66,17 @@ And here
 
 That long string of letters and numbers is the md5 hash of the contents.  If you hit the hash url, then we automatically set the HTTP cache to __never expire__.  
 
-Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.  You have versioning, conflict resolution all in one simple mechanism.  You can update your entire entire app instantaneously.  Fast, efficient, static.
+Now proxies, browsers, cloud storage, content delivery networks only need to download your asset one single time.  You have both versioning and conflict resolution all in one simple mechanism. 
 
 ### One Rack to rule them All
 
-Assets need to be managed.  Enter the Rack.  A Rack serializes your assets, allows you to deploy to the cloud, and reference urls and tags in your templates.
+Assets need to be managed.  Enter the Rack.  A Rack serializes your assets, allowing you to cache them in RAM or to deploy  them to the cloud, and to easily reference their unique names using urls and tags in your templates.
 
 Say you have a directory structure like this:
 
 ```
 /static      # all your images, fonts, etc.
-/style.less  # a less files with your styles
+/style.less  # a less file with your styles
 ```
 
 You can create a Rack to put all your assets in.
@@ -118,7 +130,7 @@ We have some professional grade assets included.
 
 #### For Stylesheets
 * [Less](http://github.com/techpines/asset-rack/tree/master/lib#lessasset) - Compile less assets, ability to use dependencies, minification.
-* [Stylus](https://github.com/techpines/asset-rack/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
+* [Stylus](https://github.com/techpines/asset-rack/tree/master/lib#stylusasset) - Compile stylus assets, ability to use dependencies, minification.
 
 #### Templates
 * [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
@@ -153,7 +165,7 @@ Checkout the [tutorial.](https://github.com/techpines/asset-rack/tree/master/lib
 
 
 ## Deploying to the Cloud
-Your assets need to be deployed! Here are the current providers that are supported.
+You may want to deploy your assets to a cloud platform! Here are the current providers that are supported.
 
 ### Amazon S3
 
@@ -323,7 +335,7 @@ npm test
 
 # License
 
-©2012 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
+©2013 Brad Carleton, Tech Pines and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
