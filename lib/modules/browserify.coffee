@@ -2,6 +2,7 @@ fs = require 'fs'
 pathutil = require 'path'
 browserify = require 'browserify'
 uglify = require('uglify-js')
+Q = require('q')
 Asset = require('../index').Asset
 
 class exports.BrowserifyAsset extends Asset
@@ -24,8 +25,16 @@ class exports.BrowserifyAsset extends Asset
       
       self = @
       if @prependAsset
-        @prependAsset.on 'complete', ()->
-          self.contents = @contents + '\n;\n'
+        promises = []
+        unless @prependAsset instanceof Array
+          @prependAsset = [@prependAsset]
+        for asset in @prependAsset
+          deferred = Q.defer()
+          promises.push deferred.promise
+          asset.on 'complete', ()->
+            deferred.resolve @contents
+        Q.all(promises).done (contentsArray)->
+          self.contents = contentsArray.join '\n;\n'
           if self.compress is true
             uncompressed = agent.bundle()
             self.contents += uglify.minify(uncompressed, {fromString: true}).code

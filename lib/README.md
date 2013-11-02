@@ -185,7 +185,7 @@ as the `filename` argument should pull in any requires you need.
 * `prepend` (optional): prepend another javascript asset (e.g. AngularTemplatesAsset or JadeAsset) to the browserify bundled javascript.
 
 
-##### Prepend Example - Angular:
+##### Prepend Example:
 _(using `rack.Rack([])` - multiple assets syntax)_
 
 In your assets.js:
@@ -201,6 +201,37 @@ var assets = rack.Rack([
     url: '/app.js',
     filename: __dirname + '/myAnglarApp/app.js',
     prepend: angularTemplatesAsset
+  });
+]);
+
+module.exports = assets;
+```
+
+In your client (angular in this case) index.html:
+```html
+<script src='/app.js' type='text/javascript'></script>
+```
+
+##### Prepend Example - prepend multiple assets:
+_(using `rack.Rack([])` - multiple assets syntax)_
+
+In your assets.js:
+```javascript
+var rack = require('asset-rack');
+var widgetTemplates = new rack.AngularTemplatesAsset({
+  url: '/widget/templates.js',
+  dirname: __dirname + '/relative/path/to/widget/templates'
+});
+var sharedTemplates = new rack.AngularTemplatesAsset({
+  url: '/shared/templates.js',
+  dirname: __dirname + '/relative/path/to/shared/templates'
+});
+
+var assets = rack.Rack([
+  new rack.BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/myAnglarApp/app.js',
+    prepend: [widgetTemplates, sharedTemplates]
   });
 ]);
 
