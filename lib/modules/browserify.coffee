@@ -17,11 +17,12 @@ class exports.BrowserifyAsset extends Asset
       @prependAsset = options.prepend
       @compress ?= false
       @extensionHandlers = options.extensionHandlers or []
-      agent = browserify watch: false, debug: @debug
+      @agent = browserify watch: false, debug: @debug
       for handler in @extensionHandlers
-          agent.register(handler.ext, handler.handler)
-      agent.addEntry @filename
-      agent.require @require if @require
+          @agent.register(handler.ext, handler.handler)
+      @agent.addEntry @filename
+      @agent.require @require if @require
+      delimiter = '\n;\n'
       
       self = @
       if @prependAsset
@@ -34,18 +35,14 @@ class exports.BrowserifyAsset extends Asset
           asset.on 'complete', ()->
             deferred.resolve @contents
         Q.all(promises).done (contentsArray)->
-          self.contents = contentsArray.join '\n;\n'
-          if self.compress is true
-            uncompressed = agent.bundle()
-            self.contents += uglify.minify(uncompressed, {fromString: true}).code
-            self.emit 'created'
-          else
-            self.emit 'created', contents: self.contents += agent.bundle()
+          @finish(contentsArray.join(delimiter) + delimiter)
       else
-        if @compress is true
-              uncompressed = agent.bundle()
-              @contents = uglify.minify(uncompressed, {fromString: true}).code
-              @emit 'created'
-          else
-              @emit 'created', contents: agent.bundle()
+        @finish('')
 
+    finish: (prependContents)->
+      uncompressed = prependContents + @agent.bundle()
+      if @compress is true
+        @contents = uglify.minify(uncompressed, {fromString: true}).code
+        @emit 'created'
+      else
+        @emit 'created', contents: uncompressed 
