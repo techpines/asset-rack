@@ -16,8 +16,6 @@ class exports.AngularTemplatesAsset extends Asset
     @templateCacheDirname = options.templateCacheDirname
     @clientVariable = options.clientVariable or 'angularTemplates'
     files = fs.readdirSync @dirname
-    templates = [
-
     templates = @getFileObjects(@dirname)
     javascript = "var #{@clientVariable} = function($templateCache) {\n#{templates.join('\n')}}"
     if options.compress is true

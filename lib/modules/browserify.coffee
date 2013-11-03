@@ -25,11 +25,11 @@ class exports.BrowserifyAsset extends Asset
       @agent.add @filename if @filename
 
       if @require
-          for r in @require
-              if r.file
-                  @agent.require r.file, r.options
-              else
-                  @agent.require r
+        for r in @require
+          if r.file
+            @agent.require r.file, r.options
+          else
+            @agent.require r
 
       @agent.external ext for ext in @external if @external
       @agent.transform t for t in @transform if @transform
@@ -53,11 +53,13 @@ class exports.BrowserifyAsset extends Asset
         @finish('')
 
     finish: (prependContents)->
-      @agent.bundle({debug: @debug}) (err, src) =>
-        #return @emit 'error', error if error?
-        uncompressed = prependContents + src
-        if @compress is true
-          @contents = uglify.minify(uncompressed, {fromString: true}).code
-          @emit 'created'
-        else
-          @emit 'created', contents: uncompressed
+      @agent.bundle 
+        debug: @debug, 
+        (err, src) =>
+          #return @emit 'error', error if error?
+          uncompressed = prependContents + src
+          if @compress is true
+            @contents = uglify.minify(uncompressed, {fromString: true}).code
+            @emit 'created'
+          else
+            @emit 'created', contents: uncompressed
