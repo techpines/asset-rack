@@ -23,18 +23,17 @@ class exports.BrowserifyAsset extends Asset
       @agent.addEntry @filename
       @agent.require @require if @require
       delimiter = '\n;\n'
-      
-      self = @
+
       if @prependAsset
         promises = []
         unless @prependAsset instanceof Array
           @prependAsset = [@prependAsset]
-        for asset in @prependAsset
+        @prependAsset.forEach (asset)=>
           deferred = Q.defer()
           promises.push deferred.promise
           asset.on 'complete', ()->
             deferred.resolve asset.contents
-        Q.all(promises).done (contentsArray)->
+        Q.all(promises).done (contentsArray)=>
           @finish(contentsArray.join(delimiter) + delimiter)
       else
         @finish('')
