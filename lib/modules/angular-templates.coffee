@@ -11,6 +11,7 @@ class exports.AngularTemplatesAsset extends Asset
         @dirname = pathutil.resolve options.dirname
         @toWatch = @dirname
         @compress = options.compress or false
+        @clientVariable = options.clientVariable or 'angularTemplates'
         files = fs.readdirSync @dirname
         templates = []
 
@@ -18,7 +19,7 @@ class exports.AngularTemplatesAsset extends Asset
             template = fs.readFileSync(pathutil.join(@dirname, file), 'utf8').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/'/g, '\\\'')
             templates.push "$templateCache.put('#{file}', '#{template}')"
 
-        javascript = "var angularTemplates = function($templateCache) {\n#{templates.join('\n')}}"
+        javascript = "var #{@clientVariable} = function($templateCache) {\n#{templates.join('\n')}}"
         if options.compress is true
             @contents = uglify.minify(javascript, { fromString: true }).code
         else
