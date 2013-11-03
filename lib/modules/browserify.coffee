@@ -33,7 +33,7 @@ class exports.BrowserifyAsset extends Asset
           deferred = Q.defer()
           promises.push deferred.promise
           asset.on 'complete', ()->
-            deferred.resolve @contents
+            deferred.resolve asset.contents
         Q.all(promises).done (contentsArray)->
           @finish(contentsArray.join(delimiter) + delimiter)
       else
