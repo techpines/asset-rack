@@ -11,7 +11,7 @@ mime = require 'mime'
 {extend} = require './util'
 {EventEmitter} = require 'events'
 
-# IE8 Compatibility 
+# IE8 Compatibility
 mime.types.js = 'text/javascript'
 mime.extensions['text/javascript'] = 'js'
 
@@ -24,7 +24,7 @@ class exports.Asset extends EventEmitter
     constructor: (options) ->
         super()
         options ?= {}
-    
+
         # Set the url
         @url = options.url if options.url?
 
@@ -59,7 +59,7 @@ class exports.Asset extends EventEmitter
         # Max age for HTTP cache control
         @maxAge = options.maxAge if options.maxAge?
 
-        # Whether to allow caching of non-hashed urls 
+        # Whether to allow caching of non-hashed urls
         @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
 
         # Fire callback if someone listens for a "complete" event
@@ -104,16 +104,19 @@ class exports.Asset extends EventEmitter
                         @emit 'complete'
                 else
                     @emit 'complete'
-        
+
             # Does the file watching
             if @watch
-                @watcher = fs.watch @toWatch, (event, filename) =>
-                    if event is 'change'
-                        @watcher.close()
-                        @completed = false
-                        @assets = false
-                        process.nextTick =>
-                            @emit 'start'
+                @toWatch = if Array.isArray @toWatch then @toWatch else [@toWatch]
+                @toWatch.forEach (path) =>
+                    this[path] = fs.watch path, (event, filename) =>
+                        if event is 'change'
+                            console.log filename, 'changed'
+                            this[path].close()
+                            @completed = false
+                            @assets = false
+                            process.nextTick =>
+                                @emit 'start'
 
         # Listen for errors and throw if no listeners
         @on 'error', (error) =>
@@ -153,7 +156,7 @@ class exports.Asset extends EventEmitter
         if @gzip
             response.send @gzipContents
         else response.send @contents
-        
+
     # Check if a given url "matches" this asset
     checkUrl: (url) ->
         url is @specificUrl or (not @hash? and url is @url)
@@ -172,10 +175,10 @@ class exports.Asset extends EventEmitter
             handle()
         else @on 'complete', ->
             handle()
-        
-    # Default create method, usually overwritten 
+
+    # Default create method, usually overwritten
     create: (options) ->
-        
+
         # At the end of a create method you always call
         # the created event
         @emit 'created'
