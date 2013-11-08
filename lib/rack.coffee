@@ -46,7 +46,7 @@ class exports.Rack extends EventEmitter
 
         # Create a flattened array of assets
         @assets = []
-    
+
         # Do this in series for dependency conflicts
         async.forEachSeries assets, (asset, next) =>
 
@@ -59,16 +59,16 @@ class exports.Rack extends EventEmitter
 
                 # This is necessary because of asset recompilation
                 return if @completed
-        
+
                 # If the asset has contents, it's a single asset
                 if asset.contents?
                     @assets.push asset
-                
+
                 # If it has assets, then it's multi-asset
                 if asset.assets?
                     @assets = @assets.concat asset.assets
                 next()
-    
+
             # This tells our asset to start
             asset.emit 'start'
 
@@ -76,7 +76,7 @@ class exports.Rack extends EventEmitter
         , (error) =>
             return @emit 'error', error if error?
             @emit 'complete'
-        
+
     # Makes the rack function as express middleware
     handle: (request, response, next) ->
         response.locals assets: this
@@ -178,14 +178,13 @@ class exports.Rack extends EventEmitter
     tag: (url) ->
         for asset in @assets
             return asset.tag() if asset.url is url
-        throw new Error "No asset found for url: #{url}"
 
     # Gets the hashed url for a given url
     url: (url) ->
         for asset in @assets
             return asset.specificUrl if url is asset.url
 
-    # Extend the class for javascript 
+    # Extend the class for javascript
     @extend: extend
 
 # The ConfigRack uses a json file and a hostname to map assets to a url
@@ -195,11 +194,11 @@ class ConfigRack
         # Check for required options
         throw new Error('options.configFile is required') unless options.configFile?
         throw new Error('options.hostname is required') unless options.hostname?
-    
+
         # Setup our options
         @assetMap = require options.configFile
         @hostname = options.hostname
-        
+
     # For hooking up as express middleware
     handle: (request, response, next) ->
         response.locals assets: this
@@ -209,7 +208,7 @@ class ConfigRack
                 # Redirect to the CDN, the config does not have the files
                 return response.redirect "//#{@hostname}#{specificUrl}"
         next()
-    
+
     # Simple function to get the tag for a url
     tag: (url) ->
         switch pathutil.extname(url)
@@ -222,8 +221,8 @@ class ConfigRack
     # Get the hashed url for a given url
     url: (url) ->
         return "//#{@hostname}#{@assetMap[url]}"
-        
-        
+
+
 # Shortcut function
 exports.fromConfigFile = (options) ->
     return new ConfigRack(options)
