@@ -15,8 +15,8 @@ class exports.LessAsset extends Asset
         @paths = options.paths
         @paths ?= []
         @paths.push pathutil.dirname options.filename
-        @toWatch = pathutil.dirname @filename
-        
+        @toWatch = options.toWatch or pathutil.dirname @filename
+
         @compress = options.compress
         @compress ?= false
         try
