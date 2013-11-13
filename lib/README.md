@@ -333,6 +333,7 @@ myApp.run(['$templateCache', angularTemplates]);
 * `url`: The url that should retrieve this resource.
 * `dirname`: Directory where the .html templates are stored.
 * `compress` (defaults to false): Whether to unglify the js.
+* `clientVariable` (defualts to 'angularTemplates'): Client side template variable.
 
 ## Other
 
