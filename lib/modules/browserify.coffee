@@ -9,21 +9,35 @@ class exports.BrowserifyAsset extends Asset
 
     create: (options) ->
         @filename = options.filename
-        @toWatch = pathutil.dirname pathutil.resolve @filename
+        @toWatch = options.toWatch or pathutil.dirname pathutil.resolve options.filename
         @require = options.require
         @debug = options.debug or false
         @compress = options.compress
+        @external = options.external
+        @transform = options.transform
         @compress ?= false
         @extensionHandlers = options.extensionHandlers or []
         agent = browserify watch: false, debug: @debug
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
-        agent.addEntry @filename
-        agent.require @require if @require
-        if @compress is true
-            uncompressed = agent.bundle()
-            @contents = uglify.minify(uncompressed, {fromString: true}).code
-            @emit 'created'
-        else
-            @emit 'created', contents: agent.bundle()
+        agent.add @filename if @filename
 
+        if @require
+            for r in @require
+                if r.file
+                    agent.require r.file, r.options
+                else
+                    agent.require r
+
+        agent.external ext for ext in @external if @external
+        agent.transform t for t in @transform if @transform
+
+        agent.transform 'coffeeify' if /.coffee$/.test @filename
+
+        agent.bundle (error, src) =>
+            return @emit 'error', error if error?
+            if @compress is true
+                @contents = uglify.minify(src, {fromString: true}).code
+                @emit 'created'
+            else
+                @emit 'created', contents: src
