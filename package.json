@@ -19,7 +19,8 @@
     "coffee-script": "~1.6.3",
     "coffeeify": "~0.5.0",
     "markdown": "~0.5.0",
-    "node-sassy": "~0.0.1"
+    "node-sassy": "~0.0.1",
+    "q": "~0.9.7"
   },
   "devDependencies": {
     "express.io": "1.1.8",

@@ -182,6 +182,68 @@ as the `filename` argument should pull in any requires you need.
 * `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
+* `prepend` (optional): prepend another javascript asset (e.g. AngularTemplatesAsset or JadeAsset) to the browserify bundled javascript.
+
+
+##### Prepend Example:
+_(using `rack.Rack([])` - multiple assets syntax)_
+
+In your assets.js:
+```javascript
+var rack = require('asset-rack');
+var angularTemplatesAsset = new rack.AngularTemplatesAsset({
+  url: '/templates.js',
+  dirname: __dirname + '/relative/path/to/templates'
+});
+
+var assets = rack.Rack([
+  new rack.BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/myAnglarApp/app.js',
+    prepend: angularTemplatesAsset
+  });
+]);
+
+module.exports = assets;
+```
+
+In your client (angular in this case) index.html:
+```html
+<script src='/app.js' type='text/javascript'></script>
+```
+
+##### Prepend Example - prepend multiple assets:
+_(using `rack.Rack([])` - multiple assets syntax)_
+
+In your assets.js:
+```javascript
+var rack = require('asset-rack');
+var widgetTemplates = new rack.AngularTemplatesAsset({
+  url: '/widget/templates.js',
+  dirname: __dirname + '/relative/path/to/widget/templates'
+});
+var sharedTemplates = new rack.AngularTemplatesAsset({
+  url: '/shared/templates.js',
+  dirname: __dirname + '/relative/path/to/shared/templates'
+});
+
+var assets = rack.Rack([
+  new rack.BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/myAnglarApp/app.js',
+    prepend: [widgetTemplates, sharedTemplates]
+  });
+]);
+
+module.exports = assets;
+```
+
+In your client (angular in this case) index.html:
+```html
+<script src='/app.js' type='text/javascript'></script>
+```
+
+_Reference [AngularTemplatesAsset](#angulartemplatesasset) or [JadeAsset](#jadeasset) for more details specific to either._
 
 ### SnocketsAsset (js/coffeescript)
 
