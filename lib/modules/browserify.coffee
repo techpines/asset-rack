@@ -3,6 +3,7 @@ pathutil = require 'path'
 browserify = require 'browserify'
 uglify = require('uglify-js')
 Q = require('q')
+through = require('through')
 Asset = require('../index').Asset
 
 class exports.BrowserifyAsset extends Asset
@@ -48,18 +49,34 @@ class exports.BrowserifyAsset extends Asset
           asset.on 'complete', ()->
             deferred.resolve asset.contents
         Q.all(promises).done (contentsArray)=>
-          @finish(contentsArray.join(delimiter) + delimiter)
-      else
-        @finish('')
+          #NOTE: client-side jade defines and uses `exports`, `require`, and `module`.
+          #   This conflicts with browserify's usage of the same terms so they need to be mangled
+          prependContents = (contentsArray.join(delimiter) + delimiter)
+          .replace(/exports/, 'ecksports')
+          .replace(/require/, 'rekwire')
+          .replace(/module/, 'moduwel')
+          firstFile = true
+          @agent.transform ()=>
+            data = ''
+            write = (buf)->
+              data += buf
 
-    finish: (prependContents)->
-      @agent.bundle 
-        debug: @debug, 
+            end = ->
+              if firstFile
+                data = "#{prependContents}\n#{data}"
+                firstFile = false
+              @queue data
+              @queue null
+            through write, end
+      @finish()
+
+    finish: ->
+      @agent.bundle
+        debug: @debug,
         (err, src) =>
           #return @emit 'error', error if error?
-          uncompressed = prependContents + src
           if @compress is true
-            @contents = uglify.minify(uncompressed, {fromString: true}).code
+            @contents = uglify.minify(src, {fromString: true}).code
             @emit 'created'
           else
-            @emit 'created', contents: uncompressed
+            @emit 'created', contents: src
