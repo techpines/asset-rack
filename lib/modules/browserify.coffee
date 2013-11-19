@@ -18,6 +18,8 @@ class exports.BrowserifyAsset extends Asset
         agent = browserify watch: false, debug: @debug
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
+        agent.on 'syntaxError', (err) ->
+          console.dir err
         agent.addEntry @filename
         agent.require @require if @require
         if @compress is true
