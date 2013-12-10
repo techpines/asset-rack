@@ -352,7 +352,7 @@ new StaticAssets({
 ### DynamicAssets
 
 ```js
-new DyanmicAssets({
+new DynamicAssets({
     type: LessAsset
     urlPrefix: '/style'
     dirname: './style'
