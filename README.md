@@ -121,7 +121,7 @@ We have some professional grade assets included.
 * [Stylus](https://github.com/techpines/asset-rack/tree/master/lib#stylusasset) - Compile stylu assets, ability to use dependencies, minification.
 
 #### Templates
-* [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High, performance jade templates precompiled for the browser.
+* [Jade](https://github.com/techpines/asset-rack/tree/master/lib#jadeasset) - High-performance jade templates precompiled for the browser.
 * [AngularTemplates](https://github.com/techpines/asset-rack/tree/master/lib#angulartemplatesasset) - AngularJS templates for you AngularJS folks.
 
 #### Other
