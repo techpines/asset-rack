@@ -34,7 +34,7 @@ app.use(asset);
 * `headers`: Any specific headers you want associated with this asset.
 * `mimetype`: The content type for the asset.
 * `hash`: (defaults to undefined) Serves both hashed and unhashed urls.  If set to `true` then it only serves the hashed version, and if false then it only serves the unhashed version.
-* `watch`: (defaults to false) Watches for file changes and recreates assets.
+* `watch`: (defaults to false) Watches for file changes and recreates assets. If set to `recursive` it will watch all subdirectories of this asset for changes as well.
 * `gzip`: (defaults to false) Whether to gzip the contents
 * `allowNoHashCache`: By default unhashed urls will not be cached.  To allow them to be hashed, set this option to `true`.
 * `maxAge`: How long to cache the resource, defaults to 1 year for hashed urls, and no cache for unhashed urls.
