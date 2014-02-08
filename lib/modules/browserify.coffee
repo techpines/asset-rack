@@ -14,16 +14,19 @@ class exports.BrowserifyAsset extends Asset
         @debug = options.debug or false
         @compress = options.compress
         @compress ?= false
+        @debowerify = options.debowerify
+        @debowerify ?= false
         @extensionHandlers = options.extensionHandlers or []
         agent = browserify watch: false, debug: @debug
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
-        agent.addEntry @filename
+        agent.add @filename
         agent.require @require if @require
+        agent.transform(require('debowerify')) if @debowerify
+
         if @compress is true
-            uncompressed = agent.bundle()
-            @contents = uglify.minify(uncompressed, {fromString: true}).code
-            @emit 'created'
+            agent.bundle (err, uncompressed) =>
+                @emit 'created', contents: uglify.minify(uncompressed, {fromString: true}).code
         else
-            @emit 'created', contents: agent.bundle()
+            agent.bundle((err, js) => @emit 'created', contents: js)
 
