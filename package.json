@@ -7,7 +7,7 @@
   "dependencies": {
     "browserify": "~2.34.0",
     "snockets": "~1.3.8",
-    "uglify-js": "https://github.com/shopbeam/UglifyJS2/tarball/ce884169b68ed8f00dd3691169447765a7c38a13",
+    "uglify-js": "https://github.com/shopbeam/UglifyJS2/tarball/242a6923bdde7e215a17720e1927c8a11fe29ca1",
     "async": "~0.2.9",
     "pkgcloud": "~0.8.12",
     "less": "~1.4.2",
