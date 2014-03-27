@@ -73,7 +73,7 @@ class exports.JadeAsset extends Asset
                 fileContents = @beforeCompile fileContents if @beforeCompile?
                 try
                     compiled = jade.compile fileContents,
-                        compileClient: true,
+                        client: true,
                         compileDebug: false,
                         filename: path
                     paths.push
