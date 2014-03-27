@@ -12,6 +12,7 @@ exports.StylusAsset = require('./modules/stylus').StylusAsset
 exports.BrowserifyAsset = require('./modules/browserify').BrowserifyAsset
 exports.JadeAsset = require('./modules/jade').JadeAsset
 exports.JavascriptAsset = require('./modules/javascript').JavascriptAsset
+exports.StaticAsset = require('./modules/static').StaticAsset
 exports.StaticAssets = require('./modules/static').StaticAssets
 exports.SnocketsAsset = require('./modules/snockets').SnocketsAsset
 exports.AngularTemplatesAsset = require('./modules/angular-templates').AngularTemplatesAsset
