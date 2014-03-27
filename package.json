@@ -3,11 +3,11 @@
   "version": "2.3.2",
   "description": "Static Web Framework for Nodejs",
   "author": "Brad Carleton <brad@techpines.com>",
-  "repository": "https://github.com/techpines/asset-rack",
+  "repository": "https://github.com/shopbeam/asset-rack",
   "dependencies": {
     "browserify": "~2.34.0",
     "snockets": "~1.3.8",
-    "uglify-js": "~2.4.0",
+    "uglify-js": "https://github.com/shopbeam/UglifyJS2/tarball/ce884169b68ed8f00dd3691169447765a7c38a13",
     "async": "~0.2.9",
     "pkgcloud": "~0.8.12",
     "less": "~1.4.2",
