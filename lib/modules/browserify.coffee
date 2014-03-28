@@ -19,13 +19,24 @@ class exports.BrowserifyAsset extends Asset
         for handler in @extensionHandlers
             agent.register(handler.ext, handler.handler)
         agent.on 'syntaxError', (err) ->
-          console.dir err
-        agent.addEntry @filename
-        agent.require @require if @require
-        if @compress is true
-            uncompressed = agent.bundle()
-            @contents = uglify.minify(uncompressed, {fromString: true}).code
-            @emit 'created'
-        else
-            @emit 'created', contents: agent.bundle()
+            console.dir err
 
+        agent.add @filename
+        agent.require @require if @require
+
+        if options.transforms
+            options.transforms.forEach (transform) ->
+                agent.transform(transform.opts, transform.fn)
+
+        uncompressed = ""
+        browserifyStream = agent.bundle()
+
+        browserifyStream.on 'data', (chunk) =>
+            uncompressed += chunk
+
+        browserifyStream.on 'end', =>
+            if @compress is true
+                @contents = uglify.minify(uncompressed, {fromString: true}).code
+                @emit 'created'
+            else
+                @emit 'created', contents: uncompressed

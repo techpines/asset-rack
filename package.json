@@ -5,7 +5,6 @@
   "author": "Brad Carleton <brad@techpines.com>",
   "repository": "https://github.com/techpines/asset-rack",
   "dependencies": {
-    "browserify": "1.17.3",
     "snockets": "~1.3.8",
     "uglify-js": "~2.4.0",
     "async": "~0.2.9",
@@ -19,7 +18,8 @@
     "coffee-script": "~1.6.3",
     "markdown": "~0.5.0",
     "node-sassy": "~0.0.1",
-    "gaze": "~0.4.3"
+    "gaze": "~0.4.3",
+    "browserify": "^3.33.1"
   },
   "devDependencies": {
     "express.io": "1.1.8",

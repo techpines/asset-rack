@@ -24,7 +24,7 @@ class exports.Asset extends EventEmitter
     constructor: (options) ->
         super()
         options ?= {}
-    
+
         # Set the url
         @url = options.url if options.url?
 
@@ -59,7 +59,7 @@ class exports.Asset extends EventEmitter
         # Max age for HTTP cache control
         @maxAge = options.maxAge if options.maxAge?
 
-        # Whether to allow caching of non-hashed urls 
+        # Whether to allow caching of non-hashed urls
         @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
 
         # Fire callback if someone listens for a "complete" event
@@ -104,7 +104,7 @@ class exports.Asset extends EventEmitter
                         @emit 'complete'
                 else
                     @emit 'complete'
-        
+
             # Does the file watching
             if @watch
                 @watcher = new gaze.Gaze(@toWatch + "/*")
@@ -154,7 +154,7 @@ class exports.Asset extends EventEmitter
         if @gzip
             response.send @gzipContents
         else response.send @contents
-        
+
     # Check if a given url "matches" this asset
     checkUrl: (url) ->
         url is @specificUrl or (not @hash? and url is @url)
@@ -173,10 +173,10 @@ class exports.Asset extends EventEmitter
             handle()
         else @on 'complete', ->
             handle()
-        
-    # Default create method, usually overwritten 
+
+    # Default create method, usually overwritten
     create: (options) ->
-        
+
         # At the end of a create method you always call
         # the created event
         @emit 'created'
