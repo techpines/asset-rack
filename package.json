@@ -19,7 +19,7 @@
     "markdown": "~0.5.0",
     "node-sassy": "~0.0.1",
     "gaze": "~0.4.3",
-    "browserify": "^3.33.1"
+    "browserify": "3.33.1"
   },
   "devDependencies": {
     "express.io": "1.1.8",
