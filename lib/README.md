@@ -25,7 +25,7 @@ asset = new Asset({
 Generally, you should wrap your assets in a rack, but for quick and dirty smaller projects you can just use the asset directly.
 
 ```
-app.use(asset);
+app.use(asset.handler());
 ```
 
 ### Options
@@ -120,9 +120,9 @@ new rack.Rack(assets)
 ### With Express
 
 ```javascript
-app.use(assets);
+app.use(assets.handler());
 ```
-__Important__: You have to call `app.use(assets)` before `app.use(app.router)` or else the `assets` markup functions will not be available in your templates.  The assets middleware needs to come first.
+__Important__: You have to call `app.use(assets.handler())` before route definitions (or `app.use(app.router)` in Express < 4.x) or else the `assets` markup functions will not be available in your templates. The assets middleware needs to come first.
 
 ### Deploying
 
