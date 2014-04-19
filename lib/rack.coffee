@@ -202,7 +202,7 @@ class ConfigRack
 
     # For hooking up as express middleware
     handle: (request, response, next) =>
-        response.app.locals assets: this
+        response.app.locals.assets = this
         for url, specificUrl of @assetMap
             if request.path is url or request.path is specificUrl
 
