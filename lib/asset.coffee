@@ -159,7 +159,7 @@ class exports.Asset extends EventEmitter
         url is @specificUrl or (not @hash? and url is @url)
 
     # Used so that an asset can be express middleware
-    handle: (request, response, next) ->
+    handle: (request, response, next) =>
         handle = =>
             if @assets?
                 for asset in @assets

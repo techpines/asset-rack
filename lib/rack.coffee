@@ -76,10 +76,10 @@ class exports.Rack extends EventEmitter
         , (error) =>
             return @emit 'error', error if error?
             @emit 'complete'
-        
+
     # Makes the rack function as express middleware
-    handle: (request, response, next) ->
-        response.locals assets: this
+    handle: (request, response, next) =>
+        response.app.locals.assets = this
         if request.url.slice(0,11) is '/asset-rack'
             return @handleAdmin request, response, next
         if @hasError
@@ -199,10 +199,10 @@ class ConfigRack
         # Setup our options
         @assetMap = require options.configFile
         @hostname = options.hostname
-        
+
     # For hooking up as express middleware
-    handle: (request, response, next) ->
-        response.locals assets: this
+    handle: (request, response, next) =>
+        response.app.locals assets: this
         for url, specificUrl of @assetMap
             if request.path is url or request.path is specificUrl
 
