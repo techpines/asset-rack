@@ -16,7 +16,7 @@
     "nib": "~1.0.1",
     "stylus": "~0.38.0",
     "underscore": "~1.5.2",
-    "coffee-script": "~1.6.3",
+    "coffee-script": "~1.7.1",
     "markdown": "~0.5.0",
     "node-sassy": "~0.0.1"
   },
@@ -27,7 +27,7 @@
     "chai": "1.4.2"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/test.coffee",
+    "test": "./node_modules/mocha/bin/mocha --compilers coffee:coffee-script/register test/test.coffee",
     "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
     "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
     "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
