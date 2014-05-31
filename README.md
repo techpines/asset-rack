@@ -35,7 +35,7 @@ asset = new rack.Asset({
 Need to serve that asset with a blisteringly fast in memory cache using express?
 
 ```
-app.use(asset)
+app.use(asset.handle)
 ```
 
 ### Hash for speed and efficiency
@@ -205,7 +205,7 @@ assets = rack.fromConfigFile({
     configFile: __dirname + '/rack.json',
     hostname: 'cdn.example.com'
 });
-app.use(assets);
+app.use(assets.handle);
 ```
 
 And now all of your server side templates will reference your CDN.  Also, if you do happen to hit one of your static urls on the server, then you will be redirected to the CDN.
