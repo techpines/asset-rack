@@ -72,7 +72,7 @@ class exports.JadeAsset extends Asset
                 fileContents = fs.readFileSync path, 'utf8'
                 fileContents = @beforeCompile fileContents if @beforeCompile?
                 try
-                    compiled = jade.compile fileContents,
+                    compiled = jade.compileClient fileContents,
                         client: true,
                         compileDebug: false,
                         filename: path
@@ -84,5 +84,3 @@ class exports.JadeAsset extends Asset
                     @hasError = true
                     @emit 'error', error
         paths
-
-
