@@ -143,7 +143,7 @@ class exports.Rack extends EventEmitter
             # Might be bug with pkgcloud.  This hack just uploads the first file again
             # at the end.
             assets = @assets.concat @assets[0] if options.provider is 'rackspace'
-            async.forEachSeries assets, (asset, next) =>
+            async.forEach assets, (asset, next) =>
                 stream = null
                 headers = {}
                 if asset.gzip
