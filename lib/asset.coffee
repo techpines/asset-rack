@@ -27,6 +27,7 @@ class exports.Asset extends EventEmitter
 
         # Set the url
         @url = options.url if options.url?
+        @hostname = options.hostname if options.hostname?
 
         # Set the cotents if given
         @contents = options.contents if options.contents?
@@ -199,6 +200,14 @@ class exports.Asset extends EventEmitter
                 return tag += "src=\"#{@specificUrl}\"></script>"
             when 'text/css'
                 return "\n<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
+
+    getUploadUrl: ->
+        url = @specificUrl
+        if (url.indexOf('//') > 0)
+            url = url.replace(/^[^\/]+\/\/[^\/]+\//, '')
+        if (url.slice(0, 1) == '/')
+            url = url.slice 1
+        url
 
     # Creates and md5 hash of the url for caching
     createSpecificUrl: ->

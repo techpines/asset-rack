@@ -151,7 +151,7 @@ class exports.Rack extends EventEmitter
                     headers['content-encoding'] = 'gzip'
                 else
                     stream = new BufferStream asset.contents
-                url = asset.specificUrl.slice 1, asset.specificUrl.length
+                url = asset.getUploadUrl()
                 for key, value of asset.headers
                     headers[key] = value
                 headers['x-amz-acl'] = 'public-read' if options.provider is 'amazon'
