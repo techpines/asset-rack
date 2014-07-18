@@ -203,8 +203,8 @@ class exports.Asset extends EventEmitter
 
     getUploadUrl: ->
         url = @specificUrl
-        if (url.indexOf('//') > 0)
-            url = url.replace(/^[^\/]+\/\/[^\/]+\//, '')
+        if (url.indexOf('//') >= 0)
+            url = url.replace(/^[^\/]*\/\/[^\/]+\//, '')
         if (url.slice(0, 1) == '/')
             url = url.slice 1
         url
