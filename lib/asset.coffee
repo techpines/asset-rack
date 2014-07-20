@@ -10,6 +10,7 @@ zlib = require 'zlib'
 mime = require 'mime'
 {extend} = require './util'
 {EventEmitter} = require 'events'
+Rack = require('./rack').Rack
 
 # IE8 Compatibility
 mime.types.js = 'text/javascript'
@@ -213,7 +214,11 @@ class exports.Asset extends EventEmitter
     createSpecificUrl: ->
 
         # This is the no hash option
-        if @hash is false
+        shouldHash = @hash isnt false
+        if shouldHash and Rack.neverHashThis?
+            shouldHash = not Rack.neverHashThis(@url)
+
+        if shouldHash
             @useDefaultMaxAge = false
             return @specificUrl = @url
 
