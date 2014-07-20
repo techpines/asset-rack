@@ -211,12 +211,13 @@ class exports.Asset extends EventEmitter
 
     # Creates and md5 hash of the url for caching
     createSpecificUrl: ->
-        @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
 
         # This is the no hash option
         if @hash is false
             @useDefaultMaxAge = false
             return @specificUrl = @url
+
+        @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
 
         # Construction of the hashed url
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
