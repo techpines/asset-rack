@@ -97,7 +97,10 @@ class exports.Asset extends EventEmitter
                     @completed = true
                     @emit 'complete'
             else
-                @completed = true
+                # can't mark "@completed" yet, since mutli-assets containing this asset
+                # may get the "complete" callback twice
+                # see: https://github.com/techpines/asset-rack/pull/96
+                # @completed = true
 
                 # Handles gzipping
                 if not @gzip and Rack.gzippableUrl?
@@ -107,12 +110,14 @@ class exports.Asset extends EventEmitter
                 if @gzip
                     console.log 'gzipping', @url
                     zlib.gzip @contents, (error, gzip) =>
+                        @completed = true
                         console.log "gzip failed failed for #{@url}: #{error}" if error?
                         return @emit 'error', error if error?
                         console.log 'gzipped', @url
                         @gzipContents = gzip
                         @emit 'complete'
                 else
+                    @completed = true
                     @emit 'complete'
 
             # Does the file watching
