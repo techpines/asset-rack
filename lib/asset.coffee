@@ -54,9 +54,6 @@ class exports.Asset extends EventEmitter
 
         # Whether to gzip the asset or not
         @gzip = options.gzip
-        if not @gzip and Rack.gzippableUrl?
-          if Rack.gzippableUrl(@url)
-            @gzip = true
 
         # Whether to hash the url or not or both
         @hash = options.hash if options.hash?
@@ -103,6 +100,10 @@ class exports.Asset extends EventEmitter
                 @completed = true
 
                 # Handles gzipping
+                if not @gzip and Rack.gzippableUrl?
+                    if Rack.gzippableUrl(@url)
+                        @gzip = true
+
                 if @gzip
                     zlib.gzip @contents, (error, gzip) =>
                         @gzipContents = gzip
