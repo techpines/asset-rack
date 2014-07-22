@@ -146,9 +146,11 @@ class exports.Rack extends EventEmitter
             async.forEachSeries assets, (asset, next) =>
                 stream = null
                 headers = {}
+                gzipped = false
                 if asset.gzip
                     stream = new BufferStream asset.gzipContents
                     headers['content-encoding'] = 'gzip'
+                    gzipped = true
                 else
                     stream = new BufferStream asset.contents
                 url = asset.getUploadUrl()
@@ -160,6 +162,10 @@ class exports.Rack extends EventEmitter
                     remote: url
                     headers: headers
                     stream: stream
+
+                console.log('uploading ' + (gzipped ? '(gzipped)' : '') +
+                  ' asset with url: ' + url)
+
                 client.upload clientOptions, (error) ->
                     return next error if error?
                     next()
