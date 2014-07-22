@@ -216,9 +216,11 @@ class exports.Asset extends EventEmitter
         # This is the no hash option
         shouldHash = @hash isnt false
         if shouldHash and Rack.neverHashThis?
-            shouldHash = not Rack.neverHashThis(@url)
+            if Rack.neverHashThis(@url)
+              shouldHash = false
+              console.log('hashing for this url is disabled: ' + @url)
 
-        if shouldHash
+        if not shouldHash
             @useDefaultMaxAge = false
             return @specificUrl = @url
 
