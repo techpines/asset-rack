@@ -105,7 +105,11 @@ class exports.Asset extends EventEmitter
                         @gzip = true
 
                 if @gzip
+                    console.log 'gzipping', @url
                     zlib.gzip @contents, (error, gzip) =>
+                        console.log "gzip failed failed for #{@url}: #{error}" if error?
+                        return @emit 'error', error if error?
+                        console.log 'gzipped', @url
                         @gzipContents = gzip
                         @emit 'complete'
                 else
