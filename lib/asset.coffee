@@ -115,6 +115,8 @@ class exports.Asset extends EventEmitter
                         return @emit 'error', error if error?
                         console.log 'gzipped', @url
                         @gzipContents = gzip
+                        # set gzip header
+                        @headers['content-encoding'] ?= 'gzip'
                         @emit 'complete'
                 else
                     @completed = true
