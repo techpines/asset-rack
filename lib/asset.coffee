@@ -176,7 +176,11 @@ class exports.Asset extends EventEmitter
 
     # Check if a given url "matches" this asset
     checkUrl: (url) ->
-        url is @specificUrl or (not @hash? and url is @url)
+        return true if url is @specificUrl
+        return true if (not @isHashed? and url is @url.replace(/^https?:\/\/[^\/]+\//, '/'))
+        if @specificUrl and not @domainlessSpecificUrl
+          @domainlessSpecificUrl = @specificUrl.replace(/^https?:\/\/[^\/]+\//, '/')
+        return true if url is @domainlessSpecificUrl
 
     # Used so that an asset can be express middleware
     handle: (request, response, next) ->
@@ -243,7 +247,7 @@ class exports.Asset extends EventEmitter
 
         # Construction of the hashed url
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
-
+        @isHashed = true
         # Might need a hostname if not on same server
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"
