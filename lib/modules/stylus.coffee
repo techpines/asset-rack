@@ -30,7 +30,7 @@ class exports.StylusAsset extends Asset
                 .set('filename', @filename)
                 .render (error, css) =>
                     return @emit 'error', error if error?
-                    console.log "#{@filename} stylus compiled"
+                    # console.log "#{@filename} stylus compiled"
                     if @rack? and css.indexOf('url') >= 0
                         css = css.replace urlRegex, (match, quote, path, query) =>
                           assetUrl = url.resolve(@url, path)
