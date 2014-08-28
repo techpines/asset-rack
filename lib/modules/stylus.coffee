@@ -38,8 +38,8 @@ class exports.StylusAsset extends Asset
                           if not specificUrl
                             # asset not found, no replace
                             return match
-                          console.log "updating css url: #{path}#{query}"
-                          console.log "     to point to: #{specificUrl}"
+                          # console.log "updating css url: #{path}#{query}"
+                          # console.log "     to point to: #{specificUrl}"
                           return "url(#{quote}#{specificUrl}#{query}#{quote})"
 
                     @emit 'created', contents: css

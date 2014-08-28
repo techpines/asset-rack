@@ -3,6 +3,7 @@ pathutil = require 'path'
 uglify = require 'uglify-js'
 Asset = require('../index').Asset
 jade = require('jade')
+node_url = require('url')
 
 class exports.AngularTemplatesAsset extends Asset
   mimetype: 'text/javascript'
@@ -50,7 +51,13 @@ class exports.AngularTemplatesAsset extends Asset
             @assetsMap = {
               assets:
                 assets: assets,
-                url: (url)-> @assets[url]
+                useAbsoluteUrls: (host) ->
+                  @host = host
+                url: (url) ->
+                  if @absoluteUrlsHost
+                    node_url.resolve(@absoluteUrlsHost, @assets[url])
+                  else
+                    @assets[url]
             }
 
           templateCacheDirname = (if @templateCacheDirname then pathutil.join(@templateCacheDirname, file) else "/#{file}").replace(/\.jade/, '.html')

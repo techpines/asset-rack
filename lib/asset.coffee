@@ -108,12 +108,10 @@ class exports.Asset extends EventEmitter
                         @gzip = true
 
                 if @gzip
-                    console.log 'gzipping', @url
                     zlib.gzip @contents, (error, gzip) =>
                         @completed = true
                         console.log "gzip failed failed for #{@url}: #{error}" if error?
                         return @emit 'error', error if error?
-                        console.log 'gzipped', @url
                         @gzipContents = gzip
                         # set gzip header
                         @headers['content-encoding'] ?= 'gzip'
@@ -237,7 +235,7 @@ class exports.Asset extends EventEmitter
         if shouldHash and Rack.neverHashThis?
             if Rack.neverHashThis(@url)
               shouldHash = false
-              console.log('hashing for this url is disabled: ' + @url)
+              # console.log('hashing for this url is disabled: ' + @url)
 
         if not shouldHash
             @useDefaultMaxAge = false
