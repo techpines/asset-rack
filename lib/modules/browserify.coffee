@@ -53,7 +53,6 @@ class exports.BrowserifyAsset extends Asset
           #   This conflicts with browserify's usage of the same terms so they need to be mangled
           prependContents = (contentsArray.join(delimiter) + delimiter)
           .replace(/exports/, 'ecksports')
-          .replace(/require/, 'rekwire')
           .replace(/module/, 'moduwel')
           firstFile = true
           @agent.transform ()=>
