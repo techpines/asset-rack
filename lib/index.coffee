@@ -15,6 +15,7 @@ exports.JavascriptAsset = require('./modules/javascript').JavascriptAsset
 exports.StaticAssets = require('./modules/static').StaticAssets
 exports.SnocketsAsset = require('./modules/snockets').SnocketsAsset
 exports.AngularTemplatesAsset = require('./modules/angular-templates').AngularTemplatesAsset
+exports.version = require('../package').version
 
 util = require './util'
 exports.util =

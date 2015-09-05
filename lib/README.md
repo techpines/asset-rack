@@ -182,6 +182,68 @@ as the `filename` argument should pull in any requires you need.
 * `debug` (defaults to false): enables the browserify debug option.
 * `compress` (defaults to false): whether to run the javascript through a minifier.
 * `extensionHandlers` (defaults to []): an array of custom extensions and associated handler function. eg: `[{ ext: 'handlebars', handler: handlebarsCompilerFunction }]`
+* `prepend` (optional): prepend another javascript asset (e.g. AngularTemplatesAsset or JadeAsset) to the browserify bundled javascript.
+
+
+##### Prepend Example:
+_(using `rack.Rack([])` - multiple assets syntax)_
+
+In your assets.js:
+```javascript
+var rack = require('asset-rack');
+var angularTemplatesAsset = new rack.AngularTemplatesAsset({
+  url: '/templates.js',
+  dirname: __dirname + '/relative/path/to/templates'
+});
+
+var assets = rack.Rack([
+  new rack.BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/myAnglarApp/app.js',
+    prepend: angularTemplatesAsset
+  });
+]);
+
+module.exports = assets;
+```
+
+In your client (angular in this case) index.html:
+```html
+<script src='/app.js' type='text/javascript'></script>
+```
+
+##### Prepend Example - prepend multiple assets:
+_(using `rack.Rack([])` - multiple assets syntax)_
+
+In your assets.js:
+```javascript
+var rack = require('asset-rack');
+var widgetTemplates = new rack.AngularTemplatesAsset({
+  url: '/widget/templates.js',
+  dirname: __dirname + '/relative/path/to/widget/templates'
+});
+var sharedTemplates = new rack.AngularTemplatesAsset({
+  url: '/shared/templates.js',
+  dirname: __dirname + '/relative/path/to/shared/templates'
+});
+
+var assets = rack.Rack([
+  new rack.BrowserifyAsset({
+    url: '/app.js',
+    filename: __dirname + '/myAnglarApp/app.js',
+    prepend: [widgetTemplates, sharedTemplates]
+  });
+]);
+
+module.exports = assets;
+```
+
+In your client (angular in this case) index.html:
+```html
+<script src='/app.js' type='text/javascript'></script>
+```
+
+_Reference [AngularTemplatesAsset](#angulartemplatesasset) or [JadeAsset](#jadeasset) for more details specific to either._
 
 ### SnocketsAsset (js/coffeescript)
 
@@ -308,18 +370,72 @@ variable.
 
 ### AngularTemplatesAsset
 
-The angular templates asset packages all .html templates ready to be injected into the client side angularjs template cache.
+The angular templates asset packages all .html and .jade templates, in a given directory, ready to be injected into the client side angularjs template cache.
 You can read more about angularjs [here](http://angularjs.org/).
 
+#### Example:
+This example will compile html and jade documents located on the filesystem in the `__dirname + '../widget/app/views'` directory, and embed them in JS file served by the server at `'/js/widget/templates.js'`.
+
+_NOTE: all files in the `templateUrl` should use the `.html` file extension (including jade templates)_
+
+##### Server
+Project directory structure:
+```
+  MyExpressApp
+  ├── app.js
+  ├── assets.js
+  ├── public
+  │   └── js
+  │       └── (nothing on FS here)
+  └── widget
+      ├── app
+      │   ├── controllers
+      │   ├── directives
+      │   ├── services
+      │   └── views
+      │       ├── view1.html
+      │       └── view2.jade
+      └── test
+          ├── e2e
+          └── spec
+```
+In your project's `assets.js`:
 ```javascript
-new AngularTemplatesAsset({
-    url: '/js/templates.js',
-    dirname: __dirname + '/templates'
-});
+...
+  new rack.AngularTemplatesAsset({
+    url: '/js/widget/templates.js',
+    dirname: __dirname + '../widget/app/views',
+    templateCahceDirname: '/widget/views'
+  }),
+...
 ```
 
-Then see the following example client js code which loads templates into the template cache, where `angularTemplates` is the function provided by AngularTemplatesAsset:
+##### Client
+In angular route config:
+```javascript
+...
+  $routeProvider
+    .when('/view1/:id', {
+      templateUrl: '/widget/views/view1.html',
+      controller: 'MainCtrl'
+    },
+    .when('/view2/:id', {
+      templateUrl: '/widget/views/view2.html',
+      controller: 'MainCtrl'
+    },
+  )
+...
+```
 
+Then the following example client code loads templates into the template cache, where `angularTemplates` is the function provided by AngularTemplatesAsset:
+
+In your angular index.html:
+```html
+<script src='/js/widget/templates.js' type='text/javascript'></script>
+<script src='/path/to/angular/index-or-app.js' type='text/javascript'></script>
+```
+
+In your angular module initialization (usually index.js or app.js):
 ```javascript
 //replace this with your module initialization logic
 var myApp = angular.module("myApp", []);
@@ -331,8 +447,17 @@ myApp.run(['$templateCache', angularTemplates]);
 #### Options
 
 * `url`: The url that should retrieve this resource.
-* `dirname`: Directory where the .html templates are stored.
+* `dirname`: Directory where the .html and/or .jade templates are stored.
 * `compress` (defaults to false): Whether to unglify the js.
+* `clientVariable` (defualts to 'angularTemplates'): Client side template variable.
+* `templateCahceDirname` (defaults to empty string): Directory of the `templateUrl` you will be using in your angular routing configuration or directives to reference the template file.
+  * With `templateCacheDirname`: 
+    assets.js: `templateCahceDirname: '/widget/views'`
+    angular route config: `templateUrl: '/widget/views/view1.html',`
+  * Without:
+    angular route config: `templateUrl: '/view1.html',`
+    
+_NOTE: `templateCacheDirname` examples use the directory structure in the preceeding example_
 
 ## Other
 

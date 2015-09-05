@@ -10,8 +10,9 @@ zlib = require 'zlib'
 mime = require 'mime'
 {extend} = require './util'
 {EventEmitter} = require 'events'
+Rack = require('./rack').Rack
 
-# IE8 Compatibility 
+# IE8 Compatibility
 mime.types.js = 'text/javascript'
 mime.extensions['text/javascript'] = 'js'
 
@@ -24,9 +25,10 @@ class exports.Asset extends EventEmitter
     constructor: (options) ->
         super()
         options ?= {}
-    
+
         # Set the url
         @url = options.url if options.url?
+        @hostname = options.hostname if options.hostname?
 
         # Set the cotents if given
         @contents = options.contents if options.contents?
@@ -59,7 +61,7 @@ class exports.Asset extends EventEmitter
         # Max age for HTTP cache control
         @maxAge = options.maxAge if options.maxAge?
 
-        # Whether to allow caching of non-hashed urls 
+        # Whether to allow caching of non-hashed urls
         @allowNoHashCache = options.allowNoHashCache if options.allowNoHashCache?
 
         # Fire callback if someone listens for a "complete" event
@@ -95,25 +97,41 @@ class exports.Asset extends EventEmitter
                     @completed = true
                     @emit 'complete'
             else
-                @completed = true
+                # can't mark "@completed" yet, since mutli-assets containing this asset
+                # may get the "complete" callback twice
+                # see: https://github.com/techpines/asset-rack/pull/96
+                # @completed = true
 
                 # Handles gzipping
+                if not @gzip and Rack.gzippableUrl?
+                    if Rack.gzippableUrl(@url)
+                        @gzip = true
+
                 if @gzip
                     zlib.gzip @contents, (error, gzip) =>
+                        @completed = true
+                        console.log "gzip failed failed for #{@url}: #{error}" if error?
+                        return @emit 'error', error if error?
                         @gzipContents = gzip
+                        # set gzip header
+                        @headers['content-encoding'] ?= 'gzip'
                         @emit 'complete'
                 else
+                    @completed = true
                     @emit 'complete'
-        
+
             # Does the file watching
             if @watch
-                @watcher = fs.watch @toWatch, (event, filename) =>
-                    if event is 'change'
-                        @watcher.close()
-                        @completed = false
-                        @assets = false
-                        process.nextTick =>
-                            @emit 'start'
+                @toWatch = if Array.isArray @toWatch then @toWatch else [@toWatch]
+                @toWatch.forEach (path) =>
+                    this[path] = fs.watch path, (event, filename) =>
+                        if event is 'change'
+                            console.log filename, 'changed'
+                            this[path].close()
+                            @completed = false
+                            @assets = false
+                            process.nextTick =>
+                                @emit 'start'
 
         # Listen for errors and throw if no listeners
         @on 'error', (error) =>
@@ -153,10 +171,14 @@ class exports.Asset extends EventEmitter
         if @gzip
             response.send @gzipContents
         else response.send @contents
-        
+
     # Check if a given url "matches" this asset
     checkUrl: (url) ->
-        url is @specificUrl or (not @hash? and url is @url)
+        return true if url is @specificUrl
+        return true if (not @isHashed? and url is @url.replace(/^https?:\/\/[^\/]+\//, '/'))
+        if @specificUrl and not @domainlessSpecificUrl
+          @domainlessSpecificUrl = @specificUrl.replace(/^https?:\/\/[^\/]+\//, '/')
+        return true if url is @domainlessSpecificUrl
 
     # Used so that an asset can be express middleware
     handle: (request, response, next) ->
@@ -172,10 +194,10 @@ class exports.Asset extends EventEmitter
             handle()
         else @on 'complete', ->
             handle()
-        
-    # Default create method, usually overwritten 
+
+    # Default create method, usually overwritten
     create: (options) ->
-        
+
         # At the end of a create method you always call
         # the created event
         @emit 'created'
@@ -197,18 +219,33 @@ class exports.Asset extends EventEmitter
             when 'text/css'
                 return "\n<link rel=\"stylesheet\" href=\"#{@specificUrl}\">"
 
+    getUploadUrl: ->
+        url = @specificUrl
+        if (url.indexOf('//') >= 0)
+            url = url.replace(/^[^\/]*\/\/[^\/]+\//, '')
+        if (url.slice(0, 1) == '/')
+            url = url.slice 1
+        url
+
     # Creates and md5 hash of the url for caching
     createSpecificUrl: ->
-        @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
 
         # This is the no hash option
-        if @hash is false
+        shouldHash = @hash isnt false
+        if shouldHash and Rack.neverHashThis?
+            if Rack.neverHashThis(@url)
+              shouldHash = false
+              # console.log('hashing for this url is disabled: ' + @url)
+
+        if not shouldHash
             @useDefaultMaxAge = false
             return @specificUrl = @url
 
+        @md5 = crypto.createHash('md5').update(@contents).digest 'hex'
+
         # Construction of the hashed url
         @specificUrl = "#{@url.slice(0, @url.length - @ext.length)}-#{@md5}#{@ext}"
-
+        @isHashed = true
         # Might need a hostname if not on same server
         if @hostname?
             @specificUrl = "//#{@hostname}#{@specificUrl}"

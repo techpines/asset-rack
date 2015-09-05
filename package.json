@@ -1,24 +1,27 @@
 {
   "name": "asset-rack",
-  "version": "2.2.2",
+  "version": "2.3.15",
   "description": "Static Web Framework for Nodejs",
   "author": "Brad Carleton <brad@techpines.com>",
-  "repository": "https://github.com/techpines/asset-rack",
+  "repository": "https://github.com/shopbeam/asset-rack",
   "dependencies": {
-    "browserify": "1.17.3",
+    "browserify": "~2.34.0",
     "snockets": "~1.3.8",
-    "uglify-js": "~2.4.0",
+    "uglify-js": "https://github.com/shopbeam/UglifyJS2/tarball/5f5d0b1c5fcb9142979c2bdd3b94a8371453d9ba",
     "async": "~0.2.9",
     "pkgcloud": "~0.8.12",
     "less": "~1.4.2",
     "jade": "~0.35.0",
     "mime": "1.2.11",
     "nib": "~1.0.1",
-    "stylus": "~0.38.0",
+    "stylus": "~0.49.0",
     "underscore": "~1.5.2",
     "coffee-script": "~1.6.3",
+    "coffeeify": "~0.5.0",
     "markdown": "~0.5.0",
-    "node-sassy": "~0.0.1"
+    "node-sassy": "~0.0.1",
+    "q": "~0.9.7",
+    "through": "~2.3.4"
   },
   "devDependencies": {
     "express.io": "1.1.8",
